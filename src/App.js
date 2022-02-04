@@ -12,6 +12,7 @@ function App() {
   /* File browsing */
   const [images, setImages] = useState([]);
   const [imageURLs, setImageURLs] = useState([]);
+  const [imageName, setImageNames] = useState();
 
   useEffect(() => {
     if (images.length < 1 || images.length > 4) {
@@ -19,19 +20,29 @@ function App() {
     }
     const newImageURLs = [];
     for (var i = 0; i < images.length; i++) {
-      newImageURLs.push(URL.createObjectURL(images[i]));
+      // newImageURLs.push(URL.createObjectURL(images[i]));
+      newImageURLs.push({
+        objectURL: URL.createObjectURL(images[i]),
+        imageName: imageName[i],
+        id: i
+      })
     }
     setImageURLs(newImageURLs);
   }, [images]);
 
   function onImageChange(e) {
     setImages(e.target.files);
+    const newImageNames = []
+    for (var i=0; i<e.target.files.length; i++){
+      newImageNames.push(e.target.files[i].name)
+    }
+    setImageNames(newImageNames)
   }
 
   // Components
-  // const footerStandardComponent = <Footer />;
-  // const imageBrowserComponent = <ImageBrowser onImageChange={onImageChange} imageURLs={imageURLs}/>;
-  // const ImagePreviewComponent = <Carousel imageURLs={imageURLs} />;
+  const footerStandardComponent = <Footer />;
+  const imageBrowserComponent = <ImageBrowser onImageChange={onImageChange}/>;
+  const ImagePreviewComponent = <Carousel imageURLs={imageURLs} />;
 
   // // Hooks for collapsible components
   // const [isExpandedSelect, setExpandedSelect] = useState(false);
@@ -42,10 +53,8 @@ function App() {
 
   return (
     <div className="App">
-      <input type="file" multiple accept="image/*" onChange={onImageChange} />
-      {imageURLs.map((imageSrc) => (
-        <img src={imageSrc} />
-      ))}
+      {imageBrowserComponent}
+      {ImagePreviewComponent}
     </div>
   );
 }

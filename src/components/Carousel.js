@@ -8,7 +8,7 @@ const Carousel = ({ imageURLs }) => {
     <AliceCarousel
     >
     {imageURLs.map((imageSrc) => (
-      <Image alt={imageSrc.fileName} id={imageSrc.id} src={imageSrc.objectURL} />
+      <Image alt={imageSrc.imageName} id={imageSrc.id} src={imageSrc.objectURL} />
     ))}
   </AliceCarousel>
   );
