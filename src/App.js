@@ -45,16 +45,31 @@ function App() {
   const ImagePreviewComponent = <Carousel imageURLs={imageURLs} />;
 
   // // Hooks for collapsible components
-  // const [isExpandedSelect, setExpandedSelect] = useState(false);
-  // const {
-  //   getCollapseProps: getCollapsePropsSelect,
-  //   getToggleProps: getTogglePropsSelect,
-  // } = useCollapse({ isExpanded: isExpandedSelect });
+  const [isExpandedSelect, setExpandedSelect] = useState(false);
+  const {
+    getCollapseProps: getCollapsePropsSelect,
+    getToggleProps: getTogglePropsSelect,
+  } = useCollapse({ isExpanded: isExpandedSelect });
 
   return (
     <div className="App">
-      {imageBrowserComponent}
-      {ImagePreviewComponent}
+      {/* {imageBrowserComponent} */}
+      <div className="Select">
+        <Section 
+        header="Select image(s"
+        component={imageBrowserComponent}
+        footer={footerStandardComponent}
+        isExpanded={isExpandedSelect}
+        setExpanded={setExpandedSelect}
+        getCollapseProps={getCollapsePropsSelect}
+        getToggleProps={getTogglePropsSelect}
+        />
+      </div>
+        {/* {ImagePreviewComponent}
+         */}
+      <div className="Preview">
+        
+      </div>
     </div>
   );
 }
