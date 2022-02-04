@@ -1,44 +1,51 @@
-import './App.css';
+import "./App.css";
 import { useEffect, useState } from "react";
 import useCollapse from "react-collapsed";
 
+import ImageBrowser from "./components/ImageBrowser";
+import Section from "./components/Section";
+import Footer from "./components/Footer";
+import Carousel from "./components/Carousel";
+import Image from "./components/Image";
+
 function App() {
-  // Hooks related to files
+  /* File browsing */
+  const [images, setImages] = useState([]);
+  const [imageURLs, setImageURLs] = useState([]);
 
-  const [files, setFiles] = useState([]);
-  const [fileURLs, setFileURLs] = useState([]);
-  const [fileNames, setFileNames] = useState([]);
-
-  const fileOnChange = (e) => {
-    setFiles(e.target.files);
-    const fileNamesArray = [];
-    for (var i = 0; i < e.target.files.length; i++) {
-      fileNamesArray.push(e.target.files[i].name);
+  useEffect(() => {
+    if (images.length < 1 || images.length > 4) {
+      return;
     }
-    setFileNames(fileNamesArray);
-  };
+    const newImageURLs = [];
+    for (var i = 0; i < images.length; i++) {
+      newImageURLs.push(URL.createObjectURL(images[i]));
+    }
+    setImageURLs(newImageURLs);
+  }, [images]);
 
-  useEffect(
-    (fileNames) => {
-      if (files.length < 1 || files.length > 10) return;
-      const newObjectURLs = [];
-      for (var i = 0; i < files.length; i++) {
-        const objectURL = {
-          id: i,
-          fileName: fileNames[i],
-          objectURL: URL.createObjectURL(files[i]),
-        };
-        newObjectURLs.push(objectURL);
-      }
-      setFileURLs(newObjectURLs);
-    },
-    [files]
-  );
+  function onImageChange(e) {
+    setImages(e.target.files);
+  }
 
+  // Components
+  // const footerStandardComponent = <Footer />;
+  // const imageBrowserComponent = <ImageBrowser onImageChange={onImageChange} imageURLs={imageURLs}/>;
+  // const ImagePreviewComponent = <Carousel imageURLs={imageURLs} />;
+
+  // // Hooks for collapsible components
+  // const [isExpandedSelect, setExpandedSelect] = useState(false);
+  // const {
+  //   getCollapseProps: getCollapsePropsSelect,
+  //   getToggleProps: getTogglePropsSelect,
+  // } = useCollapse({ isExpanded: isExpandedSelect });
 
   return (
     <div className="App">
-      
+      <input type="file" multiple accept="image/*" onChange={onImageChange} />
+      {imageURLs.map((imageSrc) => (
+        <img src={imageSrc} />
+      ))}
     </div>
   );
 }

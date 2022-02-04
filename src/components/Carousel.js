@@ -3,12 +3,11 @@ import "react-alice-carousel/lib/alice-carousel.css";
 
 import Image from "./Image";
 
-const Carousel = ({ fileURLs }) => {
+const Carousel = ({ imageURLs }) => {
   return (
     <AliceCarousel
-    items={2}
     >
-    {fileURLs.map((imageSrc) => (
+    {imageURLs.map((imageSrc) => (
       <Image alt={imageSrc.fileName} id={imageSrc.id} src={imageSrc.objectURL} />
     ))}
   </AliceCarousel>

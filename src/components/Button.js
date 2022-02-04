@@ -8,8 +8,8 @@ const Button = ({ text, onClick , optional}) => {
 
 Button.defaultProps = {
     text: "Button",
-    onClick: undefined,
-    optional: undefined
+    // onClick: undefined,
+    // optional: undefined
 }
 
 export default Button;
