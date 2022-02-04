@@ -51,6 +51,12 @@ function App() {
     getToggleProps: getTogglePropsSelect,
   } = useCollapse({ isExpanded: isExpandedSelect });
 
+  const [isExpandedPreview, setExpandedPreview] = useState(false);
+  const {
+    getCollapseProps: getCollapsePropsPreview,
+    getToggleProps: getTogglePropsPreview,
+  } = useCollapse({ isExpanded: isExpandedPreview });
+
   return (
     <div className="App">
       {/* {imageBrowserComponent} */}
@@ -68,7 +74,15 @@ function App() {
         {/* {ImagePreviewComponent}
          */}
       <div className="Preview">
-        
+      <Section 
+        header="Select image(s"
+        component={ImagePreviewComponent}
+        footer={footerStandardComponent}
+        isExpanded={isExpandedPreview}
+        setExpanded={setExpandedPreview}
+        getCollapseProps={getCollapsePropsPreview}
+        getToggleProps={getTogglePropsPreview}
+        />
       </div>
     </div>
   );
