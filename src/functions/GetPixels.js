@@ -27,10 +27,10 @@ async function GetPixels(divRef, setImgDataArray) {
     img.onload = function () {
       ctx.drawImage(img, 0, 0);
       var imgData = ctx.getImageData(0, 0, width, height);
-      var rgbData = getRGBData(imgData)
       imgDataArray.push(imgData)
-      imgRGBArray.push(rgbData)
       setImgDataArray(imgDataArray)
+      // var rgbData = getRGBData(imgData)
+      // imgRGBArray.push(rgbData)
       // setImgRGBArray(imgRGBArray)
     };
   }

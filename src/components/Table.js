@@ -13,6 +13,8 @@ function Table({ columns, data }) {
     data,
   })
   console.log("table!")
+  // console.log("data", data)
+  // console.log("rows", rows)
 
   // Render the UI for your table
   return (

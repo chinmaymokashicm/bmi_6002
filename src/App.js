@@ -7,7 +7,10 @@ import Section from "./components/Section";
 import Footer from "./components/Footer";
 import Carousel from "./components/Carousel";
 import Processing from "./components/Processing";
+import Float from "./components/Float";
+import Button from "./components/Button";
 
+import GetPixels from "./functions/GetPixels";
 
 function App() {
   /* File browsing */
@@ -23,6 +26,10 @@ function App() {
   const [imageURLs, setImageURLs] = useState(defaultImageURLarray);
   const [imageNames, setImageNames] = useState();
 
+  // Stack for undo-redo functionality
+  const [stackImageURLs, setStackImageURLs] = useState([defaultImageURLarray]);
+  const [stackCounter, setStackCounter] = useState(0);
+
   useEffect(() => {
     if (images.length < 1 || images.length > 4) {
       return;
@@ -37,8 +44,8 @@ function App() {
       });
     }
     setImageURLs(newImageURLs);
+    setStackImageURLs([newImageURLs]) //Initialized stack
   }, [images]);
-
 
   function onImageChange(e) {
     setImages(e.target.files);
@@ -47,13 +54,25 @@ function App() {
       newImageNames.push(e.target.files[i].name);
     }
     setImageNames(newImageNames);
+    console.log("Current divRef: ", divRef.current)
   }
+  
+  // Undo-redo
+  useEffect(() => {
+    console.log("Stack counter update", stackCounter);
+    setUndoVisibility()
+    setRedoVisibility()
+    setImageURLs(stackImageURLs[stackCounter])
+  }, [stackCounter]);
 
   // Image Processing
-  const [imgDataArray, setImgDataArray] = useState([])
-  const [imgRGBArray, setImgRGBArray] = useState([])
-  // When the value of this state is set to true, image pixel data are generated
-  const [getImgData, setGetImgData] = useState(false)
+  const [imgDataArray, setImgDataArray] = useState([]);
+
+  const divRef = useRef(); //Ref for image div
+  useEffect(() => {
+    GetPixels(divRef, setImgDataArray);
+    console.log("Getting pixel values!")
+  }, [divRef])
 
   // Hooks for collapsible components
   const [isExpandedSelect, setExpandedSelect] = useState(true);
@@ -80,7 +99,6 @@ function App() {
     getToggleProps: getTogglePropsML,
   } = useCollapse({ isExpanded: isExpandedML });
 
-  const componentFooterStandard = <Footer />;
   const [isExpandedResults, setExpandedResults] = useState(false);
   const {
     getCollapseProps: getCollapsePropsResults,
@@ -99,7 +117,6 @@ function App() {
   function continueButtonPreview(e) {
     setExpandedProcessing(true);
     setExpandedPreview(false);
-    setGetImgData(true) //Generates image pixel data
   }
   const componentFooterPreview = (
     <Footer continueOnClick={continueButtonPreview} />
@@ -125,26 +142,83 @@ function App() {
     <Footer continueText="Finish" continueOnClick={continueButtonResults} />
   );
 
+  function setUndoVisibility(){
+    if(stackCounter <= 0) {
+      setIsUndoVisible(false)
+    }
+    else{
+      setIsUndoVisible(true)
+    }
+  }
+  function setRedoVisibility(){
+    if(stackCounter >= stackImageURLs.length - 1) {
+      setIsRedoVisible(false)
+    }
+    else{
+      setIsRedoVisible(true)
+    }
+  }
+
+  const [isUndoVisible, setIsUndoVisible] = useState(false);
+  const [isRedoVisible, setIsRedoVisible] = useState(false);
+  const componentUndoRedo = (
+    <div className="UndoRedo">
+      <Button
+        text="Undo"
+        onClick={() => {
+          if(stackCounter > 0){
+            setStackCounter(stackCounter - 1);
+          }
+          else {
+            alert("At the beginning of stack! No more undo")
+          }
+        }}
+        disabled={!isUndoVisible}
+      />
+      <Button
+        text="Redo"
+        onClick={() => {
+          if(stackCounter < stackImageURLs.length - 1){
+            setStackCounter(stackCounter + 1);
+          }
+          else {
+            alert("At the end of stack! No more redo")
+          }
+        }}
+        disabled={!isRedoVisible}
+      />
+      {stackCounter}
+    </div>
+  );
   const componentSelect = <ImageBrowser onImageChange={onImageChange} />;
-  const divRef = useRef(); //Ref for image div
   const componentImagePreview = (
     <Carousel
       imageURLs={imageURLs}
       setImageURLs={setImageURLs}
       divRef={divRef}
       setImgDataArray={setImgDataArray}
-      setImgRGBArray={setImgRGBArray}
-      getImgData={getImgData}
+      // Update stack
+      stackImageURLs={stackImageURLs}
+      setStackImageURLs={setStackImageURLs}
+      stackCounter={stackCounter}
+      setStackCounter={setStackCounter}
     />
   );
   const componentProcessing = (
-    <Processing imageURLs={imageURLs} imgDataArray={imgDataArray} setImgDataArray={setImgDataArray} />
+    <Processing
+      imageURLs={imageURLs}
+      imgDataArray={imgDataArray}
+      setImgDataArray={setImgDataArray}
+      stackCounter={stackCounter}
+      setStackCounter={setStackCounter}
+    />
   );
   const componentML = <div>Machine Learning</div>;
   const componentResults = <div>Results</div>;
 
   return (
     <div className="App">
+      <div className="Float">{componentUndoRedo}</div>
       <div className="Select">
         <Section
           header="Select image(s)"

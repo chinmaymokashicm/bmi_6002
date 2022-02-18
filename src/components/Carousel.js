@@ -7,14 +7,17 @@ import Button from "./Button";
 
 import GetPixels from "../functions/GetPixels";
 
-const Carousel = ({ imageURLs, setImageURLs, divRef, setImgDataArray, getImgData }) => {
-  useEffect(() => {
-    GetPixels(divRef, setImgDataArray);
-  }, [getImgData]);
-
-  // Keep a copy of the original image array
-  const imageURLsCopy = imageURLs;
-
+const Carousel = ({
+  imageURLs,
+  setImageURLs,
+  divRef,
+  setImgDataArray,
+  getImgData,
+  stackImageURLs,
+  setStackImageURLs,
+  stackCounter,
+  setStackCounter,
+}) => {
   const [isCarouselVisible, setIsCarouselVisible] = useState(true);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [crop, setCrop] = useState();
@@ -32,7 +35,6 @@ const Carousel = ({ imageURLs, setImageURLs, divRef, setImgDataArray, getImgData
   }
 
   function getCroppedImage() {
-    // console.log(image);
     const canvas = document.createElement("canvas");
     const scaleX = image.naturalWidth / image.width;
     const scaleY = image.naturalHeight / image.height;
@@ -123,37 +125,6 @@ const Carousel = ({ imageURLs, setImageURLs, divRef, setImgDataArray, getImgData
               />
             </div>
           </div>
-
-          {/* <div className="carousel">
-            {imageURLs[currentImageIndex].id + 1} |{" "}
-            {imageURLs[currentImageIndex].imageName}
-            <div className="image-view">
-              <Image
-                id={imageURLs[currentImageIndex].id}
-                alt={imageURLs[currentImageIndex].imageName}
-                src={imageURLs[currentImageIndex].objectURL}
-              />
-            </div>
-          </div>
-          <div className="navigate-image">
-            {imageURLs.map((imageSrc) => (
-              <Button
-                text={imageSrc.id + 1}
-                onClick={() => {
-                  moveToImageIndex(imageSrc.id);
-                }}
-              />
-            ))}
-          </div>
-          <div className="button-reset">
-            <Button
-              text="Crop image"
-              onClick={() => {
-                setIsCarouselVisible(false);
-                setIsCroppedSectionVisible(true);
-              }}
-            />
-          </div> */}
         </div>
       )}
       <div className="crop-div" style={CroppedSectionStyle}>
@@ -171,10 +142,12 @@ const Carousel = ({ imageURLs, setImageURLs, divRef, setImgDataArray, getImgData
           <Button
             text="Save"
             onClick={() => {
-              imageURLs[currentImageIndex].objectURL = croppedImage;
+              var imageURLsCopy = JSON.parse(JSON.stringify(imageURLs))
+              imageURLsCopy[currentImageIndex].objectURL = croppedImage;
+              setStackImageURLs([...stackImageURLs, imageURLsCopy]);
+              setStackCounter(stackCounter + 1);
               setIsCroppedSectionVisible(false);
               setIsCarouselVisible(true);
-              // setImage(null);
             }}
           />
         )}
@@ -183,15 +156,6 @@ const Carousel = ({ imageURLs, setImageURLs, divRef, setImgDataArray, getImgData
           onClick={() => {
             setIsCroppedSectionVisible(false);
             setIsCarouselVisible(true);
-          }}
-        />
-      </div>
-      <div className="reset">
-        <Button
-          text="Reset"
-          onClick={() => {
-            setImageURLs(imageURLsCopy);
-            console.log("unable to reset cropped images, check this issue");
           }}
         />
       </div>

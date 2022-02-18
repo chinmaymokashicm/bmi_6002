@@ -37,7 +37,13 @@ const Styles = styled.div`
   }
 `;
 
-const Processing = ({ imageURLs, imgDataArray, setImgDataArray }) => {
+const Processing = ({
+  imageURLs,
+  imgDataArray,
+  setImgDataArray,
+  stackCounter,
+  setStackCounter,
+}) => {
   // Setting up the appearance
   const animatedComponents = makeAnimated();
   useEffect(() => {
@@ -95,7 +101,8 @@ const Processing = ({ imageURLs, imgDataArray, setImgDataArray }) => {
   const [count, setCount] = useState(0);
 
   //   -------------------------------------------------------------------------------
-  function submit() {
+
+  function Submit() {
     var obj = {
       Function: currentFunctionName,
     };
@@ -106,8 +113,7 @@ const Processing = ({ imageURLs, imgDataArray, setImgDataArray }) => {
     obj["id"] = data.length + 1;
     var tempArray = data;
     tempArray.push(obj);
-    setData(tempArray);
-    console.log(data);
+    setData(tempArray)
     forceUpdate();
     setCount((previous) => previous + 1);
   }
@@ -127,7 +133,7 @@ const Processing = ({ imageURLs, imgDataArray, setImgDataArray }) => {
         />
       </div>
       <div className="submit">
-        <Button text="Submit" onClick={submit} />
+        <Button text="Submit" onClick={Submit} />
         <Button
           text="Column names"
           onClick={() => {
@@ -147,6 +153,8 @@ const Processing = ({ imageURLs, imgDataArray, setImgDataArray }) => {
           console.log(imgDataArray);
         }}
       />
+      <div className="table" />
+      {/* <Table data={data} columns={columns} /> */}
     </div>
   );
 };
