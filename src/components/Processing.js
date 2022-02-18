@@ -43,6 +43,8 @@ const Processing = ({
   setImgDataArray,
   stackCounter,
   setStackCounter,
+  data,
+  setData
 }) => {
   // Setting up the appearance
   const animatedComponents = makeAnimated();
@@ -95,7 +97,6 @@ const Processing = ({
 
   //   -------------------------------------------------------------------------------
 
-  const [data, setData] = useState([]);
   const [columns, setColumns] = useState(useMemo(() => [], []));
   const [_, forceUpdate] = useReducer((x) => x + 1, 0);
   const [count, setCount] = useState(0);

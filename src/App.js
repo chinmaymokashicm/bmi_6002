@@ -67,6 +67,7 @@ function App() {
 
   // Image Processing
   const [imgDataArray, setImgDataArray] = useState([]);
+  const [data, setData] = useState([])
 
   const divRef = useRef(); //Ref for image div
   useEffect(() => {
@@ -211,6 +212,8 @@ function App() {
       setImgDataArray={setImgDataArray}
       stackCounter={stackCounter}
       setStackCounter={setStackCounter}
+      data={data}
+      setData={setData}
     />
   );
   const componentML = <div>Machine Learning</div>;
