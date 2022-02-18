@@ -1,0 +1,5 @@
+4 images
+5 measurements per image
+5 different areas of an image
+align image (center and circle around it)
+aspect ratio (?)

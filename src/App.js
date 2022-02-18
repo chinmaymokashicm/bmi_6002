@@ -1,18 +1,27 @@
 import "./App.css";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import useCollapse from "react-collapsed";
 
 import ImageBrowser from "./components/ImageBrowser";
 import Section from "./components/Section";
 import Footer from "./components/Footer";
 import Carousel from "./components/Carousel";
-import Image from "./components/Image";
+import Processing from "./components/Processing";
+
 
 function App() {
   /* File browsing */
   const [images, setImages] = useState([]);
-  const [imageURLs, setImageURLs] = useState([]);
-  const [imageName, setImageNames] = useState();
+  const defaultImageURLarray = [
+    {
+      objectURL: undefined,
+      imageName: undefined,
+      id: undefined,
+      image: undefined,
+    },
+  ];
+  const [imageURLs, setImageURLs] = useState(defaultImageURLarray);
+  const [imageNames, setImageNames] = useState();
 
   useEffect(() => {
     if (images.length < 1 || images.length > 4) {
@@ -20,15 +29,16 @@ function App() {
     }
     const newImageURLs = [];
     for (var i = 0; i < images.length; i++) {
-      // newImageURLs.push(URL.createObjectURL(images[i]));
       newImageURLs.push({
         objectURL: URL.createObjectURL(images[i]),
-        imageName: imageName[i],
+        imageName: imageNames[i],
         id: i,
+        image: images[i],
       });
     }
     setImageURLs(newImageURLs);
   }, [images]);
+
 
   function onImageChange(e) {
     setImages(e.target.files);
@@ -39,7 +49,13 @@ function App() {
     setImageNames(newImageNames);
   }
 
-  // // Hooks for collapsible components
+  // Image Processing
+  const [imgDataArray, setImgDataArray] = useState([])
+  const [imgRGBArray, setImgRGBArray] = useState([])
+  // When the value of this state is set to true, image pixel data are generated
+  const [getImgData, setGetImgData] = useState(false)
+
+  // Hooks for collapsible components
   const [isExpandedSelect, setExpandedSelect] = useState(true);
   const {
     getCollapseProps: getCollapsePropsSelect,
@@ -58,13 +74,13 @@ function App() {
     getToggleProps: getTogglePropsProcessing,
   } = useCollapse({ isExpanded: isExpandedProcessing });
 
-
   const [isExpandedML, setExpandedML] = useState(false);
   const {
     getCollapseProps: getCollapsePropsML,
     getToggleProps: getTogglePropsML,
   } = useCollapse({ isExpanded: isExpandedML });
 
+  const componentFooterStandard = <Footer />;
   const [isExpandedResults, setExpandedResults] = useState(false);
   const {
     getCollapseProps: getCollapsePropsResults,
@@ -72,10 +88,9 @@ function App() {
   } = useCollapse({ isExpanded: isExpandedResults });
 
   // Components
-  const componentFooterStandard = <Footer />;
-
   function continueButtonSelect(e) {
     setExpandedPreview(true);
+    setExpandedSelect(false);
   }
   const componentFooterSelect = (
     <Footer continueOnClick={continueButtonSelect} />
@@ -83,6 +98,8 @@ function App() {
 
   function continueButtonPreview(e) {
     setExpandedProcessing(true);
+    setExpandedPreview(false);
+    setGetImgData(true) //Generates image pixel data
   }
   const componentFooterPreview = (
     <Footer continueOnClick={continueButtonPreview} />
@@ -95,13 +112,10 @@ function App() {
     <Footer continueOnClick={continueButtonProcessing} />
   );
 
-
   function continueButtonML(e) {
     setExpandedResults(true);
   }
-  const componentFooterML = (
-    <Footer continueOnClick={continueButtonML} />
-  );
+  const componentFooterML = <Footer continueOnClick={continueButtonML} />;
 
   function continueButtonResults(e) {
     setExpandedResults(true);
@@ -112,10 +126,22 @@ function App() {
   );
 
   const componentSelect = <ImageBrowser onImageChange={onImageChange} />;
-  const componentImagePreview = <Carousel imageURLs={imageURLs} />;
-  const componentProcessing = <div>Processing</div>
-  const componentML = <div>Machine Learning</div>
-  const componentResults = <div>Results</div>
+  const divRef = useRef(); //Ref for image div
+  const componentImagePreview = (
+    <Carousel
+      imageURLs={imageURLs}
+      setImageURLs={setImageURLs}
+      divRef={divRef}
+      setImgDataArray={setImgDataArray}
+      setImgRGBArray={setImgRGBArray}
+      getImgData={getImgData}
+    />
+  );
+  const componentProcessing = (
+    <Processing imageURLs={imageURLs} imgDataArray={imgDataArray} setImgDataArray={setImgDataArray} />
+  );
+  const componentML = <div>Machine Learning</div>;
+  const componentResults = <div>Results</div>;
 
   return (
     <div className="App">
@@ -130,7 +156,7 @@ function App() {
           getToggleProps={getTogglePropsSelect}
         />
       </div>
-      <div className="Preview">
+      <div className="Preview" style={{ borderStyle: "dotted" }}>
         <Section
           header="Preview"
           component={componentImagePreview}
@@ -142,7 +168,7 @@ function App() {
         />
       </div>
       <div className="Processing">
-      <Section
+        <Section
           header="Processing"
           component={componentProcessing}
           footer={componentFooterProcessing}
@@ -153,7 +179,7 @@ function App() {
         />
       </div>
       <div className="ML">
-      <Section
+        <Section
           header="Machine Learning"
           component={componentML}
           footer={componentFooterML}
@@ -164,7 +190,7 @@ function App() {
         />
       </div>
       <div className="Results">
-      <Section
+        <Section
           header="Results"
           component={componentResults}
           footer={componentFooterResults}
