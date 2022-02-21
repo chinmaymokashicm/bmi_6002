@@ -1,15 +1,15 @@
 import { useState, useEffect } from "react";
 import ReactCrop from "react-image-crop";
 import "react-image-crop/dist/ReactCrop.css";
+import clone from "just-clone";
 
 import Image from "./Image";
 import Button from "./Button";
 
 import GetPixels from "../functions/GetPixels";
+import SaveImageURLsToStack from "../functions/SaveImageURLsToStack";
 
 const Carousel = ({
-  imageURLs,
-  setImageURLs,
   divRef,
   setImgDataArray,
   getImgData,
@@ -40,7 +40,7 @@ const Carousel = ({
     const scaleY = image.naturalHeight / image.height;
     canvas.width = crop.width;
     canvas.height = crop.height;
-    const ctx = canvas.getContext("2d");
+    const ctx = canvas.getContext("2d", { colorSpace: "display-p3" });
 
     // New lines to be added
     const pixelRatio = window.devicePixelRatio;
@@ -65,6 +65,24 @@ const Carousel = ({
     setCroppedImage(base64Image);
   }
 
+  function save() {
+    try {
+      var newImageURLs = clone(stackImageURLs[stackCounter]);
+      newImageURLs[currentImageIndex].objectURL = croppedImage;
+      SaveImageURLsToStack(
+        newImageURLs,
+        stackImageURLs,
+        setStackImageURLs,
+        stackCounter
+      );
+      setStackCounter(stackCounter + 1);
+    } catch (e) {
+      console.log(e);
+    }
+    setIsCroppedSectionVisible(false);
+    setIsCarouselVisible(true);
+  }
+
   let CroppedSectionStyle = {};
   if (!isCroppedSectionVisible) {
     CroppedSectionStyle.display = "none";
@@ -76,21 +94,23 @@ const Carousel = ({
 
   return (
     <div className="image-preview">
-      {imageURLs[0].objectURL !== undefined && (
-        <div className="image-carousel" style={CarouselStyle}>
+      {stackImageURLs[stackCounter][0].objectURL !== undefined && (
+        <div id="image-carousel" className="image-carousel" style={CarouselStyle}>
           <div className="carousel-test">
-            {imageURLs[currentImageIndex].id + 1} |{" "}
-            {imageURLs[currentImageIndex].imageName}
+            {stackImageURLs[stackCounter][currentImageIndex].id + 1} |{" "}
+            {stackImageURLs[stackCounter][currentImageIndex].imageName}
             <div className="image-view" id="1" ref={divRef}>
-              {imageURLs.map((imageSrc) => (
-                <Image
-                  alt={imageSrc.imageName}
-                  id={imageSrc.id}
-                  src={imageSrc.objectURL}
-                  isVisible={
-                    imageSrc.id === currentImageIndex ? "inline" : "none"
-                  }
-                />
+              {stackImageURLs[stackCounter].map((imageSrc) => (
+                <div key={imageSrc.id}>
+                  <Image
+                    alt={imageSrc.imageName}
+                    id={imageSrc.id}
+                    src={imageSrc.objectURL}
+                    isVisible={
+                      imageSrc.id === currentImageIndex ? "inline" : "none"
+                    }
+                  />
+                </div>
               ))}
             </div>
             <div className="buttons">
@@ -100,14 +120,19 @@ const Carousel = ({
                   if (currentImageIndex !== 0) {
                     setCurrentImageIndex(currentImageIndex - 1);
                   } else {
-                    setCurrentImageIndex(imageURLs.length - 1);
+                    setCurrentImageIndex(
+                      stackImageURLs[stackCounter].length - 1
+                    );
                   }
                 }}
               />
               <Button
                 text=">>"
                 onClick={() => {
-                  if (currentImageIndex !== imageURLs.length - 1) {
+                  if (
+                    currentImageIndex !==
+                    stackImageURLs[stackCounter].length - 1
+                  ) {
                     setCurrentImageIndex(currentImageIndex + 1);
                   } else {
                     setCurrentImageIndex(0);
@@ -129,7 +154,7 @@ const Carousel = ({
       )}
       <div className="crop-div" style={CroppedSectionStyle}>
         <ReactCrop
-          src={imageURLs[currentImageIndex].objectURL}
+          src={stackImageURLs[stackCounter][currentImageIndex].objectURL}
           crop={crop}
           onChange={(newCrop) => setCrop(newCrop)}
           onImageLoaded={setImage}
@@ -138,19 +163,7 @@ const Carousel = ({
         {croppedImage && (
           <Image src={croppedImage} alt="Cropped Image" id="1" />
         )}
-        {croppedImage && (
-          <Button
-            text="Save"
-            onClick={() => {
-              var imageURLsCopy = JSON.parse(JSON.stringify(imageURLs))
-              imageURLsCopy[currentImageIndex].objectURL = croppedImage;
-              setStackImageURLs([...stackImageURLs, imageURLsCopy]);
-              setStackCounter(stackCounter + 1);
-              setIsCroppedSectionVisible(false);
-              setIsCarouselVisible(true);
-            }}
-          />
-        )}
+        {croppedImage && <Button text="Save" onClick={save} />}
         <Button
           text="Cancel"
           onClick={() => {

@@ -11,6 +11,7 @@ import Float from "./components/Float";
 import Button from "./components/Button";
 
 import GetPixels from "./functions/GetPixels";
+import clone from "just-clone";
 
 function App() {
   /* File browsing */
@@ -23,11 +24,14 @@ function App() {
       image: undefined,
     },
   ];
-  const [imageURLs, setImageURLs] = useState(defaultImageURLarray);
   const [imageNames, setImageNames] = useState();
+  const [imageURLs, setImageURLs] = useState(defaultImageURLarray);
 
   // Stack for undo-redo functionality
-  const [stackImageURLs, setStackImageURLs] = useState([defaultImageURLarray]);
+  const [stackImageURLs, setStackImageURLs] = useState({
+    0: defaultImageURLarray,
+  });
+  const [stackData, setStackData] = useState({ 0: [] });
   const [stackCounter, setStackCounter] = useState(0);
 
   useEffect(() => {
@@ -42,9 +46,13 @@ function App() {
         id: i,
         image: images[i],
       });
+      // console.log(images[i])
     }
     setImageURLs(newImageURLs);
-    setStackImageURLs([newImageURLs]) //Initialized stack
+    setStackImageURLs({
+      [stackCounter]: newImageURLs,
+      [stackCounter + 1]: newImageURLs,
+    }); //Initialize stack
   }, [images]);
 
   function onImageChange(e) {
@@ -54,26 +62,50 @@ function App() {
       newImageNames.push(e.target.files[i].name);
     }
     setImageNames(newImageNames);
-    console.log("Current divRef: ", divRef.current)
   }
-  
+
   // Undo-redo
   useEffect(() => {
-    console.log("Stack counter update", stackCounter);
-    setUndoVisibility()
-    setRedoVisibility()
+    setUndoVisibility();
+    setRedoVisibility();
+    if (
+      stackImageURLs[stackCounter] === undefined &&
+      !isCounterChangeOnButton
+    ) {
+      // Only if not on button change
+      // If no new imageURLs are generated in this counter, just copy the previous one
+      console.log(
+        "stackCounter inside stackImageURLs undefined!",
+        stackCounter
+      );
+      var imageURLsObj = stackImageURLs;
+      imageURLsObj[stackCounter] =
+        imageURLsObj[Object.keys(stackImageURLs).length - 1];
+      setStackImageURLs(imageURLsObj);
+      setIsCounterChangeOnButton(false);
+    }
     setImageURLs(stackImageURLs[stackCounter])
+
+    if (stackData[stackCounter] === undefined && !isCounterChangeOnButton) {
+      // If there is no new data is generated in this counter, just copy the previous one
+      var dataObj = stackData;
+      console.log("stackCounter inside stackData undefined!", stackCounter);
+      dataObj[stackCounter] = dataObj[Object.keys(stackData).length - 1];
+      setStackData(dataObj);
+      setIsCounterChangeOnButton(false);
+    }
+    // console.log("stackData", stackData);
   }, [stackCounter]);
 
   // Image Processing
   const [imgDataArray, setImgDataArray] = useState([]);
-  const [data, setData] = useState([])
 
   const divRef = useRef(); //Ref for image div
   useEffect(() => {
     GetPixels(divRef, setImgDataArray);
-    console.log("Getting pixel values!")
-  }, [divRef])
+    // console.log("Getting pixel values!");
+    console.log("Update in divRef!");
+  }, [divRef]);
 
   // Hooks for collapsible components
   const [isExpandedSelect, setExpandedSelect] = useState(true);
@@ -117,7 +149,8 @@ function App() {
 
   function continueButtonPreview(e) {
     setExpandedProcessing(true);
-    setExpandedPreview(false);
+    // setExpandedPreview(false);
+    GetPixels(divRef, setImgDataArray);
   }
   const componentFooterPreview = (
     <Footer continueOnClick={continueButtonPreview} />
@@ -137,41 +170,41 @@ function App() {
 
   function continueButtonResults(e) {
     setExpandedResults(true);
-    console.log("Here");
+    console.log("Reached the end of the application!");
   }
   const componentFooterResults = (
     <Footer continueText="Finish" continueOnClick={continueButtonResults} />
   );
 
-  function setUndoVisibility(){
-    if(stackCounter <= 0) {
-      setIsUndoVisible(false)
-    }
-    else{
-      setIsUndoVisible(true)
+  function setUndoVisibility() {
+    if (stackCounter <= 0) {
+      setIsUndoVisible(false);
+    } else {
+      setIsUndoVisible(true);
     }
   }
-  function setRedoVisibility(){
-    if(stackCounter >= stackImageURLs.length - 1) {
-      setIsRedoVisible(false)
-    }
-    else{
-      setIsRedoVisible(true)
+  function setRedoVisibility() {
+    if (stackCounter >= Object.keys(stackImageURLs).length - 1) {
+      setIsRedoVisible(false);
+    } else {
+      setIsRedoVisible(true);
     }
   }
 
   const [isUndoVisible, setIsUndoVisible] = useState(false);
   const [isRedoVisible, setIsRedoVisible] = useState(false);
+
+  const [isCounterChangeOnButton, setIsCounterChangeOnButton] = useState(false);
   const componentUndoRedo = (
     <div className="UndoRedo">
       <Button
         text="Undo"
         onClick={() => {
-          if(stackCounter > 0){
+          if (stackCounter > 0) {
             setStackCounter(stackCounter - 1);
-          }
-          else {
-            alert("At the beginning of stack! No more undo")
+            setIsCounterChangeOnButton(true);
+          } else {
+            alert("At the beginning of stack! No more undo");
           }
         }}
         disabled={!isUndoVisible}
@@ -179,23 +212,21 @@ function App() {
       <Button
         text="Redo"
         onClick={() => {
-          if(stackCounter < stackImageURLs.length - 1){
+          if (stackCounter < Object.keys(stackImageURLs).length - 1) {
             setStackCounter(stackCounter + 1);
-          }
-          else {
-            alert("At the end of stack! No more redo")
+            setIsCounterChangeOnButton(true);
+          } else {
+            alert("At the end of stack! No more redo");
           }
         }}
         disabled={!isRedoVisible}
       />
-      {stackCounter}
+      {`${stackCounter}/${Object.keys(stackImageURLs).length - 1}`}
     </div>
   );
   const componentSelect = <ImageBrowser onImageChange={onImageChange} />;
   const componentImagePreview = (
     <Carousel
-      imageURLs={imageURLs}
-      setImageURLs={setImageURLs}
       divRef={divRef}
       setImgDataArray={setImgDataArray}
       // Update stack
@@ -208,12 +239,16 @@ function App() {
   const componentProcessing = (
     <Processing
       imageURLs={imageURLs}
+      setImageURLs={setImageURLs}
       imgDataArray={imgDataArray}
       setImgDataArray={setImgDataArray}
+      stackImageURLs={stackImageURLs}
+      setStackImageURLs={setStackImageURLs}
       stackCounter={stackCounter}
       setStackCounter={setStackCounter}
-      data={data}
-      setData={setData}
+      stackData={stackData}
+      setStackData={setStackData}
+      divRef={divRef}
     />
   );
   const componentML = <div>Machine Learning</div>;
@@ -222,6 +257,32 @@ function App() {
   return (
     <div className="App">
       <div className="Float">{componentUndoRedo}</div>
+      <div className="temp">
+        <Button
+          text="stackData"
+          onClick={() => {
+            console.log("stackData", stackData);
+          }}
+        />
+        <Button
+          text="stackImageURLs"
+          onClick={() => {
+            console.log("stackImageURLs", stackImageURLs);
+          }}
+        />
+        <Button
+          text="data"
+          onClick={() => {
+            console.log("data", stackData[stackCounter]);
+          }}
+        />
+        <Button
+          text="imageURLs"
+          onClick={() => {
+            console.log("imageURLs", imageURLs);
+          }}
+        />
+      </div>
       <div className="Select">
         <Section
           header="Select image(s)"

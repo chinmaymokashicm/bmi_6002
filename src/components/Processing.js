@@ -7,7 +7,11 @@ import Greyscale from "../functions/Greyscale";
 import VesselDensityPixelCount from "../functions/VesselDensityPixelCount";
 import Table from "./Table";
 import MaterialTable from "material-table";
+import clone from "just-clone";
+import { Link } from "react-scroll";
 import styled from "styled-components";
+import SaveDataToStack from "../functions/SaveDataToStack";
+import SaveImageURLsToStack from "../functions/SaveImageURLsToStack";
 const Styles = styled.div`
   padding: 1rem;
 
@@ -39,17 +43,20 @@ const Styles = styled.div`
 
 const Processing = ({
   imageURLs,
+  setImageURLs,
   imgDataArray,
-  setImgDataArray,
+  stackImageURLs,
+  setStackImageURLs,
   stackCounter,
   setStackCounter,
-  data,
-  setData
+  stackData,
+  setStackData,
+  divRef,
 }) => {
   // Setting up the appearance
   const animatedComponents = makeAnimated();
   useEffect(() => {
-    if (imageURLs.length > 1) {
+    if (stackImageURLs[stackCounter].length > 1) {
       const tempColumnsArray = [];
       tempColumnsArray.push({
         Header: "id",
@@ -59,20 +66,20 @@ const Processing = ({
         Header: "Function",
         accessor: 2,
       });
-      for (var i = 0; i < imageURLs.length; i++) {
+      for (var i = 0; i < stackImageURLs[stackCounter].length; i++) {
         tempColumnsArray.push({
-          Header: imageURLs[i].imageName,
+          Header: stackImageURLs[stackCounter][i].imageName,
           accessor: i + 3,
         });
       }
       tempColumnsArray.push({
         Header: "Average",
-        accessor: imageURLs.length + 3,
+        accessor: stackImageURLs[stackCounter].length + 3,
       });
 
       setColumns(tempColumnsArray);
     }
-  }, [imageURLs]);
+  }, [stackImageURLs[stackCounter]]);
 
   var functionsList = [
     {
@@ -104,19 +111,37 @@ const Processing = ({
   //   -------------------------------------------------------------------------------
 
   function Submit() {
-    var obj = {
-      Function: currentFunctionName,
-    };
-    for (var i = 0; i < imageURLs.length; i++) {
-      obj[imageURLs[i].imageName] = currentFunction(imgDataArray[i]);
+    try {
+      var obj = {
+        Function: currentFunctionName,
+      };
+      var boolOutput = currentFunction(
+        imgDataArray,
+        stackImageURLs,
+        setStackImageURLs,
+        stackCounter
+      );
+      for (var i = 0; i < boolOutput.length; i++) {
+        obj[stackImageURLs[stackCounter][i].imageName] = boolOutput[i];
+      }
+      obj["Average"] = "Average";
+      try {
+        obj["id"] = stackData[stackCounter].length + 1;
+      } catch (e) {
+        obj["id"] = 1;
+      }
+      try {
+        obj["image"] = stackData[stackCounter]["image"];
+      } catch (e) {
+        obj["Image"] = undefined;
+      }
+      // setImageURLs(imageURLs);
+      SaveDataToStack(obj, stackData, setStackData, stackCounter);
+      setStackCounter(stackCounter + 1);
+      divRef.current.scrollIntoView({ behavior: "smooth" });
+    } catch (e) {
+      console.log(e);
     }
-    obj["Average"] = "Average";
-    obj["id"] = data.length + 1;
-    var tempArray = data;
-    tempArray.push(obj);
-    setData(tempArray)
-    forceUpdate();
-    setCount((previous) => previous + 1);
   }
 
   return (
@@ -134,17 +159,13 @@ const Processing = ({
         />
       </div>
       <div className="submit">
-        <Button text="Submit" onClick={Submit} />
+        <Link to="image-carousel" spy={true} smooth={true}>
+          <Button text="Submit" onClick={Submit} />
+        </Link>
         <Button
           text="Column names"
           onClick={() => {
             console.log(columns);
-          }}
-        />
-        <Button
-          text="Data"
-          onClick={() => {
-            console.log(data);
           }}
         />
       </div>

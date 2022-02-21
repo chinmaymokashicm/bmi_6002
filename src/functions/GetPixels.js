@@ -4,44 +4,35 @@ import { useState } from "react";
 import getPixelsNumJS from "./GetPixelsNumJS";
 
 async function GetPixels(divRef, setImgDataArray) {
+  console.log("Calling getPixels");
   const imgDataArray = [];
-  const imgRGBArray = [];
 
-  function getRGBData(imgData) {
-    var dataArray = imgData.data;
-    var rgbArray = [];
-    for (var i = 0; i < dataArray.length; i += 4) {
-      rgbArray.push([dataArray[i], dataArray[i + 1], dataArray[i + 2]]);
-    }
-    return rgbArray;
-  }
-
-  async function getInfo(imgElement) {
+  async function getInfo(imgElement, callback) {
     var img = new Image();
     var canvas = document.createElement("canvas");
     var ctx = canvas.getContext("2d", { colorSpace: "display-p3" });
     // var ctx = canvas.getContext("2d");
     img.src = imgElement.src;
     var width = img.naturalWidth;
+    // var width = img.width;
     var height = img.naturalHeight;
-    img.onload = function () {
+    // var height = img.height;
+    img.onload = async function () {
       ctx.drawImage(img, 0, 0);
       var imgData = ctx.getImageData(0, 0, width, height);
-      imgDataArray.push(imgData)
-      setImgDataArray(imgDataArray)
-      // var rgbData = getRGBData(imgData)
-      // imgRGBArray.push(rgbData)
-      // setImgRGBArray(imgRGBArray)
+      imgDataArray.push({ array: imgData, width: width, height: height });
     };
+    return(imgDataArray)
   }
 
-  for (var i = 0; i < divRef.current.children.length; i++) {
-    var imgElement =
-      divRef.current.children[i].getElementsByTagName("img")[0];
-    await getInfo(imgElement)
-    // console.log("Ran GetPixels")
-    // setImgDataArray(getPixelsNumJS(imgElement.src))
-    // setImgRGBArray([])
+  if (divRef.current !== undefined) {
+    for (var i = 0; i < divRef.current.children.length; i++) {
+      var imgElement =
+        divRef.current.children[i].getElementsByTagName("img")[0];
+      var out = await getInfo(imgElement);
+      // console.log("imgDataArray", out)
+    }
+    setImgDataArray(imgDataArray);
   }
 }
 
