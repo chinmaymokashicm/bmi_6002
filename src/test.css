@@ -1,0 +1,70 @@
+
+img {
+    background: linear-gradient(
+      0deg,
+      transparent 24%,
+      rgba(255, 255, 255, 0.7) 25%,
+      rgba(255, 255, 255, 0.05) 26%,
+      transparent 27%,
+      transparent 74%,
+      rgba(255, 255, 255, 0.05) 75%,
+      rgba(255, 255, 255, 0.05) 76%,
+      transparent 74%,
+      transparent
+    ),
+    linear-gradient(
+      90deg,
+      transparent 24%,
+      rgba(255, 255, 255, 0.7) 25%,
+      rgba(255, 255, 255, 0.05) 26%,
+      transparent 27%,
+      transparent 74%,
+      rgba(255, 255, 255, 0.05) 75%,
+      rgba(255, 255, 255, 0.05) 76%,
+      transparent 77%,
+      transparent
+    );
+  }
+  
+  /* .image-preview {
+    height: 650px;
+    display: block;
+  
+  } */
+  
+  /* .image-carousel { */
+  .image-class {
+    border-style: solid;
+    border-width: thick;
+    /* border-color: rgb(255, 127, 255); */
+    flex: 1;
+    /* width: fit-content; */
+    /* height: fit-content; */
+    resize: "contain";
+    height: 500px;
+    /* width: 500px; */
+    background: linear-gradient(
+        0deg,
+        transparent 24%,
+        rgba(255, 255, 255, 0.7) 25%,
+        rgba(255, 255, 255, 0.05) 26%,
+        transparent 27%,
+        transparent 74%,
+        rgba(255, 255, 255, 0.05) 75%,
+        rgba(255, 255, 255, 0.05) 76%,
+        transparent 74%,
+        transparent
+      ),
+      linear-gradient(
+        90deg,
+        transparent 24%,
+        rgba(255, 255, 255, 0.7) 25%,
+        rgba(255, 255, 255, 0.05) 26%,
+        transparent 27%,
+        transparent 74%,
+        rgba(255, 255, 255, 0.05) 75%,
+        rgba(255, 255, 255, 0.05) 76%,
+        transparent 77%,
+        transparent
+      );
+  }

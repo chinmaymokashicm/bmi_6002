@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import ReactCrop from "react-image-crop";
 import "react-image-crop/dist/ReactCrop.css";
 import clone from "just-clone";
@@ -8,6 +8,7 @@ import Button from "./Button";
 
 import GetPixels from "../functions/GetPixels";
 import SaveImageURLsToStack from "../functions/SaveImageURLsToStack";
+// import Image
 
 const Carousel = ({
   divRef,
@@ -26,12 +27,16 @@ const Carousel = ({
   const [croppedImage, setCroppedImage] = useState(null);
   const [isCroppedSectionVisible, setIsCroppedSectionVisible] = useState(false);
 
-  let CarouselStyle = {};
+  let CarouselStyle = {
+    "grid-template-columns": "80% 20%",
+    "grid-template-rows": "100%"
+  };
+  // let CarouselStyle = {}
   if (!isCarouselVisible) {
     CarouselStyle.display = "none";
   }
   if (isCarouselVisible) {
-    CarouselStyle.display = "inline";
+    CarouselStyle.display = "grid";
   }
 
   function getCroppedImage() {
@@ -93,27 +98,36 @@ const Carousel = ({
   }
 
   return (
-    <div className="image-preview">
+    <div className="component-image-preview">
       {stackImageURLs[stackCounter][0].objectURL !== undefined && (
-        <div id="image-carousel" className="image-carousel" style={CarouselStyle}>
-          <div className="carousel-test">
-            {stackImageURLs[stackCounter][currentImageIndex].id + 1} |{" "}
-            {stackImageURLs[stackCounter][currentImageIndex].imageName}
-            <div className="image-view" id="1" ref={divRef}>
-              {stackImageURLs[stackCounter].map((imageSrc) => (
-                <div key={imageSrc.id}>
-                  <Image
-                    alt={imageSrc.imageName}
-                    id={imageSrc.id}
-                    src={imageSrc.objectURL}
-                    isVisible={
-                      imageSrc.id === currentImageIndex ? "inline" : "none"
-                    }
-                  />
-                </div>
-              ))}
+        <div
+          id="image-carousel"
+          className="image-carousel"
+          style={CarouselStyle}
+        >
+          <div className="image-view" ref={divRef}>
+            {stackImageURLs[stackCounter].map((imageSrc) => (
+              <div key={imageSrc.id} id="image-display">
+                <Image
+                  alt={imageSrc.imageName}
+                  id={imageSrc.id}
+                  src={imageSrc.objectURL}
+                  isVisible={
+                    imageSrc.id === currentImageIndex ? "inline" : "none"
+                  }
+                />
+              </div>
+            ))}
+          </div>
+          <div className="image-view-other">
+            <div className="image-information">
+              {stackImageURLs[stackCounter][currentImageIndex].id + 1}
+              <br />
+              {stackImageURLs[stackCounter][currentImageIndex].imageName}|<br />
+              {stackImageURLs[stackCounter][currentImageIndex].image.size}
+              <br />
             </div>
-            <div className="buttons">
+            <div className="image-options">
               <Button
                 text="<<"
                 onClick={() => {
@@ -139,15 +153,15 @@ const Carousel = ({
                   }
                 }}
               />
-            </div>
-            <div className="crop">
-              <Button
-                text="Crop image"
-                onClick={() => {
-                  setIsCarouselVisible(false);
-                  setIsCroppedSectionVisible(true);
-                }}
-              />
+              <div className="crop">
+                <Button
+                  text="Crop image"
+                  onClick={() => {
+                    setIsCarouselVisible(false);
+                    setIsCroppedSectionVisible(true);
+                  }}
+                />
+              </div>
             </div>
           </div>
         </div>

@@ -116,6 +116,7 @@ const Processing = ({
         Function: currentFunctionName,
       };
       var boolOutput = currentFunction(
+        divRef,
         imgDataArray,
         stackImageURLs,
         setStackImageURLs,

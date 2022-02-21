@@ -5,6 +5,7 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  height: 100%;
 }
 
 code {
@@ -12,72 +13,156 @@ code {
     monospace;
 }
 
-img {
-  background: linear-gradient(
-    0deg,
-    transparent 24%,
-    rgba(255, 255, 255, 0.7) 25%,
-    rgba(255, 255, 255, 0.05) 26%,
-    transparent 27%,
-    transparent 74%,
-    rgba(255, 255, 255, 0.05) 75%,
-    rgba(255, 255, 255, 0.05) 76%,
-    transparent 74%,
-    transparent
-  ),
-  linear-gradient(
-    90deg,
-    transparent 24%,
-    rgba(255, 255, 255, 0.7) 25%,
-    rgba(255, 255, 255, 0.05) 26%,
-    transparent 27%,
-    transparent 74%,
-    rgba(255, 255, 255, 0.05) 75%,
-    rgba(255, 255, 255, 0.05) 76%,
-    transparent 77%,
-    transparent
-  );
-}
-
-/* .image-preview {
-  height: 650px;
-  display: block;
-
+/* div, span {
+  display: grid | inline-grid;
 } */
 
-/* .image-carousel { */
-.image-class {
+.App {
+  display: grid;
+  grid-template-columns: 0.4fr 0.6fr;
+  grid-template-rows: 80px auto;
+  grid-gap: 20px;
   border-style: solid;
-  border-width: thick;
-  /* border-color: rgb(255, 127, 255); */
-  flex: 1;
-  /* width: fit-content; */
-  /* height: fit-content; */
-  resize: "contain";
-  height: 500px;
-  /* width: 500px; */
-  background: linear-gradient(
-      0deg,
-      transparent 24%,
-      rgba(255, 255, 255, 0.7) 25%,
-      rgba(255, 255, 255, 0.05) 26%,
-      transparent 27%,
-      transparent 74%,
-      rgba(255, 255, 255, 0.05) 75%,
-      rgba(255, 255, 255, 0.05) 76%,
-      transparent 74%,
-      transparent
-    ),
-    linear-gradient(
-      90deg,
-      transparent 24%,
-      rgba(255, 255, 255, 0.7) 25%,
-      rgba(255, 255, 255, 0.05) 26%,
-      transparent 27%,
-      transparent 74%,
-      rgba(255, 255, 255, 0.05) 75%,
-      rgba(255, 255, 255, 0.05) 76%,
-      transparent 77%,
-      transparent
-    );
+  border-color: brown;
+  overflow: scroll;
+}
+
+.component-temp {
+  grid-column-start: 1;
+  grid-column-end: 3;
+  grid-row-start: 1;
+  grid-row-end: 2;
+  overflow: auto;
+}
+
+.component-temp {
+  border-style: dotted;
+}
+
+.component-select {
+  grid-column-start: 1;
+  grid-column-end: 1;
+  grid-row-start: 2;
+  grid-row-end: 3;
+  /* grid-auto-rows: minmax(min-content, max-content); */
+}
+
+.component-select {
+  border-style: groove;
+}
+
+.component-preview {
+  grid-column-start: 2;
+  grid-column-end: 2;
+  grid-row-start: 2;
+  grid-row-end: 6;
+  /* grid-auto-rows: minmax(min-content, max-content); */
+}
+
+.component-preview {
+  border-style: double;
+}
+
+.component-processing {
+  grid-column-start: 1;
+  grid-column-end: 1;
+  grid-row-start: 3;
+  grid-row-end: 4;
+  /* grid-auto-rows: minmax(min-content, max-content); */
+}
+
+.component-processing {
+  border-style: dotted;
+}
+
+.component-ml {
+  grid-column-start: 1;
+  grid-column-end: 1;
+  grid-row-start: 4;
+  grid-row-end: 5;
+  /* grid-auto-rows: minmax(min-content, max-content); */
+}
+
+.component-ml {
+  border-style: solid;
+}
+
+.component-results {
+  grid-column-start: 1;
+  grid-column-end: 1;
+  grid-row-start: 5;
+  grid-row-end: 6;
+  /* grid-auto-rows: minmax(min-content, max-content); */
+}
+
+.component-results {
+  border-style: ridge;
+}
+
+/* Headers */
+h1 {
+  text-align: center;
+}
+
+.image-display {
+  display: flex;
+  /* width: 100%; */
+  width: 400px;
+  height: 700px;
+  background-color: #475;
+  overflow: scroll;
+  justify-content: center;
+}
+
+img {
+  max-width: 100%;
+  max-height: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
+  object-fit: contain;
+}
+
+/* Image carousel section */
+
+.image-carousel {
+  display: grid;
+  grid-template-columns: 70% 30%;
+  grid-template-rows: 100%;
+}
+/* ^^^Overwritten in Carousel.js */
+
+.image-view-other {
+  display: flex;
+  justify-content: space-around;
+  flex-direction: column;
+}
+
+.image-information {
+  border-style: dotted;
+}
+
+.image-options {
+  border-style: groove;
+}
+
+/* Section */
+.section-main {
+  position: relative;
+}
+
+.section-header {
+  background-color: aqua;
+}
+
+.section-component {
+  background-color: burlywood;
+}
+
+.section-footer {
+  background-color: yellowgreen;
+  bottom: 0;
+  border-style: double;
+  border-color: black;
+  float: right;
 }

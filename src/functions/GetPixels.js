@@ -13,12 +13,19 @@ async function GetPixels(divRef, setImgDataArray) {
     var ctx = canvas.getContext("2d", { colorSpace: "display-p3" });
     // var ctx = canvas.getContext("2d");
     img.src = imgElement.src;
-    var width = img.naturalWidth;
-    // var width = img.width;
-    var height = img.naturalHeight;
-    // var height = img.height;
+
+    // https://stackoverflow.com/a/4032188: Canvas width and height
+    // var width = img.naturalWidth;
+    // var width = canvas.width;
+    // var width = canvas.getBoundingClientRect().width;
+    // var height = img.naturalHeight;
+    // var height = canvas.height;
+    // var height = canvas.getBoundingClientRect().height;
     img.onload = async function () {
       ctx.drawImage(img, 0, 0);
+      var width = this.width
+      var height = this.height
+      console.log(width, height)
       var imgData = ctx.getImageData(0, 0, width, height);
       imgDataArray.push({ array: imgData, width: width, height: height });
     };

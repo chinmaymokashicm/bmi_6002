@@ -84,7 +84,7 @@ function App() {
       setStackImageURLs(imageURLsObj);
       setIsCounterChangeOnButton(false);
     }
-    setImageURLs(stackImageURLs[stackCounter])
+    setImageURLs(stackImageURLs[stackCounter]);
 
     if (stackData[stackCounter] === undefined && !isCounterChangeOnButton) {
       // If there is no new data is generated in this counter, just copy the previous one
@@ -256,8 +256,8 @@ function App() {
 
   return (
     <div className="App">
-      <div className="Float">{componentUndoRedo}</div>
-      <div className="temp">
+      <div className="component-temp">
+        {componentUndoRedo}
         <Button
           text="stackData"
           onClick={() => {
@@ -283,7 +283,7 @@ function App() {
           }}
         />
       </div>
-      <div className="Select">
+      <div className="component-select">
         <Section
           header="Select image(s)"
           component={componentSelect}
@@ -294,7 +294,7 @@ function App() {
           getToggleProps={getTogglePropsSelect}
         />
       </div>
-      <div className="Preview" style={{ borderStyle: "dotted" }}>
+      <div className="component-preview">
         <Section
           header="Preview"
           component={componentImagePreview}
@@ -305,7 +305,7 @@ function App() {
           getToggleProps={getTogglePropsPreview}
         />
       </div>
-      <div className="Processing">
+      <div className="component-processing">
         <Section
           header="Processing"
           component={componentProcessing}
@@ -316,7 +316,7 @@ function App() {
           getToggleProps={getTogglePropsProcessing}
         />
       </div>
-      <div className="ML">
+      <div className="component-ml">
         <Section
           header="Machine Learning"
           component={componentML}
@@ -327,7 +327,7 @@ function App() {
           getToggleProps={getTogglePropsML}
         />
       </div>
-      <div className="Results">
+      <div className="component-results">
         <Section
           header="Results"
           component={componentResults}

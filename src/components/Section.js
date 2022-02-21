@@ -1,16 +1,36 @@
-const Section = ({ header, component, footer, isExpanded, setExpanded, getCollapseProps, getToggleProps }) => {
+const Section = ({
+  header,
+  component,
+  footer,
+  isExpanded,
+  setExpanded,
+  getCollapseProps,
+  getToggleProps,
+}) => {
+  function onClick() {
+    setExpanded((prevExpanded) => !prevExpanded);
+  }
+
   return (
-    <div>
-      <h1>{header}</h1>
-      <button
+    <div className="section-main">
+      <div
+        className="section-header"
         {...getToggleProps({
-          onClick: () => setExpanded((prevExpanded) => !prevExpanded),
+          onClick: onClick,
+        })}
+      >
+        <h1>{header}</h1>
+      </div>
+      {/* <button
+        {...getToggleProps({
+          onClick: onClick,
         })}
       >
         {isExpanded ? "⇑" : "⇓"}
-    </button>
+      </button> */}
       <div {...getCollapseProps()}>
-        {component} {footer}{" "}
+        <div className="section-component">{component}</div>
+        <div className="section-footer">{footer}</div>
       </div>
     </div>
   );

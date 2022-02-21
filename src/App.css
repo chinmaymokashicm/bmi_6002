@@ -1,4 +1,4 @@
-.App {
+/* .App {
   text-align: center;
 }
 
@@ -52,4 +52,33 @@
     justify-content: center;
     background-color: #283c34;
     text-align: center;
+} */
+
+
+.image-carousel {
+  display: grid;
+  grid-template-columns: 70% 30%;
+  grid-template-rows: 20% 80%;
+}
+
+.image-view{
+  grid-column-start: 1;
+  grid-column-end: 2;
+  grid-row-start: 1;
+  grid-row-end: 3;
+  /* align-self: stretch; */
+}
+
+.image-information{
+  grid-column-start: 2;
+  grid-column-end: 3;
+  grid-row-start: 2;
+  grid-row-end: 3;
+}
+
+.image-options{
+  grid-column-start: 2;
+  grid-column-end: 3;
+  grid-row-start: 2;
+  grid-row-end: 3;
 }
