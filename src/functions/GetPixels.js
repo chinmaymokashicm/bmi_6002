@@ -1,7 +1,10 @@
 // var nj = require("numjs")
 
+import { useState } from "react";
+
 
 async function GetPixels(stackImageURLs, stackCounter, setImgDataArray) {
+
   try {
     console.log("Calling getPixels");
     const imgDataArray = [];

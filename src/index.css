@@ -104,20 +104,33 @@ h1 {
   text-align: center;
 }
 
+.image-view{
+  display: flex;
+  justify-content: center;
+  position: relative;
+  /* width: 400px; */
+  width: fit-content;
+  height: 700px;
+}
+
 .image-display {
   display: flex;
-  /* width: 100%; */
   width: 400px;
   height: 700px;
   background-color: #475;
   overflow: scroll;
   justify-content: center;
 }
+/* Overwritten in Carousel.js */
 
-.image-view{
-  display: flex;
-  justify-content: center;
-}
+/* .overlay{
+  z-index: 9;
+  margin: 30px;
+  background: rgb(25, 24, 126);
+} */
+/* Overwritten in Carousel.js */
+
+
 
 img {
   max-width: 100%;

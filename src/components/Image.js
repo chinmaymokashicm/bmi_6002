@@ -9,7 +9,7 @@ const Image = ({ id, src, alt, isVisible }) => {
         src={src}
         alt={alt}
         className="image-class"
-        style={{ display: isVisible }}
+        style={{ display: isVisible}}
         // height={canvasConfig.height}
         // width={canvasConfig.width}
       />

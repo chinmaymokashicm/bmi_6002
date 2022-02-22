@@ -104,8 +104,6 @@ const Processing = ({
   //   -------------------------------------------------------------------------------
 
   const [columns, setColumns] = useState(useMemo(() => [], []));
-  const [_, forceUpdate] = useReducer((x) => x + 1, 0);
-  const [count, setCount] = useState(0);
 
   //   -------------------------------------------------------------------------------
 
@@ -134,7 +132,6 @@ const Processing = ({
       } catch (e) {
         obj["Image"] = undefined;
       }
-      // setImageURLs(imageURLs);
       SaveDataToStack(obj, stackData, setStackData, stackCounter);
       setStackCounter(stackCounter + 1);
     } catch (e) {

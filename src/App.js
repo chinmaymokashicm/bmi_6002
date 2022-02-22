@@ -99,7 +99,7 @@ function App() {
 
   // Image Processing
   const [imgDataArray, setImgDataArray] = useState([]);
-
+  const imageOverlayRef = useRef(null)
 
   // Hooks for collapsible components
   const [isExpandedSelect, setExpandedSelect] = useState(true);
@@ -223,7 +223,7 @@ function App() {
   const componentImagePreview = (
     <Carousel
       setImgDataArray={setImgDataArray}
-      // Update stack
+      imageOverlayRef={imageOverlayRef}
       stackImageURLs={stackImageURLs}
       setStackImageURLs={setStackImageURLs}
       stackCounter={stackCounter}

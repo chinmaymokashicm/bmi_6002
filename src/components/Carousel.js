@@ -8,11 +8,13 @@ import Button from "./Button";
 
 import GetPixels from "../functions/GetPixels";
 import SaveImageURLsToStack from "../functions/SaveImageURLsToStack";
+import KonvaStage from "../functions/KonvaStage";
 // import Image
 
 const Carousel = ({
   setImgDataArray,
   getImgData,
+  imageOverlayRef,
   stackImageURLs,
   setStackImageURLs,
   stackCounter,
@@ -26,17 +28,23 @@ const Carousel = ({
   const [croppedImage, setCroppedImage] = useState(null);
   const [isCroppedSectionVisible, setIsCroppedSectionVisible] = useState(false);
 
-  let CarouselStyle = {
+  let carouselStyle = {
     "grid-template-columns": "80% 20%",
-    "grid-template-rows": "100%"
+    "grid-template-rows": "100%",
   };
   // let CarouselStyle = {}
   if (!isCarouselVisible) {
-    CarouselStyle.display = "none";
+    carouselStyle.display = "none";
   }
   if (isCarouselVisible) {
-    CarouselStyle.display = "grid";
+    carouselStyle.display = "grid";
   }
+
+  let overlayStyle = {
+    "z-index": 9,
+    margin: "30px",
+    background: "rgb(25, 24, 126)",
+  };
 
   function getCroppedImage() {
     const canvas = document.createElement("canvas");
@@ -102,19 +110,43 @@ const Carousel = ({
         <div
           id="image-carousel"
           className="image-carousel"
-          style={CarouselStyle}
+          style={carouselStyle}
         >
-          <div className="image-view" >
+          <div className="image-view">
             {stackImageURLs[stackCounter].map((imageSrc) => (
-              <div key={imageSrc.id} id="image-display">
+              <div
+                key={imageSrc.id}
+                id="image-display"
+                style={{
+                  // width:"400px",
+                  // height: "700px",
+                  "background-color": "#475",
+                  // overflow: "scroll",
+                  "justify-content": "center",
+                  "position": "absolute",
+                  display: imageSrc.id === currentImageIndex ? "flex" : "none",
+                }}
+              >
                 <Image
                   alt={imageSrc.imageName}
                   id={imageSrc.id}
                   src={imageSrc.objectURL}
-                  isVisible={
-                    imageSrc.id === currentImageIndex ? "inline" : "none"
-                  }
                 />
+              </div>
+            ))}
+            {stackImageURLs[stackCounter].map((imageSrc) => (
+              <div
+                className="image-display overlay"
+                style={{
+                  "z-index": 9,
+                  // margin: "30px",
+                  background: "rgb(25, 24, 126)",
+                  opacity: "0.6",
+                  display:
+                    imageSrc.id === currentImageIndex ? "inline" : "none",
+                }}
+              >
+                <KonvaStage />
               </div>
             ))}
           </div>
