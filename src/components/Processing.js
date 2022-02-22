@@ -51,7 +51,6 @@ const Processing = ({
   setStackCounter,
   stackData,
   setStackData,
-  divRef,
 }) => {
   // Setting up the appearance
   const animatedComponents = makeAnimated();
@@ -116,7 +115,6 @@ const Processing = ({
         Function: currentFunctionName,
       };
       var boolOutput = currentFunction(
-        divRef,
         imgDataArray,
         stackImageURLs,
         setStackImageURLs,
@@ -139,7 +137,6 @@ const Processing = ({
       // setImageURLs(imageURLs);
       SaveDataToStack(obj, stackData, setStackData, stackCounter);
       setStackCounter(stackCounter + 1);
-      divRef.current.scrollIntoView({ behavior: "smooth" });
     } catch (e) {
       console.log(e);
     }

@@ -11,7 +11,6 @@ import SaveImageURLsToStack from "../functions/SaveImageURLsToStack";
 // import Image
 
 const Carousel = ({
-  divRef,
   setImgDataArray,
   getImgData,
   stackImageURLs,
@@ -105,7 +104,7 @@ const Carousel = ({
           className="image-carousel"
           style={CarouselStyle}
         >
-          <div className="image-view" ref={divRef}>
+          <div className="image-view" >
             {stackImageURLs[stackCounter].map((imageSrc) => (
               <div key={imageSrc.id} id="image-display">
                 <Image

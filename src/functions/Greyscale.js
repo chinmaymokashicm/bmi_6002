@@ -4,7 +4,6 @@ import DataURLtoBlob from "./DataURLToBlob";
 import SaveImageURLsToStack from "./SaveImageURLsToStack";
 
 function Greyscale(
-  divRef,
   imgDataArray,
   stackImageURLs,
   setStackImageURLs,

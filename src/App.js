@@ -100,12 +100,6 @@ function App() {
   // Image Processing
   const [imgDataArray, setImgDataArray] = useState([]);
 
-  const divRef = useRef(); //Ref for image div
-  useEffect(() => {
-    GetPixels(divRef, setImgDataArray);
-    // console.log("Getting pixel values!");
-    console.log("Update in divRef!");
-  }, [divRef]);
 
   // Hooks for collapsible components
   const [isExpandedSelect, setExpandedSelect] = useState(true);
@@ -150,7 +144,8 @@ function App() {
   function continueButtonPreview(e) {
     setExpandedProcessing(true);
     // setExpandedPreview(false);
-    GetPixels(divRef, setImgDataArray);
+    GetPixels(stackImageURLs, stackCounter, setImgDataArray);
+
   }
   const componentFooterPreview = (
     <Footer continueOnClick={continueButtonPreview} />
@@ -227,7 +222,6 @@ function App() {
   const componentSelect = <ImageBrowser onImageChange={onImageChange} />;
   const componentImagePreview = (
     <Carousel
-      divRef={divRef}
       setImgDataArray={setImgDataArray}
       // Update stack
       stackImageURLs={stackImageURLs}
@@ -248,7 +242,6 @@ function App() {
       setStackCounter={setStackCounter}
       stackData={stackData}
       setStackData={setStackData}
-      divRef={divRef}
     />
   );
   const componentML = <div>Machine Learning</div>;
