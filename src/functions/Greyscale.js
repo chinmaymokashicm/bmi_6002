@@ -18,18 +18,13 @@ function Greyscale(
       currentImageIndex++
     ) {
       var imgData = imgDataArray[currentImageIndex];
-      console.log(
-        `imgData dimensions: width: ${imgData.width} height: ${imgData.height}`
-      );
       var pixelData = imgData.array.data;
       var img = new Image();
       img.src = stackImageURLs[stackCounter][currentImageIndex].objectURL;
       var canvas = document.createElement("canvas");
-      var ctx = canvas.getContext("2d", { colorSpace: "display-p3" });
       canvas.width = imgData.width;
       canvas.height = imgData.height;
-      // Experimenting with the below line
-      // ctx.drawImage(img, )
+      var ctx = canvas.getContext("2d", { csolorSpace: "display-p3" });
       // Weights
       // https://www.dynamsoft.com/blog/insights/image-processing/image-processing-101-color-space-conversion/#:~:text=the%20weighted%20method.%C2%A0-,The%20Weighted%20Method,-The%20weighted%20method
       var redWeight = 0.299;
@@ -48,12 +43,6 @@ function Greyscale(
       }
       var newImageData = ctx.createImageData(imgData.width, imgData.height);
       newImageData.data.set(pixelData);
-      console.log(
-        "newImageData.width, newImageData.height, currentImageIndex",
-        newImageData.width,
-        newImageData.height,
-        currentImageIndex
-      );
       ctx.putImageData(newImageData, 0, 0);
       var base64Image = canvas.toDataURL("image/jpeg", 1);
       arrayNewObjectURLs.push(URL.createObjectURL(DataURLtoBlob(base64Image)));

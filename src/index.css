@@ -109,17 +109,20 @@ h1 {
   justify-content: center;
   position: relative;
   /* width: 400px; */
-  width: fit-content;
+  /* width: fit-content; */
   height: 700px;
 }
 
 .image-display {
   display: flex;
-  width: 400px;
-  height: 700px;
+  /* width: 400px;
+  height: 700px; */
+  width: fit-content;
+  height: fit-content;
   background-color: #475;
-  overflow: scroll;
+  /* overflow: scroll; */
   justify-content: center;
+  
 }
 /* Overwritten in Carousel.js */
 

@@ -12,10 +12,10 @@ function KonvaStage(imageOverlayRef) {
     <Stage width={width} height={height}>
       <Layer>
         <Circle
-          x={200}
-          y={50}
-          // width={200}
-          // height={100}
+          x={0}
+          y={0}
+          width={200}
+          height={100}
           radius={50}
           fill="red"
           shadowBlur={5}

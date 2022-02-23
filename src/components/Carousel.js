@@ -14,7 +14,7 @@ import KonvaStage from "../functions/KonvaStage";
 const Carousel = ({
   setImgDataArray,
   getImgData,
-  imageOverlayRef,
+  imageRef,
   stackImageURLs,
   setStackImageURLs,
   stackCounter,
@@ -29,8 +29,8 @@ const Carousel = ({
   const [isCroppedSectionVisible, setIsCroppedSectionVisible] = useState(false);
 
   let carouselStyle = {
-    "grid-template-columns": "80% 20%",
-    "grid-template-rows": "100%",
+    gridTemplateColumns: "80% 20%",
+    gridTemplateRows: "100%",
   };
   // let CarouselStyle = {}
   if (!isCarouselVisible) {
@@ -103,9 +103,19 @@ const Carousel = ({
   if (isCroppedSectionVisible) {
     CroppedSectionStyle.display = "inline";
   }
-
   return (
     <div className="component-image-preview">
+      <Button
+        text="imageRef"
+        onClick={() => {
+          console.log(
+            // imageRef.current.getElementsByClassName("image-frame")[0]
+            imageRef.current
+              .getElementsByClassName("image-frame")[0]
+              .getElementsByTagName("img")[0].src
+          );
+        }}
+      />
       {stackImageURLs[stackCounter][0].objectURL !== undefined && (
         <div
           id="image-carousel"
@@ -117,13 +127,12 @@ const Carousel = ({
               <div
                 key={imageSrc.id}
                 id="image-display"
+                ref={imageSrc.id === currentImageIndex ? imageRef : null}
                 style={{
-                  // width:"400px",
-                  // height: "700px",
-                  "background-color": "#475",
-                  // overflow: "scroll",
-                  "justify-content": "center",
-                  "position": "absolute",
+                  width: "400px",
+                  height: "700px",
+                  justifyContent: "center",
+                  position: "absolute",
                   display: imageSrc.id === currentImageIndex ? "flex" : "none",
                 }}
               >
@@ -131,6 +140,7 @@ const Carousel = ({
                   alt={imageSrc.imageName}
                   id={imageSrc.id}
                   src={imageSrc.objectURL}
+                  innerRef={imageRef}
                 />
               </div>
             ))}
@@ -138,8 +148,13 @@ const Carousel = ({
               <div
                 className="image-display overlay"
                 style={{
-                  "z-index": 9,
-                  // margin: "30px",
+                  zindex: 9,
+                  width: imageRef.current
+                    .getElementsByClassName("image-frame")[0]
+                    .getElementsByTagName("img")[0].width,
+                  height: imageRef.current
+                    .getElementsByClassName("image-frame")[0]
+                    .getElementsByTagName("img")[0].height,
                   background: "rgb(25, 24, 126)",
                   opacity: "0.6",
                   display:
