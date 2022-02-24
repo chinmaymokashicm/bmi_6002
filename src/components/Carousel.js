@@ -27,9 +27,10 @@ const Carousel = ({
   const [image, setImage] = useState(null);
   const [croppedImage, setCroppedImage] = useState(null);
   const [isCroppedSectionVisible, setIsCroppedSectionVisible] = useState(false);
+  const [isOverlayVisible, setIsOverlayVisible] = useState(false);
 
-  const [overlayWidth, setOverlayWidth] = useState(100)
-  const [overlayHeight, setOverlayHeight] = useState(100)
+  const [overlayWidth, setOverlayWidth] = useState(100);
+  const [overlayHeight, setOverlayHeight] = useState(100);
 
   let carouselStyle = {
     gridTemplateColumns: "80% 20%",
@@ -43,13 +44,19 @@ const Carousel = ({
   }
 
   useEffect(() => {
-    if(imageRef.current !== undefined){
-      setOverlayWidth(imageRef.current.getElementsByClassName("image-frame")[0].getElementsByTagName("img")[0].width)
-      setOverlayHeight(imageRef.current.getElementsByClassName("image-frame")[0].getElementsByTagName("img")[0].height)
+    if (imageRef.current !== undefined) {
+      setOverlayWidth(
+        imageRef.current
+          .getElementsByClassName("image-frame")[0]
+          .getElementsByTagName("img")[0].width
+      );
+      setOverlayHeight(
+        imageRef.current
+          .getElementsByClassName("image-frame")[0]
+          .getElementsByTagName("img")[0].height
+      );
     }
-  }, [imageRef.current])
-
-
+  }, [imageRef.current]);
 
   function getCroppedImage() {
     const canvas = document.createElement("canvas");
@@ -111,23 +118,6 @@ const Carousel = ({
 
   return (
     <div className="component-image-preview">
-      <Button
-        text="imageRef"
-        onClick={() => {
-          console.log(
-            "imageRef",
-            imageRef,
-            imageRef.current.getElementsByClassName("image-frame")[0]
-          );
-          console.log(imageRef);
-
-          if (imageRef.current === undefined) {
-            console.log(true);
-          } else {
-            console.log(false);
-          }
-        }}
-      />
       {stackImageURLs[stackCounter][0].objectURL !== undefined && (
         <div
           id="image-carousel"
@@ -152,7 +142,6 @@ const Carousel = ({
                   alt={imageSrc.imageName}
                   id={imageSrc.id}
                   src={imageSrc.objectURL}
-                  // innerRef={imageRef}
                 />
               </div>
             ))}
@@ -167,10 +156,14 @@ const Carousel = ({
                   background: "rgb(25, 24, 126)",
                   opacity: "0.6",
                   display:
-                    imageSrc.id === currentImageIndex ? "inline" : "none",
+                    imageSrc.id === currentImageIndex
+                      ? isOverlayVisible
+                        ? "inline"
+                        : "none"
+                      : "none",
                 }}
               >
-                <KonvaStage />
+                <KonvaStage width={overlayWidth} height={overlayHeight}/>
               </div>
             ))}
           </div>
@@ -214,6 +207,14 @@ const Carousel = ({
                   onClick={() => {
                     setIsCarouselVisible(false);
                     setIsCroppedSectionVisible(true);
+                  }}
+                />
+              </div>
+              <div className="overlay-options">
+                <Button
+                  text="Show overlay"
+                  onClick={() => {
+                    setIsOverlayVisible(!isOverlayVisible);
                   }}
                 />
               </div>

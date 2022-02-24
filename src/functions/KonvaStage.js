@@ -3,22 +3,37 @@
 // https://blog.logrocket.com/canvas-manipulation-react-konva/
 // https://konvajs.org/docs/react/Transformer.html
 
-import { Stage, Layer, Rect, Circle } from "react-konva";
+import { useRef, useState } from "react";
+import { Stage, Layer, Circle, Transformer } from "react-konva";
 
-function KonvaStage(imageOverlayRef) {
-  var width = 200
-  var height = 200
+function KonvaStage({ circleRef, width, height }) {
+  // const [centerX, setCenterX] = useState(width/2)
+  // const [centerY, setCenterY] = useState(height/2)
+
+
   return (
-    <Stage width={width} height={height}>
+    <Stage width={width} height={height} circleRef={circleRef}>
       <Layer>
         <Circle
-          x={0}
-          y={0}
-          width={200}
-          height={100}
+          x={width/2}
+          y={height/2}
           radius={50}
           fill="red"
           shadowBlur={5}
+          draggable={true}
+          resizable={true}
+          ref={circleRef}
+          onClick={(e) => {
+            console.log(circleRef)
+            console.log(e.target.attrs.x, e.target.attrs.y)
+            // setCenterX(e.target.x)
+            // setCenterY(e.target.y)
+          }}
+          onDragMove={(e) => {
+            console.log(e.target.attrs.x, e.target.attrs.y)
+            // setCenterX(e.target.x)
+            // setCenterY(e.target.y)
+          }}
         />
       </Layer>
     </Stage>
