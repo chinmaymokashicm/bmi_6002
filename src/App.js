@@ -99,7 +99,7 @@ function App() {
 
   // Image Processing
   const [imgDataArray, setImgDataArray] = useState([]);
-  const imageRef = useRef(null)
+  const imageRef = useRef()
 
   // Hooks for collapsible components
   const [isExpandedSelect, setExpandedSelect] = useState(true);

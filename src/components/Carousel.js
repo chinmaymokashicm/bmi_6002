@@ -28,11 +28,13 @@ const Carousel = ({
   const [croppedImage, setCroppedImage] = useState(null);
   const [isCroppedSectionVisible, setIsCroppedSectionVisible] = useState(false);
 
+  const [overlayWidth, setOverlayWidth] = useState(100)
+  const [overlayHeight, setOverlayHeight] = useState(100)
+
   let carouselStyle = {
     gridTemplateColumns: "80% 20%",
     gridTemplateRows: "100%",
   };
-  // let CarouselStyle = {}
   if (!isCarouselVisible) {
     carouselStyle.display = "none";
   }
@@ -40,11 +42,14 @@ const Carousel = ({
     carouselStyle.display = "grid";
   }
 
-  let overlayStyle = {
-    "z-index": 9,
-    margin: "30px",
-    background: "rgb(25, 24, 126)",
-  };
+  useEffect(() => {
+    if(imageRef.current !== undefined){
+      setOverlayWidth(imageRef.current.getElementsByClassName("image-frame")[0].getElementsByTagName("img")[0].width)
+      setOverlayHeight(imageRef.current.getElementsByClassName("image-frame")[0].getElementsByTagName("img")[0].height)
+    }
+  }, [imageRef.current])
+
+
 
   function getCroppedImage() {
     const canvas = document.createElement("canvas");
@@ -103,17 +108,24 @@ const Carousel = ({
   if (isCroppedSectionVisible) {
     CroppedSectionStyle.display = "inline";
   }
+
   return (
     <div className="component-image-preview">
       <Button
         text="imageRef"
         onClick={() => {
           console.log(
-            // imageRef.current.getElementsByClassName("image-frame")[0]
-            imageRef.current
-              .getElementsByClassName("image-frame")[0]
-              .getElementsByTagName("img")[0].src
+            "imageRef",
+            imageRef,
+            imageRef.current.getElementsByClassName("image-frame")[0]
           );
+          console.log(imageRef);
+
+          if (imageRef.current === undefined) {
+            console.log(true);
+          } else {
+            console.log(false);
+          }
         }}
       />
       {stackImageURLs[stackCounter][0].objectURL !== undefined && (
@@ -140,21 +152,18 @@ const Carousel = ({
                   alt={imageSrc.imageName}
                   id={imageSrc.id}
                   src={imageSrc.objectURL}
-                  innerRef={imageRef}
+                  // innerRef={imageRef}
                 />
               </div>
             ))}
             {stackImageURLs[stackCounter].map((imageSrc) => (
               <div
                 className="image-display overlay"
+                key={imageSrc.id}
                 style={{
                   zindex: 9,
-                  width: imageRef.current
-                    .getElementsByClassName("image-frame")[0]
-                    .getElementsByTagName("img")[0].width,
-                  height: imageRef.current
-                    .getElementsByClassName("image-frame")[0]
-                    .getElementsByTagName("img")[0].height,
+                  width: overlayWidth,
+                  height: overlayHeight,
                   background: "rgb(25, 24, 126)",
                   opacity: "0.6",
                   display:
