@@ -6,7 +6,7 @@ import InitiateCanvas from "./InitiateCanvas";
 
 import SaveImageURLsToStack from "./SaveImageURLsToStack";
 
-function Greyscale(
+function MakeImageZero(
   imgDataArray,
   stackImageURLs,
   setStackImageURLs,
@@ -48,9 +48,9 @@ function Greyscale(
           redWeight * pixelData[i] +
           greenWeight * pixelData[i + 1] +
           blueWeight * pixelData[i + 2];
-        pixelData[i] = grayscale;
-        pixelData[i + 1] = grayscale;
-        pixelData[i + 2] = grayscale;
+        pixelData[i] = 0;
+        pixelData[i + 1] = 0;
+        pixelData[i + 2] = 0;
       }
       var newImageData = ctx.createImageData(imgData.width, imgData.height);
       newImageData.data.set(pixelData);
@@ -65,8 +65,6 @@ function Greyscale(
     for (let i = 0; i < tempImageURLs.length; i++) {
       tempImageURLs[i].objectURL = arrayNewObjectURLs[i];
     }
-
-
     SaveImageURLsToStack(
       tempImageURLs,
       stackImageURLs,
@@ -85,4 +83,4 @@ function Greyscale(
   }
 }
 
-export default Greyscale;
+export default MakeImageZero;

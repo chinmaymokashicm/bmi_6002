@@ -68,6 +68,7 @@ code {
   grid-column-end: 1;
   grid-row-start: 3;
   grid-row-end: 4;
+  overflow: scroll;
   /* grid-auto-rows: minmax(min-content, max-content); */
 }
 
@@ -80,6 +81,7 @@ code {
   grid-column-end: 1;
   grid-row-start: 4;
   grid-row-end: 5;
+  overflow: scroll;
   /* grid-auto-rows: minmax(min-content, max-content); */
 }
 
@@ -167,9 +169,21 @@ img {
   border-style: groove;
 }
 
+/* Table */
+.table{
+  /* overflow-x: scroll; */
+  /* text-align: center; */
+}
+td{
+  text-align: center;
+}
+
+
 /* Section */
 .section-main {
   position: relative;
+  /* overflow: auto; */
+  
 }
 
 .section-header {

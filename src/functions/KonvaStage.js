@@ -3,40 +3,108 @@
 // https://blog.logrocket.com/canvas-manipulation-react-konva/
 // https://konvajs.org/docs/react/Transformer.html
 
-import { useRef, useState } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 import { Stage, Layer, Circle, Transformer } from "react-konva";
+import UpdateOverlayData from "./UpdateOverlayData";
 
-function KonvaStage({ circleRef, width, height }) {
-  // const [centerX, setCenterX] = useState(width/2)
-  // const [centerY, setCenterY] = useState(height/2)
+function KonvaStage({
+  width,
+  height,
+  overlayData,
+  setOverlayData,
+  currentImageIndex,
+}) {
+  const circleRef = useRef();
+  const transformerRef = useRef();
 
+  try{
+    if(!isNaN(overlayData.x)){ 
+      console.log(overlayData)
+      console.log("Loading existing data!")
+      width = overlayData.x * 2
+      height = overlayData.y * 2
+    }
+  }
+  catch(e){
+    console.log(e)
+  }
+
+  if (width === undefined) {
+    width = 200;
+  }
+  if (height === undefined) {
+    height = 100;
+  }
+
+  function onChange(e) {
+    var attributes = e.target.attrs;
+    const node = circleRef.current;
+    const scaleX = node.scaleX();
+    var overlayDataObj = {
+      x: Math.round(attributes.x),
+      y: Math.round(attributes.y),
+      radius: Math.round(attributes.radius * scaleX),
+    };
+    node.scaleX(1)
+    node.scaleY(1)
+    console.log(overlayDataObj);
+    UpdateOverlayData(
+      overlayData,
+      setOverlayData,
+      overlayDataObj,
+      currentImageIndex
+    );
+  }
 
   return (
-    <Stage width={width} height={height} circleRef={circleRef}>
-      <Layer>
-        <Circle
-          x={width/2}
-          y={height/2}
-          radius={50}
-          fill="red"
-          shadowBlur={5}
-          draggable={true}
-          resizable={true}
-          ref={circleRef}
-          onClick={(e) => {
-            console.log(circleRef)
-            console.log(e.target.attrs.x, e.target.attrs.y)
-            // setCenterX(e.target.x)
-            // setCenterY(e.target.y)
-          }}
-          onDragMove={(e) => {
-            console.log(e.target.attrs.x, e.target.attrs.y)
-            // setCenterX(e.target.x)
-            // setCenterY(e.target.y)
-          }}
-        />
-      </Layer>
-    </Stage>
+    <Fragment>
+      <Stage
+        width={width}
+        height={height}
+        onMouseDown={(e) => {
+          transformerRef.current.nodes([circleRef.current]);
+          transformerRef.current.getLayer().batchDraw();
+        }}
+      >
+        <Layer>
+          <Circle
+            x={overlayData[currentImageIndex].x}
+            y={overlayData[currentImageIndex].y}
+            radius={overlayData[currentImageIndex].radius}
+            fill="rgba(166, 109, 86, 0.1)"
+            stroke="red"
+            strokeWidth={5}
+            // border="1px solid black"
+            // opacity={0.5}
+            shadowBlur={5}
+            draggable={true}
+            resizable={true}
+            ref={circleRef}
+            onClick={onChange}
+            onDragEnd={onChange}
+            onTransformEnd={onChange}
+          />
+          <Transformer
+            ref={transformerRef}
+            boundBoxFunc={(oldBox, newBox) => {
+              // limit resize
+              if (newBox.width < 5 || newBox.height < 5) {
+                return oldBox;
+              }
+              return newBox;
+            }}
+            enabledAnchors={[
+              "top-left",
+              "top-right",
+              "bottom-left",
+              "bottom-right",
+            ]}
+            resizeEnabled={true}
+            rotateEnabled={false}
+          />
+        </Layer>
+      </Stage>
+    </Fragment>
   );
 }
 

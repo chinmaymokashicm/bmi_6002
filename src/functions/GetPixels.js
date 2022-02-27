@@ -3,20 +3,22 @@
 import { useState } from "react";
 
 
-async function GetPixels(stackImageURLs, stackCounter, setImgDataArray) {
+async function GetPixels(imageURLs, setImgDataArray, arrayImageDimensions) {
 
   try {
     console.log("Calling getPixels");
     const imgDataArray = [];
 
-    async function getInfo(objectURL) {
+    async function getInfo(objectURL, imageDimensions) {
       var img = new Image();
       console.log("GetPixels")
       var canvas = document.createElement("canvas");
       var ctx = canvas.getContext("2d", { colorSpace: "display-p3" });
       img.src = objectURL;
-      canvas.width = img.width
-      canvas.height = img.height
+      // canvas.width = img.width
+      // canvas.height = img.height
+      canvas.width = imageDimensions[0]
+      canvas.height = imageDimensions[1]
       img.onload = async function () {
         ctx.drawImage(img, 0, 0);
         var imgData = ctx.getImageData(0, 0, canvas.width, canvas.height); //Switched to canvas.width
@@ -25,12 +27,13 @@ async function GetPixels(stackImageURLs, stackCounter, setImgDataArray) {
       return imgDataArray;
     }
 
-    for (var i = 0; i < stackImageURLs[stackCounter].length; i++) {
-      var objectURL = stackImageURLs[stackCounter][i].objectURL;
-      var out = await getInfo(objectURL);
+    for (var i = 0; i < imageURLs.length; i++) {
+      var objectURL = imageURLs[i].objectURL;
+      var out = await getInfo(objectURL, arrayImageDimensions[i]);
     }
     setImgDataArray(imgDataArray);
   } catch (e) {
+    console.log(imageURLs)
     console.log(e);
   }
 }

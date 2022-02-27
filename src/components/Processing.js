@@ -12,6 +12,9 @@ import { Link } from "react-scroll";
 import styled from "styled-components";
 import SaveDataToStack from "../functions/SaveDataToStack";
 import SaveImageURLsToStack from "../functions/SaveImageURLsToStack";
+import MakeImageZero from "../functions/MakeImageZero";
+import GetPixels from "../functions/GetPixels";
+import GetImageDimensions from "../functions/GetImageDimensions";
 const Styles = styled.div`
   padding: 1rem;
 
@@ -42,43 +45,36 @@ const Styles = styled.div`
 `;
 
 const Processing = ({
-  imageURLs,
-  setImageURLs,
   imgDataArray,
+  setImgDataArray,
   stackImageURLs,
   setStackImageURLs,
   stackCounter,
   setStackCounter,
   stackData,
   setStackData,
+  overlayData,
+  setOverlayData,
 }) => {
   // Setting up the appearance
   const animatedComponents = makeAnimated();
-  useEffect(() => {
-    if (stackImageURLs[stackCounter].length > 1) {
-      const tempColumnsArray = [];
-      tempColumnsArray.push({
-        Header: "id",
-        accessor: 1,
-      });
-      tempColumnsArray.push({
-        Header: "Function",
-        accessor: 2,
-      });
-      for (var i = 0; i < stackImageURLs[stackCounter].length; i++) {
-        tempColumnsArray.push({
-          Header: stackImageURLs[stackCounter][i].imageName,
-          accessor: i + 3,
-        });
-      }
-      tempColumnsArray.push({
-        Header: "Average",
-        accessor: stackImageURLs[stackCounter].length + 3,
-      });
 
-      setColumns(tempColumnsArray);
+  useEffect(() => {
+    try {
+      const lengthImageURLs = stackImageURLs[stackCounter].length;
+      var objColumns = {
+        0: "id",
+        1: "Function",
+        [lengthImageURLs + 2]: "Average",
+      };
+      for (let i = 0; i < lengthImageURLs; i++) {
+        objColumns[i + 2] = `Image ${i + 1}`;
+      }
+      generateTableData(objColumns);
+    } catch (e) {
+      // console.log(e);
     }
-  }, [stackImageURLs[stackCounter]]);
+  }, [stackCounter]);
 
   var functionsList = [
     {
@@ -88,9 +84,15 @@ const Processing = ({
       },
     },
     {
-      label: "Vessel Density: Pixel Count",
+      label: "Pixel Density",
       value: function () {
         return VesselDensityPixelCount;
+      },
+    },
+    {
+      label: "Make everything 0",
+      value: function () {
+        return MakeImageZero;
       },
     },
   ];
@@ -103,36 +105,78 @@ const Processing = ({
 
   //   -------------------------------------------------------------------------------
 
-  const [columns, setColumns] = useState(useMemo(() => [], []));
+  const [columns, setColumns] = useState([]);
+  const [tableDataArray, setTableDataArray] = useState([]);
+
+  function generateTableData(objColumns) {
+    var arrayColumns = Object.entries(objColumns)
+      .sort(([, a], [, b]) => a - b)
+      .map((arr) => arr[1]);
+    setColumns(arrayColumns);
+    var objData = stackData[stackCounter];
+    const rows = [];
+    for (let rowIndex = 0; rowIndex < Object.keys(objData).length; rowIndex++) {
+      var row = [];
+      for (
+        let columnIndex = 0;
+        columnIndex < arrayColumns.length;
+        columnIndex++
+      ) {
+        var currentColumnName = arrayColumns[columnIndex];
+        var currentCell = objData[rowIndex]["function"][currentColumnName];
+        // console.log(currentColumnName, currentCell);
+        row.push(currentCell);
+      }
+      rows.push(row);
+    }
+    setTableDataArray(rows);
+  }
 
   //   -------------------------------------------------------------------------------
 
   function Submit() {
     try {
-      var obj = {
+      var objFunctionData = {
         Function: currentFunctionName,
       };
-      var boolOutput = currentFunction(
+      var objOverlayData = {};
+      var functionOutput = currentFunction(
         imgDataArray,
         stackImageURLs,
         setStackImageURLs,
-        stackCounter
+        stackCounter,
+        setImgDataArray
       );
-      for (var i = 0; i < boolOutput.length; i++) {
-        obj[stackImageURLs[stackCounter][i].imageName] = boolOutput[i];
+      for (var i = 0; i < stackImageURLs[stackCounter].length; i++) {
+        objFunctionData[`Image ${i + 1}`] = functionOutput[i];
+        if (functionOutput[i] === true) {
+          objFunctionData[`Image ${i + 1}`] = "\u{2705}"; //Green tick emoji
+        } else if (functionOutput[i] === false) {
+          objFunctionData[`Image ${i + 1}`] = "\u{274C}"; //Red cross emoji
+        }
+        objOverlayData[`Image ${i + 1}`] = overlayData[i];
       }
-      obj["Average"] = "Average";
+      // console.log("Collected function return values");
+      var outputAverage = functionOutput[functionOutput.length - 1];
+      objFunctionData["Average"] =
+        typeof outputAverage === "boolean"
+          ? outputAverage === true
+            ? "\u{2705}"
+            : "\u{274C}"
+          : outputAverage;
       try {
-        obj["id"] = stackData[stackCounter].length + 1;
+        objFunctionData["id"] = stackData[stackCounter].length + 1;
       } catch (e) {
-        obj["id"] = 1;
+        objFunctionData["id"] = 1;
       }
-      try {
-        obj["image"] = stackData[stackCounter]["image"];
-      } catch (e) {
-        obj["Image"] = undefined;
-      }
-      SaveDataToStack(obj, stackData, setStackData, stackCounter);
+      // console.log("finished creating function data object");
+      const objData = {
+        function: objFunctionData,
+        overlay: objOverlayData,
+      };
+
+      // console.log("Saving data to stack");
+      SaveDataToStack(objData, stackData, setStackData, stackCounter);
       setStackCounter(stackCounter + 1);
     } catch (e) {
       console.log(e);
@@ -154,24 +198,34 @@ const Processing = ({
         />
       </div>
       <div className="submit">
-        <Link to="image-carousel" spy={true} smooth={true}>
-          <Button text="Submit" onClick={Submit} />
-        </Link>
-        <Button
-          text="Column names"
-          onClick={() => {
-            console.log(columns);
-          }}
-        />
+        <Button text="Submit" onClick={Submit} />
       </div>
-      <Button
-        text="Results"
-        onClick={() => {
-          console.log(imgDataArray);
-        }}
-      />
-      <div className="table" />
-      {/* <Table data={data} columns={columns} /> */}
+
+      {tableDataArray.length > 0 && (
+        <div className="table">
+          {/* ✅ ❌ */}
+          {columns.length > 1 && (
+            <table align="center" border="2">
+              <thead>
+                <tr>
+                  {columns.map((columnName) => (
+                    <th key={columnName}>{columnName} </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {tableDataArray.map((row, i) => (
+                  <tr key={i}>
+                    {row.map((cell, j) => (
+                      <td key={j}>{String(cell)}</td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+        </div>
+      )}
     </div>
   );
 };
