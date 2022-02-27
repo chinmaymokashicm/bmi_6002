@@ -1,21 +1,29 @@
-function Table(arrayColumns, arrayRows) {
-  {arrayColumns.length > 1 && (<table>
-    <tr>
-      {arrayColumns.map((columnName) => {
-        <th>{columnName}</th>;
-      })}
-    </tr>
-    <tr>
-      <td>Alfreds Futterkiste</td>
-      <td>Maria Anders</td>
-      <td>Germany</td>
-    </tr>
-    <tr>
-      <td>Centro comercial Moctezuma</td>
-      <td>Francisco Chang</td>
-      <td>Mexico</td>
-    </tr>
-  </table>)}
+function Table(columns, tableDataArray) {
+  return(
+    <div className="table">
+          {/* ✅ ❌ */}
+          {columns.length > 1 && (
+            <table align="center" border="2">
+              <thead>
+                <tr>
+                  {columns.map((columnName) => (
+                    <th key={columnName}>{columnName} </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {tableDataArray.map((row, i) => (
+                  <tr key={i}>
+                    {row.map((cell, j) => (
+                      <td key={j}>{String(cell)}</td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+        </div>
+  )
 }
 
 export default Table;

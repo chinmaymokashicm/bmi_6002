@@ -11,8 +11,6 @@ const Image = ({ id, src, alt, isVisible, innerRef }) => {
         className="image-class"
         style={{ display: isVisible}}
         ref={innerRef}
-        // height={canvasConfig.height}
-        // width={canvasConfig.width}
       />
     </div>
   );

@@ -24,7 +24,7 @@ const Carousel = ({
   updateOverlayDimensions,
   overlayData,
   setOverlayData,
-  setImgDataArray
+  setImgDataArray,
 }) => {
   const [isCarouselVisible, setIsCarouselVisible] = useState(true);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -35,11 +35,12 @@ const Carousel = ({
   const [isCroppedSectionVisible, setIsCroppedSectionVisible] = useState(false);
   const [isOverlayVisible, setIsOverlayVisible] = useState(false);
 
-
-
   let carouselStyle = {
-    gridTemplateColumns: "80% 20%",
-    gridTemplateRows: "100%",
+    gridTemplateColumns: "[v1] 80% [v2] 20% [v3]",
+    gridTemplateRows: "[h1] 70% [h2] 30% [h3]",
+    width: "100%",
+    overflow: "scroll",
+    gridGap: "20px",
   };
   if (!isCarouselVisible) {
     carouselStyle.display = "none";
@@ -47,6 +48,35 @@ const Carousel = ({
   if (isCarouselVisible) {
     carouselStyle.display = "grid";
   }
+
+  const columns = ["id", "Image", "Size", "X", "Y", "Radius"];
+
+  const [imageInfoTableData, setImageInfoTableData] = useState([]);
+
+  function updateOverlayTable() {
+    if (stackImageURLs[stackCounter][0].objectURL !== undefined) {
+      var rows = [];
+      for (let i = 0; i < stackImageURLs[stackCounter].length; i++) {
+        var row = [
+          i + 1,
+          stackImageURLs[stackCounter][i].imageName,
+          Math.floor(
+            Math.log(stackImageURLs[stackCounter][i].image.size) /
+              Math.log(1024)
+          ) + " KB",
+          overlayData[i].x,
+          overlayData[i].y,
+          overlayData[i].radius,
+        ];
+        rows.push(row);
+      }
+      setImageInfoTableData(rows);
+    }
+  }
+
+  useEffect(() => {
+    updateOverlayTable();
+  }, [overlayData]);
 
   useEffect(() => {
     if (imageRef.current !== undefined) {
@@ -116,121 +146,175 @@ const Carousel = ({
 
   return (
     <div className="component-image-preview">
-      <Button
-        text="imageRef"
-        onClick={() => {
-          console.log(imageRef.current.width, imageRef.current.height);
-        }}
-      />
       {stackImageURLs[stackCounter][0].objectURL !== undefined && (
         <div
           id="image-carousel"
           className="image-carousel"
           style={carouselStyle}
         >
-          <div className="image-view">
-            {stackImageURLs[stackCounter].map((imageSrc) => (
-              <div
-                key={imageSrc.id}
-                id="image-display"
-                // ref={imageSrc.id === currentImageIndex ? imageRef : null}
-                style={{
-                  width: "400px",
-                  height: "700px",
-                  justifyContent: "center",
-                  position: "absolute",
-                  display: imageSrc.id === currentImageIndex ? "flex" : "none",
-                }}
-              >
-                <Image
-                  alt={imageSrc.imageName}
-                  id={imageSrc.id}
-                  src={imageSrc.objectURL}
-                  innerRef={imageSrc.id === currentImageIndex ? imageRef : null}
-                />
-              </div>
-            ))}
-            {stackImageURLs[stackCounter].map((imageSrc) => (
-              <div
-                className="image-display overlay"
-                key={imageSrc.id}
-                style={{
-                  zindex: 9,
-                  width: overlayWidth,
-                  height: overlayHeight,
-                  background: "rgba(200, 207, 202, 0.2)",
-                  // background: "rgb(250, 250, 0)",
-                  opacity: "0.6",
-                  display:
-                    imageSrc.id === currentImageIndex
-                      ? isOverlayVisible
-                        ? "inline"
-                        : "none"
-                      : "none",
-                }}
-              >
-                <KonvaStage
-                  width={overlayWidth}
-                  height={overlayHeight}
-                  overlayData={overlayData}
-                  setOverlayData={setOverlayData}
-                  currentImageIndex={currentImageIndex}
-                />
-              </div>
-            ))}
-          </div>
-          <div className="image-view-other">
-            <div className="image-information">
-              {stackImageURLs[stackCounter][currentImageIndex].id + 1}
-              <br />
-              {stackImageURLs[stackCounter][currentImageIndex].imageName}|<br />
-              {stackImageURLs[stackCounter][currentImageIndex].image.size}
-              <br />
+          <div
+            className="image-view"
+            style={{
+              borderColor: "azure",
+              gridColumn: "v1 / v3",
+              gridRow: "h1 / h2",
+              backgroundColor: "blanchedalmond",
+              // textAlign: "center",
+              position: "relative",
+              display: "flex",
+              // justifyItems: "center",
+              // margin: "25px 50px 75px 100px"
+            }}
+          >
+            <div>
+              {stackImageURLs[stackCounter].map((imageSrc) => (
+                <div
+                  key={imageSrc.id}
+                  id="image-display"
+                  // ref={imageSrc.id === currentImageIndex ? imageRef : null}
+                  style={{
+                    maxHeight: "100%",
+                    height: "300px",
+                    background: "pink",
+                    position: "absolute",
+                    // left: 0,
+                    // right: 0,
+                    // marginLeft: "auto",
+                    // marginRight: "auto",
+                    display:
+                      imageSrc.id === currentImageIndex ? "flex" : "none",
+                  }}
+                >
+                  <Image
+                    alt={imageSrc.imageName}
+                    id={imageSrc.id}
+                    src={imageSrc.objectURL}
+                    innerRef={
+                      imageSrc.id === currentImageIndex ? imageRef : null
+                    }
+                  />
+                </div>
+              ))}
+              {stackImageURLs[stackCounter].map((imageSrc) => (
+                <div
+                  className="image-display overlay"
+                  key={imageSrc.id}
+                  style={{
+                    zindex: 9,
+                    width: overlayWidth,
+                    height: overlayHeight,
+                    background: "rgba(200, 207, 202, 0.2)",
+                    // background: "yellow",
+                    position: "absolute", //https://stackoverflow.com/a/8273750
+                    // left: 0,
+                    // right: 0,
+                    // marginLeft: "auto",
+                    // marginRight: "auto",
+                    opacity: "0.6",
+                    display:
+                      imageSrc.id === currentImageIndex
+                        ? isOverlayVisible
+                          ? "inline"
+                          : "none"
+                        : "none",
+                  }}
+                >
+                  <KonvaStage
+                    width={overlayWidth}
+                    height={overlayHeight}
+                    overlayData={overlayData}
+                    setOverlayData={setOverlayData}
+                    currentImageIndex={currentImageIndex}
+                  />
+                </div>
+              ))}
             </div>
-            <div className="image-options">
+          </div>
+          <div
+            className="image-information"
+            style={{
+              borderStyle: "dotted",
+              gridColumn: "v1 / v2",
+              gridRow: "h2 / h3",
+            }}
+          >
+            <div className="table">
+              {columns.length > 1 && (
+                <table align="center" border="2">
+                  <thead>
+                    <tr>
+                      {columns.map((columnName) => (
+                        <th key={columnName}>{columnName} </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {imageInfoTableData.map((row, i) => (
+                      <tr
+                        key={i}
+                        style={{
+                          backgroundColor:
+                            i === currentImageIndex ? "#03dbfc" : "",
+                        }}
+                      >
+                        {row.map((cell, j) => (
+                          <td key={j}>{String(cell)}</td>
+                        ))}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
+            </div>
+          </div>
+          <div
+            className="image-options"
+            style={{
+              borderStyle: "groove",
+              gridColumn: "v2 / v3",
+              gridRow: "h2 /h3",
+            }}
+          >
+            <Button
+              text="<<"
+              onClick={() => {
+                if (currentImageIndex !== 0) {
+                  setCurrentImageIndex(currentImageIndex - 1);
+                } else {
+                  setCurrentImageIndex(stackImageURLs[stackCounter].length - 1);
+                }
+              }}
+            />
+            <Button
+              text=">>"
+              onClick={() => {
+                if (
+                  currentImageIndex !==
+                  stackImageURLs[stackCounter].length - 1
+                ) {
+                  setCurrentImageIndex(currentImageIndex + 1);
+                } else {
+                  setCurrentImageIndex(0);
+                }
+              }}
+            />
+            <div className="crop">
               <Button
-                text="<<"
+                text="Crop image"
                 onClick={() => {
-                  if (currentImageIndex !== 0) {
-                    setCurrentImageIndex(currentImageIndex - 1);
-                  } else {
-                    setCurrentImageIndex(
-                      stackImageURLs[stackCounter].length - 1
-                    );
-                  }
+                  setIsCarouselVisible(false);
+                  setIsCroppedSectionVisible(true);
+                  // setIsOverlayVisible(false)
                 }}
               />
+            </div>
+            <div className="overlay-options">
               <Button
-                text=">>"
+                text={!isOverlayVisible ? "Show overlay" : "Hide overlay"}
                 onClick={() => {
-                  if (
-                    currentImageIndex !==
-                    stackImageURLs[stackCounter].length - 1
-                  ) {
-                    setCurrentImageIndex(currentImageIndex + 1);
-                  } else {
-                    setCurrentImageIndex(0);
-                  }
+                  setIsOverlayVisible(!isOverlayVisible);
                 }}
               />
-              <div className="crop">
-                <Button
-                  text="Crop image"
-                  onClick={() => {
-                    setIsCarouselVisible(false);
-                    setIsCroppedSectionVisible(true);
-                    // setIsOverlayVisible(false)
-                  }}
-                />
-              </div>
-              <div className="overlay-options">
-                <Button
-                  text="Show overlay"
-                  onClick={() => {
-                    setIsOverlayVisible(!isOverlayVisible);
-                  }}
-                />
-              </div>
             </div>
           </div>
         </div>
