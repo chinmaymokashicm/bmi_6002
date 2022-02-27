@@ -198,7 +198,7 @@ td{
   grid-gap: 20px;
   border-style: solid;
   border-color: brown;
-  overflow: scroll;
+  /* overflow: scroll; */
   /* display: flex;
   flex-flow: column; */
   /* position: relative; */

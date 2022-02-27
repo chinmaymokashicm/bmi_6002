@@ -31,7 +31,8 @@ const Carousel = ({
   const [crop, setCrop] = useState();
   // { aspect: 16 / 9 }
   const [image, setImage] = useState(null);
-  const [croppedImage, setCroppedImage] = useState(null);
+  const [croppedImageURL, setCroppedImageURL] = useState(null);
+  const [croppedImageObject, setCroppedImageObject] = useState(null);
   const [isCroppedSectionVisible, setIsCroppedSectionVisible] = useState(false);
   const [isOverlayVisible, setIsOverlayVisible] = useState(false);
 
@@ -96,7 +97,7 @@ const Carousel = ({
     const pixelRatio = window.devicePixelRatio;
     canvas.width = crop.width * pixelRatio;
     canvas.height = crop.height * pixelRatio;
-    ctx.setTransform(pixelRatio, 0, setCroppedImage, pixelRatio, 0, 0);
+    ctx.setTransform(pixelRatio, 0, setCroppedImageURL, pixelRatio, 0, 0);
     ctx.imageSmoothingQuality = "high";
 
     ctx.drawImage(
@@ -112,13 +113,22 @@ const Carousel = ({
     );
 
     const base64Image = canvas.toDataURL("image/jpeg");
-    setCroppedImage(base64Image);
+    setCroppedImageURL(base64Image);
+    setCroppedImageObject(image);
+    // As a blob
+    // return new Promise((resolve, reject) => {
+    //   canvas.toBlob((file) => {
+    //     file.name = fileName;
+    //     resolve(file);
+    //   }, "image/jpeg");
+    // })
   }
 
   function save() {
     try {
       var newImageURLs = clone(stackImageURLs[stackCounter]);
-      newImageURLs[currentImageIndex].objectURL = croppedImage;
+      newImageURLs[currentImageIndex].objectURL = croppedImageURL;
+      newImageURLs[currentImageIndex].image = croppedImageObject;
       SaveImageURLsToStack(
         newImageURLs,
         stackImageURLs,
@@ -327,10 +337,10 @@ const Carousel = ({
           onImageLoaded={setImage}
         />
         <Button text="Crop" onClick={getCroppedImage} />
-        {croppedImage && (
-          <Image src={croppedImage} alt="Cropped Image" id="1" />
+        {croppedImageURL && (
+          <Image src={croppedImageURL} alt="Cropped Image" id="1" />
         )}
-        {croppedImage && <Button text="Save" onClick={save} />}
+        {croppedImageURL && <Button text="Save" onClick={save} />}
         <Button
           text="Cancel"
           onClick={() => {
