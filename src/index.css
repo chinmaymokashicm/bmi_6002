@@ -110,38 +110,38 @@ h1 {
 /* Image carousel section */
 
 .image-carousel {
-  display: grid;
+  /* display: grid;
   grid-template-columns: [v1] 80% [v2] 20% [v3];
-  grid-template-rows: [h1] 70% [h2] 30% [h3];
+  grid-template-rows: [h1] 70% [h2] 30% [h3]; */
 }
 /* ^^^Overwritten in Carousel.js */
 
 .image-view{
-  border-color: azure;
+  /* border-color: azure;
   grid-column: v1 / v3;
   grid-row: h1 / h3;
   background-color: blanchedalmond;
-  height: 400px;
+  height: 400px; */
 }
 
 /* ^^^Overwritten in Carousel.js */
 
 .image-information {
-  border-style: dotted;
+  /* border-style: dotted;
   grid-column: v1 / v2;
-  grid-row: h1 / h2;
+  grid-row: h1 / h2; */
 }
 /* ^^^Overwritten in Carousel.js */
 .image-options {
-  border-style: groove;
+  /* border-style: groove;
   grid-column: v2 / v3;
-  grid-row: h1 /h2;
+  grid-row: h1 /h2; */
 }
 /* ^^^Overwritten in Carousel.js */
 .image-display {
-  display: block;
+  /* display: block;
   width: 400px;
-  height: 100px;
+  height: 100px; */
   /* width: fit-content;
   height: fit-content;
   background-color: #475; */
@@ -161,15 +161,22 @@ h1 {
 
 
 img {
-  max-width: 100%;
-  max-height: 100%;
-  margin-left: auto;
+  width: 100%;
+  /* margin-left: auto;
   margin-right: auto;
-  display: block;
+  display: block; */
   /* object-fit: contain; */
 }
 
-
+.image-frame {
+  height: 60%;
+  background-color: aqua;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
 
 
 /* Table */

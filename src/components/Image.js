@@ -3,7 +3,6 @@ import { canvasConfig } from "../Variables";
 
 const Image = ({ id, src, alt, isVisible, innerRef }) => {
   return (
-    <div className="image-frame">
       <img
         key={id}
         src={src}
@@ -12,7 +11,6 @@ const Image = ({ id, src, alt, isVisible, innerRef }) => {
         style={{ display: isVisible}}
         ref={innerRef}
       />
-    </div>
   );
 };
 

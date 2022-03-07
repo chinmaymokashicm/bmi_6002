@@ -37,10 +37,10 @@ const Carousel = ({
   const [isOverlayVisible, setIsOverlayVisible] = useState(false);
 
   let carouselStyle = {
-    gridTemplateColumns: "[v1] 80% [v2] 20% [v3]",
-    gridTemplateRows: "[h1] 70% [h2] 30% [h3]",
-    width: "100%",
-    overflow: "scroll",
+    gridTemplateColumns: "[v1] 400px [v2] 1fr [v3]",
+    gridTemplateRows: "[h1] 500px [h2] 1fr [h3]",
+    // width: "100%",
+    // overflow: "scroll",
     gridGap: "20px",
   };
   if (!isCarouselVisible) {
@@ -50,7 +50,9 @@ const Carousel = ({
     carouselStyle.display = "grid";
   }
 
-  const columns = ["id", "Image", "Size", "X", "Y", "Radius"];
+  const columns = ["id", "Image", 
+  // "Size", 
+  "X", "Y", "Radius"];
 
   const [imageInfoTableData, setImageInfoTableData] = useState([]);
 
@@ -61,10 +63,10 @@ const Carousel = ({
         var row = [
           i + 1,
           stackImageURLs[stackCounter][i].imageName,
-          Math.floor(
-            Math.log(stackImageURLs[stackCounter][i].image.size) /
-              Math.log(1024)
-          ) + " KB",
+          // Math.floor(
+          //   Math.log(stackImageURLs[stackCounter][i].image.size) /
+          //     Math.log(1024)
+          // ) + " KB",
           overlayData[i].x,
           overlayData[i].y,
           overlayData[i].radius,
@@ -142,7 +144,6 @@ const Carousel = ({
     }
     setIsCroppedSectionVisible(false);
     setIsCarouselVisible(true);
-    // setIsOverlayVisible(true)
   }
 
   let CroppedSectionStyle = {};
@@ -169,64 +170,45 @@ const Carousel = ({
               gridColumn: "v1 / v3",
               gridRow: "h1 / h2",
               backgroundColor: "blanchedalmond",
-              // textAlign: "center",
-              position: "relative",
+              height: "100%",
+              overflow: "hidden",
               display: "flex",
-              // justifyItems: "center",
-              // margin: "25px 50px 75px 100px"
+              alignItems: "center",
+              justifyContent: "center",
             }}
           >
-            <div>
-              {stackImageURLs[stackCounter].map((imageSrc) => (
+            <div
+              id="image-display"
+              style={{
+                backgroundColor: "black",
+                width: "50%",
+                height: "70%",
+              }}
+            >
+              <div className="image-frame">
+                <Image
+                  alt={
+                    stackImageURLs[stackCounter][currentImageIndex].imageName
+                  }
+                  id={stackImageURLs[stackCounter][currentImageIndex].id}
+                  src={
+                    stackImageURLs[stackCounter][currentImageIndex].objectURL
+                  }
+                  innerRef={imageRef}
+                />
                 <div
-                  key={imageSrc.id}
-                  id="image-display"
-                  // ref={imageSrc.id === currentImageIndex ? imageRef : null}
-                  style={{
-                    maxHeight: "100%",
-                    height: "300px",
-                    background: "pink",
-                    position: "absolute",
-                    // left: 0,
-                    // right: 0,
-                    // marginLeft: "auto",
-                    // marginRight: "auto",
-                    display:
-                      imageSrc.id === currentImageIndex ? "flex" : "none",
-                  }}
-                >
-                  <Image
-                    alt={imageSrc.imageName}
-                    id={imageSrc.id}
-                    src={imageSrc.objectURL}
-                    innerRef={
-                      imageSrc.id === currentImageIndex ? imageRef : null
-                    }
-                  />
-                </div>
-              ))}
-              {stackImageURLs[stackCounter].map((imageSrc) => (
-                <div
-                  className="image-display overlay"
-                  key={imageSrc.id}
+                  className="image-frame overlay"
+                  key={stackImageURLs[stackCounter][currentImageIndex].id}
                   style={{
                     zindex: 9,
                     width: overlayWidth,
                     height: overlayHeight,
-                    background: "rgba(200, 207, 202, 0.2)",
-                    // background: "yellow",
+                    background: "rgba(200, 207, 2, 0.2)",
                     position: "absolute", //https://stackoverflow.com/a/8273750
-                    // left: 0,
-                    // right: 0,
-                    // marginLeft: "auto",
-                    // marginRight: "auto",
+                    left: "0",
+                    right: "0",
                     opacity: "0.6",
-                    display:
-                      imageSrc.id === currentImageIndex
-                        ? isOverlayVisible
-                          ? "inline"
-                          : "none"
-                        : "none",
+                    display: isOverlayVisible ? "inline-block" : "none",
                   }}
                 >
                   <KonvaStage
@@ -237,7 +219,7 @@ const Carousel = ({
                     currentImageIndex={currentImageIndex}
                   />
                 </div>
-              ))}
+              </div>
             </div>
           </div>
           <div
