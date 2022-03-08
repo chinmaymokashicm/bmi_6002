@@ -1,15 +1,10 @@
-import React from 'react'
+import { Typography } from "@material-ui/core"
 
-const TabPanel = ({ content, value, index }) => {
-  return (
-      <div>
-          {
-              value === index && (
-                  {content}
-              )
-          }
-      </div>
-  )
+const TabPanel = (props) => {
+    return(<div hidden={props.value !== props.index}>
+        { props.value === props.index &&
+            (<Typography> {props.children} </Typography>)}
+    </div>)
 }
 
 export default TabPanel

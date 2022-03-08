@@ -23,6 +23,7 @@ const Carousel = ({
   overlayHeight,
   setOverlayHeight,
   imageDimensions,
+  updateOverlayDimensions,
   overlayData,
   setOverlayData,
   setImgDataArray,
@@ -121,12 +122,6 @@ const Carousel = ({
     updateOverlayTable();
   }, [overlayData]);
 
-  function updateOverlayDimensions() {
-    var currentDimensions = imageDimensions;
-    setOverlayWidth(currentDimensions.width);
-    setOverlayHeight(currentDimensions.height);
-  }
-
   useEffect(() => {
     if (imageRef.current !== undefined) {
       updateOverlayDimensions();
@@ -200,11 +195,18 @@ const Carousel = ({
     CroppedSectionStyle.display = "inline";
   }
 
+  function handleTabs(e, index) {
+    setIsOverlayVisible(false);
+    setCurrentTabValue(index);
+  }
+
   const TabComponent = (
-    <Tabs value={currentTabValue}>
-      <Tab label="Images" />
-      <Tab label="Circles" />
-    </Tabs>
+    <AppBar position="static">
+      <Tabs value={currentTabValue} onChange={handleTabs}>
+        <Tab label="Images" />
+        <Tab label="Circles" />
+      </Tabs>
+    </AppBar>
   );
 
   return (
@@ -217,68 +219,79 @@ const Carousel = ({
             className="image-carousel"
             style={carouselStyle}
           >
-            <div
-              className="image-view"
-              style={{
-                borderColor: "azure",
-                gridColumn: "v1 / v3",
-                gridRow: "h1 / h2",
-                backgroundColor: "blanchedalmond",
-                height: "100%",
-                overflow: "hidden",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
+            <TabPanel value={currentTabValue} index={0}>
               <div
-                id="image-display"
+                className="image-view"
                 style={{
-                  backgroundColor: "black",
-                  width: "50%",
-                  height: "70%",
-                }}
+                  borderColor: "azure",
+                  gridColumn: "v1 / v3",
+                  gridRow: "h1 / h2",
+                  backgroundColor: "blanchedalmond",
+                  height: "100%",
+                  overflow: "hidden",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }} // Check index.css
               >
-                <div className="image-frame">
-                  <Image
-                    alt={
-                      stackImageURLs[stackCounter][currentImageIndex].imageName
-                    }
-                    id={stackImageURLs[stackCounter][currentImageIndex].id}
-                    src={
-                      stackImageURLs[stackCounter][currentImageIndex].objectURL
-                    }
-                    innerRef={imageRef}
-                  />
-                  {imageRef.current !== undefined && (
-                    <div
-                      className="image-frame overlay"
-                      key={stackImageURLs[stackCounter][currentImageIndex].id}
-                      style={{
-                        zindex: 9,
-                        width: imageRef.current.width,
-                        height: imageRef.current.height,
-                        background: "rgba(200, 207, 2, 0)",
-                        position: "absolute", //https://stackoverflow.com/a/8273750
-                        left: "0",
-                        right: "0",
-                        opacity: "0.6",
-                        display: isOverlayVisible ? "inline-block" : "none",
-                      }}
-                    >
-                      <KonvaStage
-                        width={imageDimensions[currentImageIndex].width}
-                        height={imageDimensions[currentImageIndex].height}
-                        overlayData={overlayData}
-                        setOverlayData={setOverlayData}
-                        currentImageIndex={currentImageIndex}
-                        imageRef={imageRef}
-                      />
-                    </div>
-                  )}
+                <div
+                  id="image-display"
+                  style={{
+                    backgroundColor: "black",
+                    width: "50%",
+                    height: "70%",
+                  }} // check index.css
+                >
+                  <div className="image-frame">
+                    <Image
+                      src={
+                        stackImageURLs[stackCounter][currentImageIndex]
+                          .objectURL
+                      }
+                      innerRef={imageRef}
+                    />
+                    {imageRef.current !== null &&
+                      imageRef.current !== undefined && (
+                        <div
+                          className="image-frame overlay"
+                          key={
+                            stackImageURLs[stackCounter][currentImageIndex].id
+                          }
+                          style={{
+                            zindex: 9,
+                            width: imageRef.current.width,
+                            height: imageRef.current.height,
+                            background: "rgba(200, 207, 2, 0)",
+                            position: "absolute", //https://stackoverflow.com/a/8273750
+                            left: "0",
+                            right: "0",
+                            opacity: "0.6",
+                            display: isOverlayVisible ? "inline-block" : "none",
+                          }}
+                        >
+                          <KonvaStage
+                            width={imageDimensions[currentImageIndex].width}
+                            height={imageDimensions[currentImageIndex].height}
+                            overlayData={overlayData}
+                            setOverlayData={setOverlayData}
+                            currentImageIndex={currentImageIndex}
+                            imageRef={imageRef}
+                          />
+                        </div>
+                      )}
+                  </div>
                 </div>
               </div>
-            </div>
+            </TabPanel>
+            <TabPanel value={currentTabValue} index={1}>
+              <div className="image-view">
+                <div className="image-display">
+                  <div className="image-frame">
+                    Circles
+                    </div>
+                </div>
+              </div>
+            </TabPanel>
             <div
               className="image-information"
               style={{
@@ -332,6 +345,9 @@ const Carousel = ({
                     setIsCroppedSectionVisible(true);
                     // setIsOverlayVisible(false)
                   }}
+                  style={{
+                    display: currentTabValue === 0 ? "inline-block" : "none",
+                  }}
                 />
               </div>
               <div className="overlay-options">
@@ -339,6 +355,9 @@ const Carousel = ({
                   text={!isOverlayVisible ? "Show overlay" : "Hide overlay"}
                   onClick={() => {
                     setIsOverlayVisible(!isOverlayVisible);
+                  }}
+                  style={{
+                    display: currentTabValue === 0 ? "inline-block" : "none",
                   }}
                 />
               </div>

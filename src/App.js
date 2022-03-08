@@ -136,14 +136,21 @@ function App() {
     }
   }, [imageRef.current]);
 
+  function updateOverlayDimensions() {
+    var currentDimensions = imageDimensions;
+    setOverlayWidth(currentDimensions.width);
+    setOverlayHeight(currentDimensions.height);
+  }
+
+
   useEffect(() => {
     // Setting overlay data
     var tempOverlayData = [];
     for (let i = 0; i < imageDimensions.length; i++) {
       console.log("Updating overlay data");
       tempOverlayData.push({
-        x: imageDimensions[i].width / 2,
-        y: imageDimensions[i].height / 2,
+        x: Math.round(imageDimensions[i].width / 2),
+        y: Math.round(imageDimensions[i].height / 2),
         radius: Math.round(Math.min(imageDimensions[i].width / 6, imageDimensions[i].height / 6)),
       });
       setOverlayData(tempOverlayData);
@@ -293,6 +300,7 @@ function App() {
       overlayHeight={overlayHeight}
       setOverlayHeight={setOverlayHeight}
       imageDimensions={imageDimensions}
+      updateOverlayDimensions={updateOverlayDimensions}
       overlayData={overlayData}
       setOverlayData={setOverlayData}
       setImgDataArray={setImgDataArray}

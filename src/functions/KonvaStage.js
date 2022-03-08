@@ -13,7 +13,7 @@ function KonvaStage({
   overlayData,
   setOverlayData,
   currentImageIndex,
-  imageRef
+  imageRef,
 }) {
   const circleRef = useRef();
   const transformerRef = useRef();
@@ -119,7 +119,7 @@ function KonvaStage({
             fill="rgba(166, 109, 86, 0.1)"
             stroke="yellow"
             strokeWidth={5}
-            zIndex={0}
+            // zIndex={0}
           />
         </Layer>
       </Stage>

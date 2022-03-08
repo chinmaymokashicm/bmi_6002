@@ -117,14 +117,16 @@ h1 {
 /* ^^^Overwritten in Carousel.js */
 
 .image-view{
-  /* border-color: azure;
+  border-color: azure;
   grid-column: v1 / v3;
-  grid-row: h1 / h3;
+  grid-row: h1 / h2;
   background-color: blanchedalmond;
-  height: 400px; */
+  height: 100%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
-
-/* ^^^Overwritten in Carousel.js */
 
 .image-information {
   /* border-style: dotted;
@@ -139,17 +141,10 @@ h1 {
 }
 /* ^^^Overwritten in Carousel.js */
 .image-display {
-  /* display: block;
-  width: 400px;
-  height: 100px; */
-  /* width: fit-content;
-  height: fit-content;
-  background-color: #475; */
-  /* overflow: scroll; */
-  /* justify-content: center; */
+  background-color: "black";
+  width: "50%";
+  height: "70%";
 }
-
-/* Overwritten in Carousel.js */
 
 /* .overlay{
   z-index: 9;
