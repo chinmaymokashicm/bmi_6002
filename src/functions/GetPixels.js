@@ -7,6 +7,7 @@ async function GetPixels(imageURLs, setImgDataArray, arrayImageDimensions) {
 
   try {
     console.log("Calling getPixels");
+    console.log("arrayImageDimensions", arrayImageDimensions)
     const imgDataArray = [];
 
     async function getInfo(objectURL, imageDimensions) {
@@ -17,8 +18,8 @@ async function GetPixels(imageURLs, setImgDataArray, arrayImageDimensions) {
       img.src = objectURL;
       // canvas.width = img.width
       // canvas.height = img.height
-      canvas.width = imageDimensions[0]
-      canvas.height = imageDimensions[1]
+      canvas.width = imageDimensions.width
+      canvas.height = imageDimensions.height
       img.onload = async function () {
         ctx.drawImage(img, 0, 0);
         var imgData = ctx.getImageData(0, 0, canvas.width, canvas.height); //Switched to canvas.width

@@ -13,20 +13,30 @@ function KonvaStage({
   overlayData,
   setOverlayData,
   currentImageIndex,
+  imageRef
 }) {
   const circleRef = useRef();
   const transformerRef = useRef();
 
-  try{
-    if(!isNaN(overlayData.x)){ 
-      console.log(overlayData)
-      console.log("Loading existing data!")
-      width = overlayData.x * 2
-      height = overlayData.y * 2
+  var imageRefWidth = imageRef.current.width
+  var imageRefHeight = imageRef.current.height
+  // console.log("imageRefWidth", imageRefWidth)
+  // console.log("imageRefHeight", imageRefHeight)
+  console.log("imageRefWidth, width", imageRefWidth, width)
+  console.log("imageRefHeight, height", imageRefHeight, height)
+  var scaleWidth = imageRefWidth/width
+  var scaleHeight = imageRefHeight/height
+  console.log("scaleWidth, scaleHeight", scaleWidth, scaleHeight)
+
+  try {
+    if (!isNaN(overlayData.x)) {
+      console.log(overlayData);
+      console.log("Loading existing data!");
+      width = overlayData.x * 2;
+      height = overlayData.y * 2;
     }
-  }
-  catch(e){
-    console.log(e)
+  } catch (e) {
+    console.log(e);
   }
 
   if (width === undefined) {
@@ -41,12 +51,12 @@ function KonvaStage({
     const node = circleRef.current;
     const scaleX = node.scaleX();
     var overlayDataObj = {
-      x: Math.round(attributes.x),
-      y: Math.round(attributes.y),
-      radius: Math.round(attributes.radius * scaleX),
+      x: (Math.round(attributes.x/scaleWidth)),
+      y: (Math.round(attributes.y/scaleHeight)),
+      radius: (Math.round(attributes.radius * scaleX/scaleWidth)),
     };
-    node.scaleX(1)
-    node.scaleY(1)
+    node.scaleX(1);
+    node.scaleY(1);
     console.log(overlayDataObj);
     UpdateOverlayData(
       overlayData,
@@ -59,8 +69,8 @@ function KonvaStage({
   return (
     <Fragment>
       <Stage
-        width={width}
-        height={height}
+        width={imageRefWidth}
+        height={imageRefHeight}
         onMouseDown={(e) => {
           transformerRef.current.nodes([circleRef.current]);
           transformerRef.current.getLayer().batchDraw();
@@ -68,20 +78,20 @@ function KonvaStage({
       >
         <Layer>
           <Circle
-            x={overlayData[currentImageIndex].x}
-            y={overlayData[currentImageIndex].y}
-            radius={overlayData[currentImageIndex].radius}
+            x={Math.round(overlayData[currentImageIndex].x * scaleWidth)}
+            y={Math.round(overlayData[currentImageIndex].y * scaleHeight)}
+            radius={Math.round(overlayData[currentImageIndex].radius * scaleWidth)} //How should the radius be scaled? scaleWidth = scaleHeight
             fill="rgba(166, 109, 86, 0.1)"
             stroke="red"
             strokeWidth={5}
-            // border="1px solid black"
-            // opacity={0.5}
             shadowBlur={5}
             draggable={true}
             resizable={true}
             ref={circleRef}
             onClick={onChange}
+            onDragStart={onChange}
             onDragEnd={onChange}
+            onDragMove={onChange}
             onTransformEnd={onChange}
           />
           <Transformer
@@ -101,6 +111,15 @@ function KonvaStage({
             ]}
             resizeEnabled={true}
             rotateEnabled={false}
+          />
+          <Circle
+            x={Math.round(overlayData[currentImageIndex].x * scaleWidth)}
+            y={Math.round(overlayData[currentImageIndex].y * scaleHeight)}
+            radius={Math.round(overlayData[currentImageIndex].radius * scaleWidth * 0.5)} //How should the radius be scaled? scaleWidth = scaleHeight
+            fill="rgba(166, 109, 86, 0.1)"
+            stroke="yellow"
+            strokeWidth={5}
+            zIndex={0}
           />
         </Layer>
       </Stage>

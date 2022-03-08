@@ -9,7 +9,8 @@ import Button from "./Button";
 import GetPixels from "../functions/GetPixels";
 import SaveImageURLsToStack from "../functions/SaveImageURLsToStack";
 import KonvaStage from "../functions/KonvaStage";
-// import Image
+import { Tabs, Tab, AppBar } from "@material-ui/core";
+import TabPanel from "./TabPanel";
 
 const Carousel = ({
   imageRef,
@@ -21,7 +22,7 @@ const Carousel = ({
   setOverlayWidth,
   overlayHeight,
   setOverlayHeight,
-  updateOverlayDimensions,
+  imageDimensions,
   overlayData,
   setOverlayData,
   setImgDataArray,
@@ -35,10 +36,11 @@ const Carousel = ({
   const [croppedImageObject, setCroppedImageObject] = useState(null);
   const [isCroppedSectionVisible, setIsCroppedSectionVisible] = useState(false);
   const [isOverlayVisible, setIsOverlayVisible] = useState(false);
+  const [currentTabValue, setCurrentTabValue] = useState(0);
 
   let carouselStyle = {
-    gridTemplateColumns: "[v1] 400px [v2] 1fr [v3]",
-    gridTemplateRows: "[h1] 500px [h2] 1fr [h3]",
+    gridTemplateColumns: "[v1] 800px [v2] 1fr [v3]",
+    gridTemplateRows: "[h1] 600px [h2] 1fr [h3]",
     // width: "100%",
     // overflow: "scroll",
     gridGap: "20px",
@@ -50,14 +52,50 @@ const Carousel = ({
     carouselStyle.display = "grid";
   }
 
-  const columns = ["id", "Image", 
-  // "Size", 
-  "X", "Y", "Radius"];
+  const columns = [
+    "id",
+    "Image",
+    // "Size",
+    "Width",
+    "Height",
+    "X",
+    "Y",
+    "Radius",
+  ];
 
   const [imageInfoTableData, setImageInfoTableData] = useState([]);
 
+  const htmlImageDataTable = (
+    <table align="center" border="2">
+      <thead>
+        <tr>
+          {columns.map((columnName) => (
+            <th key={columnName}>{columnName} </th>
+          ))}
+        </tr>
+      </thead>
+      <tbody>
+        {imageInfoTableData.map((row, i) => (
+          <tr
+            key={i}
+            style={{
+              backgroundColor: i === currentImageIndex ? "#03dbfc" : "",
+            }}
+          >
+            {row.map((cell, j) => (
+              <td key={j}>{String(cell)}</td>
+            ))}
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  );
+
   function updateOverlayTable() {
-    if (stackImageURLs[stackCounter][0].objectURL !== undefined) {
+    if (
+      stackImageURLs[stackCounter][0].objectURL !== undefined &&
+      imageDimensions[0] !== undefined
+    ) {
       var rows = [];
       for (let i = 0; i < stackImageURLs[stackCounter].length; i++) {
         var row = [
@@ -67,6 +105,8 @@ const Carousel = ({
           //   Math.log(stackImageURLs[stackCounter][i].image.size) /
           //     Math.log(1024)
           // ) + " KB",
+          imageDimensions[i].width,
+          imageDimensions[i].height,
           overlayData[i].x,
           overlayData[i].y,
           overlayData[i].radius,
@@ -81,11 +121,23 @@ const Carousel = ({
     updateOverlayTable();
   }, [overlayData]);
 
+  function updateOverlayDimensions() {
+    var currentDimensions = imageDimensions;
+    setOverlayWidth(currentDimensions.width);
+    setOverlayHeight(currentDimensions.height);
+  }
+
   useEffect(() => {
     if (imageRef.current !== undefined) {
       updateOverlayDimensions();
     }
   }, [currentImageIndex]);
+
+  useEffect(() => {
+    if (imageRef.current !== undefined) {
+      updateOverlayDimensions();
+    }
+  }, [imageRef.current]);
 
   function getCroppedImage() {
     const canvas = document.createElement("canvas");
@@ -117,13 +169,6 @@ const Carousel = ({
     const base64Image = canvas.toDataURL("image/jpeg");
     setCroppedImageURL(base64Image);
     setCroppedImageObject(image);
-    // As a blob
-    // return new Promise((resolve, reject) => {
-    //   canvas.toBlob((file) => {
-    //     file.name = fileName;
-    //     resolve(file);
-    //   }, "image/jpeg");
-    // })
   }
 
   function save() {
@@ -155,162 +200,152 @@ const Carousel = ({
     CroppedSectionStyle.display = "inline";
   }
 
+  const TabComponent = (
+    <Tabs value={currentTabValue}>
+      <Tab label="Images" />
+      <Tab label="Circles" />
+    </Tabs>
+  );
+
   return (
     <div className="component-image-preview">
-      {stackImageURLs[stackCounter][0].objectURL !== undefined && (
-        <div
-          id="image-carousel"
-          className="image-carousel"
-          style={carouselStyle}
-        >
+      {TabComponent}
+      {stackImageURLs[stackCounter][0].objectURL !== undefined &&
+        imageDimensions[currentImageIndex] !== undefined && (
           <div
-            className="image-view"
-            style={{
-              borderColor: "azure",
-              gridColumn: "v1 / v3",
-              gridRow: "h1 / h2",
-              backgroundColor: "blanchedalmond",
-              height: "100%",
-              overflow: "hidden",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
+            id="image-carousel"
+            className="image-carousel"
+            style={carouselStyle}
           >
             <div
-              id="image-display"
+              className="image-view"
               style={{
-                backgroundColor: "black",
-                width: "50%",
-                height: "70%",
+                borderColor: "azure",
+                gridColumn: "v1 / v3",
+                gridRow: "h1 / h2",
+                backgroundColor: "blanchedalmond",
+                height: "100%",
+                overflow: "hidden",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
               }}
             >
-              <div className="image-frame">
-                <Image
-                  alt={
-                    stackImageURLs[stackCounter][currentImageIndex].imageName
-                  }
-                  id={stackImageURLs[stackCounter][currentImageIndex].id}
-                  src={
-                    stackImageURLs[stackCounter][currentImageIndex].objectURL
-                  }
-                  innerRef={imageRef}
-                />
-                <div
-                  className="image-frame overlay"
-                  key={stackImageURLs[stackCounter][currentImageIndex].id}
-                  style={{
-                    zindex: 9,
-                    width: overlayWidth,
-                    height: overlayHeight,
-                    background: "rgba(200, 207, 2, 0.2)",
-                    position: "absolute", //https://stackoverflow.com/a/8273750
-                    left: "0",
-                    right: "0",
-                    opacity: "0.6",
-                    display: isOverlayVisible ? "inline-block" : "none",
-                  }}
-                >
-                  <KonvaStage
-                    width={overlayWidth}
-                    height={overlayHeight}
-                    overlayData={overlayData}
-                    setOverlayData={setOverlayData}
-                    currentImageIndex={currentImageIndex}
+              <div
+                id="image-display"
+                style={{
+                  backgroundColor: "black",
+                  width: "50%",
+                  height: "70%",
+                }}
+              >
+                <div className="image-frame">
+                  <Image
+                    alt={
+                      stackImageURLs[stackCounter][currentImageIndex].imageName
+                    }
+                    id={stackImageURLs[stackCounter][currentImageIndex].id}
+                    src={
+                      stackImageURLs[stackCounter][currentImageIndex].objectURL
+                    }
+                    innerRef={imageRef}
                   />
+                  {imageRef.current !== undefined && (
+                    <div
+                      className="image-frame overlay"
+                      key={stackImageURLs[stackCounter][currentImageIndex].id}
+                      style={{
+                        zindex: 9,
+                        width: imageRef.current.width,
+                        height: imageRef.current.height,
+                        background: "rgba(200, 207, 2, 0)",
+                        position: "absolute", //https://stackoverflow.com/a/8273750
+                        left: "0",
+                        right: "0",
+                        opacity: "0.6",
+                        display: isOverlayVisible ? "inline-block" : "none",
+                      }}
+                    >
+                      <KonvaStage
+                        width={imageDimensions[currentImageIndex].width}
+                        height={imageDimensions[currentImageIndex].height}
+                        overlayData={overlayData}
+                        setOverlayData={setOverlayData}
+                        currentImageIndex={currentImageIndex}
+                        imageRef={imageRef}
+                      />
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
-          </div>
-          <div
-            className="image-information"
-            style={{
-              borderStyle: "dotted",
-              gridColumn: "v1 / v2",
-              gridRow: "h2 / h3",
-            }}
-          >
-            <div className="table">
-              {columns.length > 1 && (
-                <table align="center" border="2">
-                  <thead>
-                    <tr>
-                      {columns.map((columnName) => (
-                        <th key={columnName}>{columnName} </th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {imageInfoTableData.map((row, i) => (
-                      <tr
-                        key={i}
-                        style={{
-                          backgroundColor:
-                            i === currentImageIndex ? "#03dbfc" : "",
-                        }}
-                      >
-                        {row.map((cell, j) => (
-                          <td key={j}>{String(cell)}</td>
-                        ))}
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              )}
+            <div
+              className="image-information"
+              style={{
+                // borderStyle: "dotted",
+                gridColumn: "v1 / v2",
+                gridRow: "h2 / h3",
+              }}
+            >
+              <div className="table">
+                {columns.length > 1 && htmlImageDataTable}
+              </div>
             </div>
-          </div>
-          <div
-            className="image-options"
-            style={{
-              borderStyle: "groove",
-              gridColumn: "v2 / v3",
-              gridRow: "h2 /h3",
-            }}
-          >
-            <Button
-              text="<<"
-              onClick={() => {
-                if (currentImageIndex !== 0) {
-                  setCurrentImageIndex(currentImageIndex - 1);
-                } else {
-                  setCurrentImageIndex(stackImageURLs[stackCounter].length - 1);
-                }
+            <div
+              className="image-options"
+              style={{
+                // borderStyle: "groove",
+                gridColumn: "v2 / v3",
+                gridRow: "h2 /h3",
               }}
-            />
-            <Button
-              text=">>"
-              onClick={() => {
-                if (
-                  currentImageIndex !==
-                  stackImageURLs[stackCounter].length - 1
-                ) {
-                  setCurrentImageIndex(currentImageIndex + 1);
-                } else {
-                  setCurrentImageIndex(0);
-                }
-              }}
-            />
-            <div className="crop">
+            >
               <Button
-                text="Crop image"
+                text="<<"
                 onClick={() => {
-                  setIsCarouselVisible(false);
-                  setIsCroppedSectionVisible(true);
-                  // setIsOverlayVisible(false)
+                  if (currentImageIndex !== 0) {
+                    setCurrentImageIndex(currentImageIndex - 1);
+                  } else {
+                    setCurrentImageIndex(
+                      stackImageURLs[stackCounter].length - 1
+                    );
+                  }
                 }}
               />
-            </div>
-            <div className="overlay-options">
               <Button
-                text={!isOverlayVisible ? "Show overlay" : "Hide overlay"}
+                text=">>"
                 onClick={() => {
-                  setIsOverlayVisible(!isOverlayVisible);
+                  if (
+                    currentImageIndex !==
+                    stackImageURLs[stackCounter].length - 1
+                  ) {
+                    setCurrentImageIndex(currentImageIndex + 1);
+                  } else {
+                    setCurrentImageIndex(0);
+                  }
                 }}
               />
+              <div className="crop">
+                <Button
+                  text="Crop image"
+                  onClick={() => {
+                    setIsCarouselVisible(false);
+                    setIsCroppedSectionVisible(true);
+                    // setIsOverlayVisible(false)
+                  }}
+                />
+              </div>
+              <div className="overlay-options">
+                <Button
+                  text={!isOverlayVisible ? "Show overlay" : "Hide overlay"}
+                  onClick={() => {
+                    setIsOverlayVisible(!isOverlayVisible);
+                  }}
+                />
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
+
       <div className="crop-div" style={CroppedSectionStyle}>
         <ReactCrop
           src={stackImageURLs[stackCounter][currentImageIndex].objectURL}

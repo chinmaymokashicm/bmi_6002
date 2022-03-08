@@ -169,7 +169,7 @@ img {
 }
 
 .image-frame {
-  height: 60%;
+  height: 70%;
   background-color: aqua;
   display: flex;
   flex-direction: column;
@@ -238,3 +238,16 @@ td{
   /* position: absolute; */
   /* right: 0; */
 }
+
+
+/* 
+.button {
+  background-color: #4cafaf;
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 20px;
+} */

@@ -13,9 +13,12 @@ import Button from "./components/Button";
 import GetPixels from "./functions/GetPixels";
 import clone from "just-clone";
 import GetImageDimensions from "./functions/GetImageDimensions";
+import UpdateImageDimensions from "./functions/UpdateImageDimensions";
 
 function App() {
-  const [isFirstLoad, setIsFirstLoad] = useState(true)
+  const [isFirstLoad, setIsFirstLoad] = useState(true);
+
+  const [imageDimensions, setImageDimensions] = useState([]);
 
   /* File browsing */
   const [images, setImages] = useState([]);
@@ -65,7 +68,8 @@ function App() {
         radius: 40,
       })
     );
-    // GetPixels(newImageURLs, setImgDataArray);
+    console.log("Setting image dimensions");
+    UpdateImageDimensions(newImageURLs, setImageDimensions);
   }, [images]);
 
   function onImageChange(e) {
@@ -109,7 +113,7 @@ function App() {
     }
 
     if (imageRef.current !== undefined) {
-      updateOverlayDimensions();
+      // updateOverlayDimensions();
     }
     // console.log("stackCounter updated to ", stackCounter)
     setIsCounterChangeOnButton(false);
@@ -121,27 +125,40 @@ function App() {
   const [overlayWidth, setOverlayWidth] = useState(100);
   const [overlayHeight, setOverlayHeight] = useState(100);
 
-  function updateOverlayDimensions() {
-    setOverlayWidth(imageRef.current.width);
-    setOverlayHeight(imageRef.current.height);
-  }
   const [overlayData, setOverlayData] = useState([]);
 
   useEffect(() => {
     if (imageRef.current !== undefined) {
-      updateOverlayDimensions();
-      console.log("Change in imageRef.current")
-      GetPixels(stackImageURLs[stackCounter], setImgDataArray, GetImageDimensions(stackImageURLs[stackCounter]));
+      // updateOverlayDimensions();
+      console.log("Change in imageRef.current");
+      // GetPixels(stackImageURLs[stackCounter], setImgDataArray, imageDimensions);
+      console.log(imageRef.current.width, imageRef.current.height)
     }
   }, [imageRef.current]);
 
-
-  useEffect(()=> {
-    if(!isFirstLoad){
-      console.log("Change in imgDataArray")
+  useEffect(() => {
+    // Setting overlay data
+    var tempOverlayData = [];
+    for (let i = 0; i < imageDimensions.length; i++) {
+      console.log("Updating overlay data");
+      tempOverlayData.push({
+        x: imageDimensions[i].width / 2,
+        y: imageDimensions[i].height / 2,
+        radius: Math.round(Math.min(imageDimensions[i].width / 6, imageDimensions[i].height / 6)),
+      });
+      setOverlayData(tempOverlayData);
     }
-    setIsFirstLoad(false)
-  }, [imgDataArray])
+    if (imageDimensions.length > 0) {
+      GetPixels(stackImageURLs[stackCounter], setImgDataArray, imageDimensions);
+    }
+  }, [imageDimensions]);
+
+  useEffect(() => {
+    if (!isFirstLoad) {
+      console.log("Change in imgDataArray");
+    }
+    setIsFirstLoad(false);
+  }, [imgDataArray]);
 
   // Hooks for collapsible components
   const [isExpandedSelect, setExpandedSelect] = useState(true);
@@ -186,7 +203,7 @@ function App() {
   function continueButtonPreview(e) {
     setExpandedProcessing(true);
     // setExpandedPreview(false);
-    // GetPixels(stackImageURLs[stackCounter], setImgDataArray, GetImageDimensions(stackImageURLs[stackCounter]));
+    // GetPixels(stackImageURLs[stackCounter], setImgDataArray, imageDimensions);
   }
   const componentFooterPreview = (
     <Footer continueOnClick={continueButtonPreview} />
@@ -262,7 +279,10 @@ function App() {
   );
   const componentSelect = <ImageBrowser onImageChange={onImageChange} />;
   const componentImagePreview = (
-    <Carousel
+    <div style={{
+      overflow: "scroll"
+    }} >
+      <Carousel
       imageRef={imageRef}
       stackImageURLs={stackImageURLs}
       setStackImageURLs={setStackImageURLs}
@@ -272,11 +292,12 @@ function App() {
       setOverlayWidth={setOverlayWidth}
       overlayHeight={overlayHeight}
       setOverlayHeight={setOverlayHeight}
-      updateOverlayDimensions={updateOverlayDimensions}
+      imageDimensions={imageDimensions}
       overlayData={overlayData}
       setOverlayData={setOverlayData}
       setImgDataArray={setImgDataArray}
     />
+      </div>
   );
   const componentProcessing = (
     <Processing
@@ -330,6 +351,15 @@ function App() {
           }}
         />
         <Button text="imgDataArray" onClick={() => console.log(imgDataArray)} />
+        <Button
+          text="Image dimensions"
+          onClick={() => {
+            console.log(imageDimensions);
+          }}
+        />
+        <Button text="imageRef.current" onClick={() => {
+          console.log(imageRef.current.width, imageRef.current.height)
+        }} />
       </div>
       <div className="component-select">
         <Section

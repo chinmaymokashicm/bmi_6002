@@ -15,34 +15,6 @@ import SaveImageURLsToStack from "../functions/SaveImageURLsToStack";
 import MakeImageZero from "../functions/MakeImageZero";
 import GetPixels from "../functions/GetPixels";
 import GetImageDimensions from "../functions/GetImageDimensions";
-const Styles = styled.div`
-  padding: 1rem;
-
-  table {
-    border-spacing: 0;
-    border: 1px solid black;
-
-    tr {
-      :last-child {
-        td {
-          border-bottom: 0;
-        }
-      }
-    }
-
-    th,
-    td {
-      margin: 0;
-      padding: 0.5rem;
-      border-bottom: 1px solid black;
-      border-right: 1px solid black;
-
-      :last-child {
-        border-right: 0;
-      }
-    }
-  }
-`;
 
 const Processing = ({
   imgDataArray,
@@ -58,6 +30,17 @@ const Processing = ({
 }) => {
   // Setting up the appearance
   const animatedComponents = makeAnimated();
+
+  const [isSubmitButtonDisabled, setIsSubmitButtonDisabled] = useState(true);
+  useEffect(() => {
+    if (imgDataArray.length === 0) {
+      console.log("imgDataArray is still empty?")
+      setIsSubmitButtonDisabled(true);
+    } else {
+      console.log("Here")
+      setIsSubmitButtonDisabled(false);
+    }
+  }, [imgDataArray]);
 
   useEffect(() => {
     try {
@@ -198,7 +181,11 @@ const Processing = ({
         />
       </div>
       <div className="submit">
-        <Button text="Submit" onClick={Submit} />
+        <Button
+          text="Submit"
+          onClick={Submit}
+          disabled={isSubmitButtonDisabled}
+        />
       </div>
 
       {tableDataArray.length > 0 && (
