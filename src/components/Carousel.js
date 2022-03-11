@@ -6,6 +6,8 @@ import clone from "just-clone";
 import Image from "./Image";
 import Button from "./Button";
 
+import questionImage from "../question.jpeg"
+
 import GetPixels from "../functions/GetPixels";
 import SaveImageURLsToStack from "../functions/SaveImageURLsToStack";
 import KonvaStage from "../functions/KonvaStage";
@@ -28,7 +30,7 @@ const Carousel = ({
   setOverlayData,
   setImgDataArray,
   overlayURLs,
-  setOverlayURLs
+  setOverlayURLs,
 }) => {
   const [isCarouselVisible, setIsCarouselVisible] = useState(true);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -64,6 +66,7 @@ const Carousel = ({
     "X",
     "Y",
     "Radius",
+    "Regions of Interest",
   ];
 
   const [imageInfoTableData, setImageInfoTableData] = useState([]);
@@ -113,6 +116,9 @@ const Carousel = ({
           overlayData[i].x,
           overlayData[i].y,
           overlayData[i].radius,
+          overlayURLs[i].innerCircle !== undefined
+            ? "Selected"
+            : "Not selected",
         ];
         rows.push(row);
       }
@@ -123,6 +129,10 @@ const Carousel = ({
   useEffect(() => {
     updateOverlayTable();
   }, [overlayData]);
+
+  useEffect(() => {
+    updateOverlayTable();
+  }, [overlayURLs]);
 
   useEffect(() => {
     if (imageRef.current !== undefined) {
@@ -206,7 +216,7 @@ const Carousel = ({
     <AppBar position="static">
       <Tabs value={currentTabValue} onChange={handleTabs}>
         <Tab label="Images" />
-        <Tab label="Circles" />
+        <Tab label="Regions" />
       </Tabs>
     </AppBar>
   );
@@ -291,21 +301,42 @@ const Carousel = ({
               </div>
             </TabPanel>
             <TabPanel value={currentTabValue} index={1}>
-                  <div style={{
-                    width: "100%",
-                    paddingTop: "50px",
-                    paddingLeft: "50px",
-                    height: "500px",
-                    display: "grid",
-                    gridTemplateColumns: "1fr 1fr 1fr",
-                    gridTemplateRows: "1fr 1fr"
-                  }}>
+              {overlayURLs[currentImageIndex].innerCircle !== undefined && (
+                <div
+                style={{
+                  borderColor: "azure",
+                  gridColumn: "v1 / v3",
+                  gridRow: "h1 / h2",
+                  backgroundColor: "blanchedalmond",
+                  height: "100%",
+                  overflow: "hidden",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  width: "100%",
+                  paddingTop: "50px",
+                  paddingLeft: "50px",
+                  height: "500px",
+                  display: "grid",
+                  gridTemplateColumns: "1fr 1fr 1fr",
+                  gridTemplateRows: "1fr 1fr",
+                }}
+                >
                   <Image src={overlayURLs[currentImageIndex].innerCircle} />
                   <Image src={overlayURLs[currentImageIndex].IN} />
                   <Image src={overlayURLs[currentImageIndex].II} />
                   <Image src={overlayURLs[currentImageIndex].IT} />
                   <Image src={overlayURLs[currentImageIndex].IS} />
-                  </div>
+                </div>
+              )}
+              {overlayURLs[currentImageIndex].innerCircle === undefined && (
+                <div>
+                  <h1>
+                    Select regions of interest for <br/>"
+                    {stackImageURLs[stackCounter][currentImageIndex].imageName}"
+                    {/* <Image src={questionImage} /> */}
+                  </h1>
+                </div>
+              )}
             </TabPanel>
             <div
               className="image-information"

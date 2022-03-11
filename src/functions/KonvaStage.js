@@ -54,11 +54,11 @@ function KonvaStage({
   );
 
   var refArray = [
-    [0, "innerCircle", innerCircleRef],
-    [1, "IN", arcIN],
-    [2, "II", arcII],
-    [3, "IT", arcIT],
-    [4, "IS", arcIS],
+    [0, "innerCircle", innerCircleRef, 0, 0],
+    [1, "IN", arcIN, 0, 0],
+    [2, "II", arcII, 0, 0],
+    [3, "IT", arcIT, 0, 0],
+    [4, "IS", arcIS, 0, 0],
   ];
 
   try {
@@ -87,9 +87,30 @@ function KonvaStage({
         DataURLtoBlob(subRefArray[2].current.toDataURL())
       );
       mask.onload = function () {
+        if(subRefArray[1] == "II"){
+          var offsetX = - mask.width/2
+          var offsetY = 0
+        }
+        else if(subRefArray[1] === "IN"){
+          var offsetX = 0
+          var offsetY = - mask.height/2
+        }
+        else if(subRefArray[1] === "IT"){
+          var offsetX = - mask.width
+          var offsetY = - mask.height/2
+        }
+        else if(subRefArray[1] === "IS"){
+          var offsetX = - mask.width/2
+          var offsetY = - mask.height
+        }
+        else if (subRefArray[1] === "innerCircle"){
+          var offsetX = - mask.width/2
+          var offsetY = - mask.height/2
+        }
         let img = new Image();
         img.src = imageRef.current.src;
         img.onload = function () {
+          console.log(counter, subRefArray[1], mask.width, mask.height)
           var canvas = document.createElement("canvas");
           var ctx = canvas.getContext("2d", { csolorSpace: "display-p3" });
           ctx.drawImage(
@@ -107,8 +128,8 @@ function KonvaStage({
 
           ctx.drawImage(
             img,
-            attributes.x / scaleWidth - attributes.radius / scaleWidth,
-            attributes.y / scaleHeight - attributes.radius / scaleWidth,
+            (attributes.x + offsetX)/scaleWidth,
+            (attributes.y + offsetY)/scaleHeight,
             mask.width / scaleWidth,
             mask.height / scaleHeight,
             0,
@@ -219,7 +240,7 @@ function KonvaStage({
             angle={90}
             fill={fillIN}
             stroke="red"
-            strokeWidth={4}
+            strokeWidth={1}
             rotation={315}
             ref={arcIN}
           />
@@ -231,7 +252,7 @@ function KonvaStage({
             angle={90}
             fill={fillII}
             stroke="red"
-            strokeWidth={4}
+            strokeWidth={1}
             rotation={45}
             ref={arcII}
           />
@@ -243,7 +264,7 @@ function KonvaStage({
             angle={90}
             fill={fillIT}
             stroke="red"
-            strokeWidth={4}
+            strokeWidth={1}
             rotation={135}
             ref={arcIT}
           />
@@ -255,7 +276,7 @@ function KonvaStage({
             angle={90}
             fill={fillIS}
             stroke="red"
-            strokeWidth={4}
+            strokeWidth={1}
             rotation={225}
             ref={arcIS}
           />

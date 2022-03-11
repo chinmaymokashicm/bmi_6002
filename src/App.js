@@ -64,11 +64,11 @@ function App() {
         image: images[i],
       });
       newOverlayURLs.push({
-        innerCircle: newObjectURL,
-        IN: newObjectURL,
-        II: newObjectURL,
-        IT: newObjectURL,
-        IS: newObjectURL,
+        innerCircle: undefined,
+        IN: undefined,
+        II: undefined,
+        IT: undefined,
+        IS: undefined,
       });
     }
     setImageURLs(newImageURLs);
