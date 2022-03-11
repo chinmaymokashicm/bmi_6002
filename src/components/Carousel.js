@@ -293,6 +293,8 @@ const Carousel = ({
             <TabPanel value={currentTabValue} index={1}>
                   <div style={{
                     width: "100%",
+                    paddingTop: "50px",
+                    paddingLeft: "50px",
                     height: "500px",
                     display: "grid",
                     gridTemplateColumns: "1fr 1fr 1fr",

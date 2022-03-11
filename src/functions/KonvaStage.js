@@ -220,7 +220,7 @@ function KonvaStage({
             fill={fillIN}
             stroke="red"
             strokeWidth={4}
-            rotation={45}
+            rotation={315}
             ref={arcIN}
           />
           <Arc
@@ -232,7 +232,7 @@ function KonvaStage({
             fill={fillII}
             stroke="red"
             strokeWidth={4}
-            rotation={135}
+            rotation={45}
             ref={arcII}
           />
           <Arc
@@ -244,7 +244,7 @@ function KonvaStage({
             fill={fillIT}
             stroke="red"
             strokeWidth={4}
-            rotation={225}
+            rotation={135}
             ref={arcIT}
           />
           <Arc
@@ -256,7 +256,7 @@ function KonvaStage({
             fill={fillIS}
             stroke="red"
             strokeWidth={4}
-            rotation={315}
+            rotation={225}
             ref={arcIS}
           />
         </Layer>
