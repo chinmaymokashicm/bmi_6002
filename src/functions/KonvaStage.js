@@ -2,9 +2,12 @@
 // https://konvajs.org/docs/react/index.html#page-title
 // https://blog.logrocket.com/canvas-manipulation-react-konva/
 // https://konvajs.org/docs/react/Transformer.html
+// https://stackoverflow.com/questions/46557532/using-image-mask-with-globalcompositeoperation-on-konvajs
 
+import clone from "just-clone";
 import { Fragment, useEffect, useRef, useState } from "react";
-import { Stage, Layer, Circle, Transformer } from "react-konva";
+import { Stage, Layer, Circle, Transformer, Arc } from "react-konva";
+import DataURLtoBlob from "./DataURLToBlob";
 import UpdateOverlayData from "./UpdateOverlayData";
 
 function KonvaStage({
@@ -14,19 +17,49 @@ function KonvaStage({
   setOverlayData,
   currentImageIndex,
   imageRef,
+  overlayURLs,
+  setOverlayURLs,
+  stackImageURLs,
+  stackCounter,
+  imageDimensions,
 }) {
-  const circleRef = useRef();
   const transformerRef = useRef();
+  const stageRef = useRef();
 
-  var imageRefWidth = imageRef.current.width
-  var imageRefHeight = imageRef.current.height
-  // console.log("imageRefWidth", imageRefWidth)
-  // console.log("imageRefHeight", imageRefHeight)
-  console.log("imageRefWidth, width", imageRefWidth, width)
-  console.log("imageRefHeight, height", imageRefHeight, height)
-  var scaleWidth = imageRefWidth/width
-  var scaleHeight = imageRefHeight/height
-  console.log("scaleWidth, scaleHeight", scaleWidth, scaleHeight)
+  const innerCircleRef = useRef();
+  const arcIN = useRef();
+  const arcII = useRef();
+  const arcIT = useRef();
+  const arcIS = useRef();
+  var percentInner = 0.4;
+
+  var imageRefWidth = imageRef.current.width;
+  var imageRefHeight = imageRef.current.height;
+  var scaleWidth = imageRefWidth / width;
+  var scaleHeight = imageRefHeight / height;
+
+  var fillInner = "rgba(66, 191, 245, 1)";
+  var fillIN = "rgba(66, 191, 245, 1)";
+  var fillII = "rgba(66, 191, 245, 1)";
+  var fillIT = "rgba(66, 191, 245, 1)";
+  var fillIS = "rgba(66, 191, 245, 1)";
+
+  var x = Math.round(overlayData[currentImageIndex].x * scaleWidth);
+  var y = Math.round(overlayData[currentImageIndex].y * scaleHeight);
+  var radiusInner = Math.round(
+    overlayData[currentImageIndex].radius * percentInner * scaleWidth
+  );
+  var radiusOuter = Math.round(
+    overlayData[currentImageIndex].radius * scaleWidth
+  );
+
+  var refArray = [
+    [0, "innerCircle", innerCircleRef],
+    [1, "IN", arcIN],
+    [2, "II", arcII],
+    [3, "IT", arcIT],
+    [4, "IS", arcIS],
+  ];
 
   try {
     if (!isNaN(overlayData.x)) {
@@ -46,24 +79,81 @@ function KonvaStage({
     height = 100;
   }
 
+  function extractPixels(counter, currentOverlayURLs, refArray, attributes) {
+    try {
+      var subRefArray = refArray[counter];
+      let mask = new Image();
+      mask.src = URL.createObjectURL(
+        DataURLtoBlob(subRefArray[2].current.toDataURL())
+      );
+      mask.onload = function () {
+        let img = new Image();
+        img.src = imageRef.current.src;
+        img.onload = function () {
+          var canvas = document.createElement("canvas");
+          var ctx = canvas.getContext("2d", { csolorSpace: "display-p3" });
+          ctx.drawImage(
+            mask,
+            0,
+            0,
+            mask.width,
+            mask.height,
+            0,
+            0,
+            mask.width,
+            mask.height
+          );
+          ctx.globalCompositeOperation = "source-in";
+
+          ctx.drawImage(
+            img,
+            attributes.x / scaleWidth - attributes.radius / scaleWidth,
+            attributes.y / scaleHeight - attributes.radius / scaleWidth,
+            mask.width / scaleWidth,
+            mask.height / scaleHeight,
+            0,
+            0,
+            mask.width,
+            mask.height
+          );
+          console.log(counter, mask.width, mask.height, subRefArray[2].current.attrs, attributes)
+          ctx.restore();
+          // canvas.toDataURL();
+          currentOverlayURLs[subRefArray[1]] = canvas.toDataURL();
+          extractPixels(counter + 1, currentOverlayURLs, refArray, attributes);
+          return;
+        };
+      };
+    } catch (e) {
+      var tempOverlayURLs = clone(overlayURLs);
+      tempOverlayURLs[currentImageIndex] = currentOverlayURLs;
+      // console.log(attributes);
+      setOverlayURLs(tempOverlayURLs);
+      return;
+    }
+  }
+
   function onChange(e) {
     var attributes = e.target.attrs;
-    const node = circleRef.current;
+    const node = innerCircleRef.current;
     const scaleX = node.scaleX();
     var overlayDataObj = {
-      x: (Math.round(attributes.x/scaleWidth)),
-      y: (Math.round(attributes.y/scaleHeight)),
-      radius: (Math.round(attributes.radius * scaleX/scaleWidth)),
+      x: Math.round(attributes.x / scaleWidth),
+      y: Math.round(attributes.y / scaleHeight),
+      radius: Math.round(
+        (attributes.radius * scaleX) / (scaleWidth * percentInner)
+      ),
     };
     node.scaleX(1);
     node.scaleY(1);
-    console.log(overlayDataObj);
     UpdateOverlayData(
       overlayData,
       setOverlayData,
       overlayDataObj,
       currentImageIndex
     );
+    var currentOverlayURLs = clone(overlayURLs)[currentImageIndex];
+    extractPixels(0, currentOverlayURLs, refArray, attributes);
   }
 
   return (
@@ -72,28 +162,22 @@ function KonvaStage({
         width={imageRefWidth}
         height={imageRefHeight}
         onMouseDown={(e) => {
-          transformerRef.current.nodes([circleRef.current]);
-          transformerRef.current.getLayer().batchDraw();
+          if (e.target.className !== undefined) {
+            transformerRef.current.nodes([
+              innerCircleRef.current,
+              arcIN.current,
+              arcII.current,
+              arcIT.current,
+              arcIS.current,
+            ]);
+            transformerRef.current.getLayer().batchDraw();
+          } else {
+            transformerRef.current.nodes([]);
+          }
         }}
+        ref={stageRef}
       >
         <Layer>
-          <Circle
-            x={Math.round(overlayData[currentImageIndex].x * scaleWidth)}
-            y={Math.round(overlayData[currentImageIndex].y * scaleHeight)}
-            radius={Math.round(overlayData[currentImageIndex].radius * scaleWidth)} //How should the radius be scaled? scaleWidth = scaleHeight
-            fill="rgba(166, 109, 86, 0.1)"
-            stroke="red"
-            strokeWidth={5}
-            shadowBlur={5}
-            draggable={true}
-            resizable={true}
-            ref={circleRef}
-            onClick={onChange}
-            onDragStart={onChange}
-            onDragEnd={onChange}
-            onDragMove={onChange}
-            onTransformEnd={onChange}
-          />
           <Transformer
             ref={transformerRef}
             boundBoxFunc={(oldBox, newBox) => {
@@ -113,13 +197,67 @@ function KonvaStage({
             rotateEnabled={false}
           />
           <Circle
-            x={Math.round(overlayData[currentImageIndex].x * scaleWidth)}
-            y={Math.round(overlayData[currentImageIndex].y * scaleHeight)}
-            radius={Math.round(overlayData[currentImageIndex].radius * scaleWidth * 0.5)} //How should the radius be scaled? scaleWidth = scaleHeight
-            fill="rgba(166, 109, 86, 0.1)"
-            stroke="yellow"
-            strokeWidth={5}
-            // zIndex={0}
+            x={x}
+            y={y}
+            radius={radiusInner} //How should the radius be scaled? scaleWidth = scaleHeight
+            fill={fillInner}
+            shadowBlur={5}
+            draggable={true}
+            resizable={true}
+            ref={innerCircleRef}
+            onClick={onChange}
+            onDragStart={onChange}
+            onDragEnd={onChange}
+            onDragMove={onChange}
+            onTransformEnd={onChange}
+          />
+          <Arc
+            x={x}
+            y={y}
+            innerRadius={radiusInner}
+            outerRadius={radiusOuter}
+            angle={90}
+            fill={fillIN}
+            stroke="red"
+            strokeWidth={4}
+            rotation={45}
+            ref={arcIN}
+          />
+          <Arc
+            x={x}
+            y={y}
+            innerRadius={radiusInner}
+            outerRadius={radiusOuter}
+            angle={90}
+            fill={fillII}
+            stroke="red"
+            strokeWidth={4}
+            rotation={135}
+            ref={arcII}
+          />
+          <Arc
+            x={x}
+            y={y}
+            innerRadius={radiusInner}
+            outerRadius={radiusOuter}
+            angle={90}
+            fill={fillIT}
+            stroke="red"
+            strokeWidth={4}
+            rotation={225}
+            ref={arcIT}
+          />
+          <Arc
+            x={x}
+            y={y}
+            innerRadius={radiusInner}
+            outerRadius={radiusOuter}
+            angle={90}
+            fill={fillIS}
+            stroke="red"
+            strokeWidth={4}
+            rotation={315}
+            ref={arcIS}
           />
         </Layer>
       </Stage>

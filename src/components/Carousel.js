@@ -27,6 +27,8 @@ const Carousel = ({
   overlayData,
   setOverlayData,
   setImgDataArray,
+  overlayURLs,
+  setOverlayURLs
 }) => {
   const [isCarouselVisible, setIsCarouselVisible] = useState(true);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -276,6 +278,11 @@ const Carousel = ({
                             setOverlayData={setOverlayData}
                             currentImageIndex={currentImageIndex}
                             imageRef={imageRef}
+                            overlayURLs={overlayURLs}
+                            setOverlayURLs={setOverlayURLs}
+                            stackImageURLs={stackImageURLs}
+                            stackCounter={stackCounter}
+                            imageDimensions={imageDimensions}
                           />
                         </div>
                       )}
@@ -284,13 +291,19 @@ const Carousel = ({
               </div>
             </TabPanel>
             <TabPanel value={currentTabValue} index={1}>
-              <div className="image-view">
-                <div className="image-display">
-                  <div className="image-frame">
-                    Circles
-                    </div>
-                </div>
-              </div>
+                  <div style={{
+                    width: "100%",
+                    height: "500px",
+                    display: "grid",
+                    gridTemplateColumns: "1fr 1fr 1fr",
+                    gridTemplateRows: "1fr 1fr"
+                  }}>
+                  <Image src={overlayURLs[currentImageIndex].innerCircle} />
+                  <Image src={overlayURLs[currentImageIndex].IN} />
+                  <Image src={overlayURLs[currentImageIndex].II} />
+                  <Image src={overlayURLs[currentImageIndex].IT} />
+                  <Image src={overlayURLs[currentImageIndex].IS} />
+                  </div>
             </TabPanel>
             <div
               className="image-information"
