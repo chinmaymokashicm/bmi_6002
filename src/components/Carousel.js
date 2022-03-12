@@ -14,6 +14,7 @@ import SaveOverlayURLsToStack from "../functions/SaveOverlayURLsToStack";
 import KonvaStage from "../functions/KonvaStage";
 import { Tabs, Tab, AppBar } from "@material-ui/core";
 import TabPanel from "./TabPanel";
+import ErrorBoundary from "../functions/ErrorBoundary";
 
 const Carousel = ({
   imageRef,
@@ -30,15 +31,19 @@ const Carousel = ({
   overlayData,
   setOverlayData,
   setImgDataArray,
+  overlayURLs,
+  setOverlayURLs,
   stackOverlayURLs,
   setStackOverlayURLs,
   currentTabValue,
-  setCurrentTabValue
+  setCurrentTabValue,
 }) => {
-  const clonedStackOverlayURLs = clone(stackOverlayURLs);
-  const [overlayURLs, setOverlayURLs] = useState(
-    clonedStackOverlayURLs[stackCounter]
-  );
+  // const clonedStackOverlayURLs = clone(stackOverlayURLs);
+  // const [overlayURLs, setOverlayURLs] = useState(
+  //   clonedStackOverlayURLs[stackCounter]
+  // );
+  // console.log(overlayURLs);
+  // console.log(stackImageURLs)
 
   useEffect(() => {
     setOverlayURLs(stackOverlayURLs[stackCounter]);
@@ -53,7 +58,6 @@ const Carousel = ({
   const [croppedImageObject, setCroppedImageObject] = useState(null);
   const [isCroppedSectionVisible, setIsCroppedSectionVisible] = useState(false);
   const [isOverlayVisible, setIsOverlayVisible] = useState(false);
-  
 
   let carouselStyle = {
     gridTemplateColumns: "[v1] 800px [v2] 1fr [v3]",
@@ -144,19 +148,25 @@ const Carousel = ({
 
   useEffect(() => {
     updateOverlayTable();
+    // console.log(overlayURLs);
     if (overlayURLs.every((obj) => obj.innerCircle !== undefined)) {
-      var tempStackOverlayURLs = clone(stackOverlayURLs)
-      tempStackOverlayURLs[stackCounter] = overlayURLs
-      setStackOverlayURLs(tempStackOverlayURLs)
-      
-      console.log("Ready to grab pixel values!");
-      GetPixels(overlayURLs, setImgDataArray)
     }
   }, [overlayData]);
 
   useEffect(() => {
     updateOverlayTable();
-    console.log(overlayURLs)
+    // console.log(overlayURLs);
+    if (overlayURLs.every((obj) => obj.innerCircle !== undefined)) {
+      // SaveOverlayURLsToStack(overlayURLs, stackOverlayURLs, setStackOverlayURLs, stackCounter)
+      // setStackCounter(stackCounter + 1)
+      var tempStackOverlayURLs = clone(stackOverlayURLs);
+      tempStackOverlayURLs[stackCounter] = overlayURLs;
+      setStackOverlayURLs(tempStackOverlayURLs);
+
+      console.log("Ready to grab pixel values!");
+      console.log(overlayURLs)
+      GetPixels(clone(overlayURLs), setImgDataArray);
+    }
   }, [overlayURLs]);
 
   useEffect(() => {

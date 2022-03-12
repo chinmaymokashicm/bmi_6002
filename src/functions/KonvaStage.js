@@ -139,13 +139,13 @@ function KonvaStage({
             mask.width,
             mask.height
           );
-          console.log(
-            counter,
-            mask.width,
-            mask.height,
-            subRefArray[2].current.attrs,
-            attributes
-          );
+          // console.log(
+          //   counter,
+          //   mask.width,
+          //   mask.height,
+          //   subRefArray[2].current.attrs,
+          //   attributes
+          // );
           ctx.restore();
           overlayURLsCurrentIndex[subRefArray[1]] = URL.createObjectURL(DataURLtoBlob(canvas.toDataURL()));
           extractPixels(

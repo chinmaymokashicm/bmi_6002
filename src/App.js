@@ -47,9 +47,11 @@ function App() {
   const [stackOverlayURLs, setStackOverlayURLs] = useState({
     0: defaultOverlayURLarray,
   });
+
   
   const [stackData, setStackData] = useState({ 0: [] });
   const [stackCounter, setStackCounter] = useState(0);
+  const [overlayURLs, setOverlayURLs] = useState(stackOverlayURLs[stackCounter])
 
   useEffect(() => {
     if (images.length < 1 || images.length > 4) {
@@ -146,6 +148,7 @@ function App() {
       tempOverlayURLs[stackCounter] = tempOverlayURLs[Object.keys(stackOverlayURLs).length - 1]
       setStackOverlayURLs(tempOverlayURLs)
     }
+    setOverlayURLs(stackOverlayURLs[stackCounter])
 
     // console.log("stackCounter updated to ", stackCounter)
     setIsCounterChangeOnButton(false);
@@ -334,6 +337,8 @@ function App() {
         overlayData={overlayData}
         setOverlayData={setOverlayData}
         setImgDataArray={setImgDataArray}
+        overlayURLs={overlayURLs}
+        setOverlayURLs={setOverlayURLs}
         stackOverlayURLs={stackOverlayURLs}
         setStackOverlayURLs={setStackOverlayURLs}
         currentTabValue={currentTabValue}
@@ -353,6 +358,9 @@ function App() {
       setStackData={setStackData}
       overlayData={overlayData}
       setOverlayData={setOverlayData}
+      setOverlayURLs={setOverlayURLs}
+      stackOverlayURLs={stackOverlayURLs}
+      setStackOverlayURLs={setStackOverlayURLs}
     />
   );
   const componentML = <div>Machine Learning</div>;
@@ -411,6 +419,9 @@ function App() {
             console.log(stackOverlayURLs);
           }}
         />
+        <Button text="overlayURLs" onClick={() => {
+          console.log(overlayURLs)
+        }} />
       </div>
       <div className="component-select">
         <Section

@@ -27,6 +27,9 @@ const Processing = ({
   setStackData,
   overlayData,
   setOverlayData,
+  setOverlayURLs,
+  stackOverlayURLs,
+  setStackOverlayURLs
 }) => {
   // Setting up the appearance
   const animatedComponents = makeAnimated();
@@ -37,7 +40,7 @@ const Processing = ({
       console.log("imgDataArray is still empty?")
       setIsSubmitButtonDisabled(true);
     } else {
-      console.log("Here")
+      console.log("imgDataArray is not empty!")
       setIsSubmitButtonDisabled(false);
     }
   }, [imgDataArray]);
@@ -125,17 +128,20 @@ const Processing = ({
       var objOverlayData = {};
       var functionOutput = currentFunction(
         imgDataArray,
-        stackImageURLs,
-        setStackImageURLs,
+        stackOverlayURLs,
+        setStackOverlayURLs,
         stackCounter,
-        setImgDataArray
+        setImgDataArray,
+        setOverlayURLs
       );
-      for (var i = 0; i < stackImageURLs[stackCounter].length; i++) {
+      var greenTick = "\u{2705}"
+      var redCross = "\u{274C}"
+      for (var i = 0; i < stackOverlayURLs[stackCounter].length; i++) {
         objFunctionData[`Image ${i + 1}`] = functionOutput[i];
         if (functionOutput[i] === true) {
-          objFunctionData[`Image ${i + 1}`] = "\u{2705}"; //Green tick emoji
+          objFunctionData[`Image ${i + 1}`] = greenTick; //Green tick emoji
         } else if (functionOutput[i] === false) {
-          objFunctionData[`Image ${i + 1}`] = "\u{274C}"; //Red cross emoji
+          objFunctionData[`Image ${i + 1}`] = redCross; //Red cross emoji
         }
         objOverlayData[`Image ${i + 1}`] = overlayData[i];
       }
@@ -144,8 +150,8 @@ const Processing = ({
       objFunctionData["Average"] =
         typeof outputAverage === "boolean"
           ? outputAverage === true
-            ? "\u{2705}"
-            : "\u{274C}"
+            ? greenTick
+            : redCross
           : outputAverage;
       try {
         objFunctionData["id"] = stackData[stackCounter].length + 1;
@@ -158,6 +164,13 @@ const Processing = ({
         overlay: objOverlayData,
       };
 
+      SaveImageURLsToStack(
+        stackImageURLs[stackCounter],
+        stackImageURLs,
+        setStackImageURLs,
+        stackCounter,
+        setImgDataArray
+      );
       // console.log("Saving data to stack");
       SaveDataToStack(objData, stackData, setStackData, stackCounter);
       setStackCounter(stackCounter + 1);
