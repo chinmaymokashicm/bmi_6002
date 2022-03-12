@@ -10,7 +10,6 @@ import Processing from "./components/Processing";
 import Float from "./components/Float";
 import Button from "./components/Button";
 
-import GetPixels from "./functions/GetPixels";
 import clone from "just-clone";
 import GetImageDimensions from "./functions/GetImageDimensions";
 import UpdateImageDimensions from "./functions/UpdateImageDimensions";
@@ -37,15 +36,18 @@ function App() {
   const [stackImageURLs, setStackImageURLs] = useState({
     0: defaultImageURLarray,
   });
-  const [overlayURLs, setOverlayURLs] = useState([
-    {
-      innerCircle: defaultImageURLarray.objectURL,
-      IN: defaultImageURLarray.objectURL,
-      II: defaultImageURLarray.objectURL,
-      IT: defaultImageURLarray.objectURL,
-      IS: defaultImageURLarray.objectURL,
-    },
-  ]);
+
+  const defaultOverlayURLarray = new Array(4).fill({
+    innerCircle: defaultImageURLarray.objectURL,
+    IN: defaultImageURLarray.objectURL,
+    II: defaultImageURLarray.objectURL,
+    IT: defaultImageURLarray.objectURL,
+    IS: defaultImageURLarray.objectURL,
+  })
+  const [stackOverlayURLs, setStackOverlayURLs] = useState({
+    0: defaultOverlayURLarray,
+  });
+  
   const [stackData, setStackData] = useState({ 0: [] });
   const [stackCounter, setStackCounter] = useState(0);
 
@@ -56,7 +58,7 @@ function App() {
     const newImageURLs = [];
     const newOverlayURLs = [];
     for (var i = 0; i < images.length; i++) {
-      var newObjectURL = URL.createObjectURL(images[i])
+      var newObjectURL = URL.createObjectURL(images[i]);
       newImageURLs.push({
         objectURL: newObjectURL,
         imageName: imageNames[i],
@@ -71,14 +73,17 @@ function App() {
         IS: undefined,
       });
     }
+    console.log(newOverlayURLs)
     setImageURLs(newImageURLs);
     setStackImageURLs({
       [stackCounter]: newImageURLs,
       [stackCounter + 1]: newImageURLs,
     }); //Initialize stack
-    setOverlayURLs(newOverlayURLs);
-    // setIsCounterChangeOnButton(true)
-    // setStackCounter(stackCounter + 1)
+    // Initialize overlay URLs
+    setStackOverlayURLs({
+      [stackCounter]: newOverlayURLs,
+      // [stackCounter + 1]: newOverlayURLs
+    })
     // Initialize overlay data
     setOverlayData(
       new Array(images.length).fill({
@@ -134,6 +139,14 @@ function App() {
     if (imageRef.current !== undefined) {
       // updateOverlayDimensions();
     }
+
+    if(stackOverlayURLs[stackCounter] === undefined && !isCounterChangeOnButton){
+      //If there are no new overlays in this counter, just copy the previous one
+      var tempOverlayURLs = stackOverlayURLs
+      tempOverlayURLs[stackCounter] = tempOverlayURLs[Object.keys(stackOverlayURLs).length - 1]
+      setStackOverlayURLs(tempOverlayURLs)
+    }
+
     // console.log("stackCounter updated to ", stackCounter)
     setIsCounterChangeOnButton(false);
   }, [stackCounter]);
@@ -148,10 +161,7 @@ function App() {
 
   useEffect(() => {
     if (imageRef.current !== undefined) {
-      // updateOverlayDimensions();
       console.log("Change in imageRef.current");
-      // GetPixels(stackImageURLs[stackCounter], setImgDataArray, imageDimensions);
-      // console.log(imageRef.current.width, imageRef.current.height);
     }
   }, [imageRef.current]);
 
@@ -174,9 +184,6 @@ function App() {
         ),
       });
       setOverlayData(tempOverlayData);
-    }
-    if (imageDimensions.length > 0) {
-      GetPixels(stackImageURLs[stackCounter], setImgDataArray, imageDimensions);
     }
   }, [imageDimensions]);
 
@@ -230,7 +237,6 @@ function App() {
   function continueButtonPreview(e) {
     setExpandedProcessing(true);
     // setExpandedPreview(false);
-    // GetPixels(stackImageURLs[stackCounter], setImgDataArray, imageDimensions);
   }
   const componentFooterPreview = (
     <Footer continueOnClick={continueButtonPreview} />
@@ -326,8 +332,8 @@ function App() {
         overlayData={overlayData}
         setOverlayData={setOverlayData}
         setImgDataArray={setImgDataArray}
-        overlayURLs={overlayURLs}
-        setOverlayURLs={setOverlayURLs}
+        stackOverlayURLs={stackOverlayURLs}
+        setStackOverlayURLs={setStackOverlayURLs}
       />
     </div>
   );
@@ -396,9 +402,9 @@ function App() {
           }}
         />
         <Button
-          text="overlayURLs"
+          text="stackOverlayURLs"
           onClick={() => {
-            console.log(overlayURLs);
+            console.log(stackOverlayURLs);
           }}
         />
       </div>

@@ -23,6 +23,7 @@ function KonvaStage({
   stackCounter,
   imageDimensions,
 }) {
+
   const transformerRef = useRef();
   const stageRef = useRef();
 
@@ -79,7 +80,12 @@ function KonvaStage({
     height = 100;
   }
 
-  function extractPixels(counter, currentOverlayURLs, refArray, attributes) {
+  function extractPixels(
+    counter,
+    overlayURLsCurrentIndex,
+    refArray,
+    attributes
+  ) {
     try {
       var subRefArray = refArray[counter];
       let mask = new Image();
@@ -87,30 +93,26 @@ function KonvaStage({
         DataURLtoBlob(subRefArray[2].current.toDataURL())
       );
       mask.onload = function () {
-        if(subRefArray[1] == "II"){
-          var offsetX = - mask.width/2
-          var offsetY = 0
-        }
-        else if(subRefArray[1] === "IN"){
-          var offsetX = 0
-          var offsetY = - mask.height/2
-        }
-        else if(subRefArray[1] === "IT"){
-          var offsetX = - mask.width
-          var offsetY = - mask.height/2
-        }
-        else if(subRefArray[1] === "IS"){
-          var offsetX = - mask.width/2
-          var offsetY = - mask.height
-        }
-        else if (subRefArray[1] === "innerCircle"){
-          var offsetX = - mask.width/2
-          var offsetY = - mask.height/2
+        if (subRefArray[1] == "II") {
+          var offsetX = -mask.width / 2;
+          var offsetY = 0;
+        } else if (subRefArray[1] === "IN") {
+          var offsetX = 0;
+          var offsetY = -mask.height / 2;
+        } else if (subRefArray[1] === "IT") {
+          var offsetX = -mask.width;
+          var offsetY = -mask.height / 2;
+        } else if (subRefArray[1] === "IS") {
+          var offsetX = -mask.width / 2;
+          var offsetY = -mask.height;
+        } else if (subRefArray[1] === "innerCircle") {
+          var offsetX = -mask.width / 2;
+          var offsetY = -mask.height / 2;
         }
         let img = new Image();
         img.src = imageRef.current.src;
         img.onload = function () {
-          console.log(counter, subRefArray[1], mask.width, mask.height)
+          // console.log(counter, subRefArray[1], mask.width, mask.height);
           var canvas = document.createElement("canvas");
           var ctx = canvas.getContext("2d", { csolorSpace: "display-p3" });
           ctx.drawImage(
@@ -128,8 +130,8 @@ function KonvaStage({
 
           ctx.drawImage(
             img,
-            (attributes.x + offsetX)/scaleWidth,
-            (attributes.y + offsetY)/scaleHeight,
+            (attributes.x + offsetX) / scaleWidth,
+            (attributes.y + offsetY) / scaleHeight,
             mask.width / scaleWidth,
             mask.height / scaleHeight,
             0,
@@ -137,19 +139,28 @@ function KonvaStage({
             mask.width,
             mask.height
           );
-          console.log(counter, mask.width, mask.height, subRefArray[2].current.attrs, attributes)
+          console.log(
+            counter,
+            mask.width,
+            mask.height,
+            subRefArray[2].current.attrs,
+            attributes
+          );
           ctx.restore();
-          // canvas.toDataURL();
-          currentOverlayURLs[subRefArray[1]] = canvas.toDataURL();
-          extractPixels(counter + 1, currentOverlayURLs, refArray, attributes);
+          overlayURLsCurrentIndex[subRefArray[1]] = URL.createObjectURL(DataURLtoBlob(canvas.toDataURL()));
+          extractPixels(
+            counter + 1,
+            overlayURLsCurrentIndex,
+            refArray,
+            attributes
+          );
           return;
         };
       };
     } catch (e) {
-      var tempOverlayURLs = clone(overlayURLs);
-      tempOverlayURLs[currentImageIndex] = currentOverlayURLs;
-      // console.log(attributes);
-      setOverlayURLs(tempOverlayURLs);
+      var tempOverlayURLs = clone(overlayURLs)
+      tempOverlayURLs[currentImageIndex] = overlayURLsCurrentIndex;
+      setOverlayURLs(tempOverlayURLs)
       return;
     }
   }
@@ -173,8 +184,8 @@ function KonvaStage({
       overlayDataObj,
       currentImageIndex
     );
-    var currentOverlayURLs = clone(overlayURLs)[currentImageIndex];
-    extractPixels(0, currentOverlayURLs, refArray, attributes);
+    var overlayURLsCurrentIndex = clone(overlayURLs)[currentImageIndex];
+    extractPixels(0, overlayURLsCurrentIndex, refArray, attributes);
   }
 
   return (

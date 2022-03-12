@@ -1,6 +1,4 @@
 import clone from "just-clone";
-import GetImageDimensions from "./GetImageDimensions";
-import GetPixels from "./GetPixels";
 
 function SaveImageURLsToStack(
   newImageURLs,

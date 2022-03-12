@@ -41,12 +41,6 @@ function VesselDensityPixelCount(
     arrayPixelDensity.push(Math.round(pixelDensityAverage));
     // console.log(arrayPixelDensity)
 
-    GetPixels(
-      stackImageURLs[stackCounter],
-      setImgDataArray,
-      GetImageDimensions(stackImageURLs[stackCounter])
-    );
-
     SaveImageURLsToStack(
       stackImageURLs[stackCounter],
       stackImageURLs,

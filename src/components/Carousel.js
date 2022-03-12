@@ -6,10 +6,11 @@ import clone from "just-clone";
 import Image from "./Image";
 import Button from "./Button";
 
-import questionImage from "../question.jpeg"
+import questionImage from "../question.jpeg";
 
 import GetPixels from "../functions/GetPixels";
 import SaveImageURLsToStack from "../functions/SaveImageURLsToStack";
+import SaveOverlayURLsToStack from "../functions/SaveOverlayURLsToStack";
 import KonvaStage from "../functions/KonvaStage";
 import { Tabs, Tab, AppBar } from "@material-ui/core";
 import TabPanel from "./TabPanel";
@@ -29,9 +30,18 @@ const Carousel = ({
   overlayData,
   setOverlayData,
   setImgDataArray,
-  overlayURLs,
-  setOverlayURLs,
+  stackOverlayURLs,
+  setStackOverlayURLs,
 }) => {
+  const clonedStackOverlayURLs = clone(stackOverlayURLs);
+  const [overlayURLs, setOverlayURLs] = useState(
+    clonedStackOverlayURLs[stackCounter]
+  );
+
+  useEffect(() => {
+    setOverlayURLs(stackOverlayURLs[stackCounter]);
+  }, [stackOverlayURLs]);
+
   const [isCarouselVisible, setIsCarouselVisible] = useState(true);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [crop, setCrop] = useState();
@@ -103,20 +113,24 @@ const Carousel = ({
       imageDimensions[0] !== undefined
     ) {
       var rows = [];
-      for (let i = 0; i < stackImageURLs[stackCounter].length; i++) {
+      for (
+        let imageCounter = 0;
+        imageCounter < stackImageURLs[stackCounter].length;
+        imageCounter++
+      ) {
         var row = [
-          i + 1,
-          stackImageURLs[stackCounter][i].imageName,
+          imageCounter + 1,
+          stackImageURLs[stackCounter][imageCounter].imageName,
           // Math.floor(
           //   Math.log(stackImageURLs[stackCounter][i].image.size) /
           //     Math.log(1024)
           // ) + " KB",
-          imageDimensions[i].width,
-          imageDimensions[i].height,
-          overlayData[i].x,
-          overlayData[i].y,
-          overlayData[i].radius,
-          overlayURLs[i].innerCircle !== undefined
+          imageDimensions[imageCounter].width,
+          imageDimensions[imageCounter].height,
+          overlayData[imageCounter].x,
+          overlayData[imageCounter].y,
+          overlayData[imageCounter].radius,
+          overlayURLs[imageCounter].innerCircle !== undefined
             ? "Selected"
             : "Not selected",
         ];
@@ -132,6 +146,17 @@ const Carousel = ({
 
   useEffect(() => {
     updateOverlayTable();
+    console.log(overlayURLs)
+    if (overlayURLs.every((obj) => obj.innerCircle !== undefined)) {
+      // SaveOverlayURLsToStack(
+      //   overlayURLs,
+      //   stackOverlayURLs,
+      //   setStackOverlayURLs,
+      //   stackCounter
+      // );
+      
+      console.log("Ready to grab pixel values!");
+    }
   }, [overlayURLs]);
 
   useEffect(() => {
@@ -303,23 +328,23 @@ const Carousel = ({
             <TabPanel value={currentTabValue} index={1}>
               {overlayURLs[currentImageIndex].innerCircle !== undefined && (
                 <div
-                style={{
-                  borderColor: "azure",
-                  gridColumn: "v1 / v3",
-                  gridRow: "h1 / h2",
-                  backgroundColor: "blanchedalmond",
-                  height: "100%",
-                  overflow: "hidden",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  width: "100%",
-                  paddingTop: "50px",
-                  paddingLeft: "50px",
-                  height: "500px",
-                  display: "grid",
-                  gridTemplateColumns: "1fr 1fr 1fr",
-                  gridTemplateRows: "1fr 1fr",
-                }}
+                  style={{
+                    borderColor: "azure",
+                    gridColumn: "v1 / v3",
+                    gridRow: "h1 / h2",
+                    backgroundColor: "blanchedalmond",
+                    height: "100%",
+                    overflow: "hidden",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    width: "100%",
+                    paddingTop: "50px",
+                    paddingLeft: "50px",
+                    height: "500px",
+                    display: "grid",
+                    gridTemplateColumns: "1fr 1fr 1fr",
+                    gridTemplateRows: "1fr 1fr",
+                  }}
                 >
                   <Image src={overlayURLs[currentImageIndex].innerCircle} />
                   <Image src={overlayURLs[currentImageIndex].IN} />
@@ -331,13 +356,14 @@ const Carousel = ({
               {overlayURLs[currentImageIndex].innerCircle === undefined && (
                 <div>
                   <h1>
-                    Select regions of interest for <br/>"
+                    Select regions of interest for <br />"
                     {stackImageURLs[stackCounter][currentImageIndex].imageName}"
                     {/* <Image src={questionImage} /> */}
                   </h1>
                 </div>
               )}
             </TabPanel>
+
             <div
               className="image-information"
               style={{
