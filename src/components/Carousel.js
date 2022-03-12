@@ -148,14 +148,12 @@ const Carousel = ({
     updateOverlayTable();
     console.log(overlayURLs)
     if (overlayURLs.every((obj) => obj.innerCircle !== undefined)) {
-      // SaveOverlayURLsToStack(
-      //   overlayURLs,
-      //   stackOverlayURLs,
-      //   setStackOverlayURLs,
-      //   stackCounter
-      // );
+      var tempStackOverlayURLs = clone(stackOverlayURLs)
+      tempStackOverlayURLs[stackCounter] = overlayURLs
+      setStackOverlayURLs(tempStackOverlayURLs)
       
       console.log("Ready to grab pixel values!");
+      GetPixels(overlayURLs, setImgDataArray)
     }
   }, [overlayURLs]);
 
