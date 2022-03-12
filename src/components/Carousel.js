@@ -142,11 +142,6 @@ const Carousel = ({
 
   useEffect(() => {
     updateOverlayTable();
-  }, [overlayData]);
-
-  useEffect(() => {
-    updateOverlayTable();
-    console.log(overlayURLs)
     if (overlayURLs.every((obj) => obj.innerCircle !== undefined)) {
       var tempStackOverlayURLs = clone(stackOverlayURLs)
       tempStackOverlayURLs[stackCounter] = overlayURLs
@@ -155,6 +150,11 @@ const Carousel = ({
       console.log("Ready to grab pixel values!");
       GetPixels(overlayURLs, setImgDataArray)
     }
+  }, [overlayData]);
+
+  useEffect(() => {
+    updateOverlayTable();
+    console.log(overlayURLs)
   }, [overlayURLs]);
 
   useEffect(() => {
