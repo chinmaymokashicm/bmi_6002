@@ -29,7 +29,8 @@ const Processing = ({
   setOverlayData,
   setOverlayURLs,
   stackOverlayURLs,
-  setStackOverlayURLs
+  setStackOverlayURLs,
+  setCurrentTabValue
 }) => {
   // Setting up the appearance
   const animatedComponents = makeAnimated();
@@ -174,6 +175,7 @@ const Processing = ({
       // console.log("Saving data to stack");
       SaveDataToStack(objData, stackData, setStackData, stackCounter);
       setStackCounter(stackCounter + 1);
+      setCurrentTabValue(1)
     } catch (e) {
       console.log(e);
     }

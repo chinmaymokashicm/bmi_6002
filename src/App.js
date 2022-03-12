@@ -361,6 +361,7 @@ function App() {
       setOverlayURLs={setOverlayURLs}
       stackOverlayURLs={stackOverlayURLs}
       setStackOverlayURLs={setStackOverlayURLs}
+      setCurrentTabValue={setCurrentTabValue}
     />
   );
   const componentML = <div>Machine Learning</div>;
