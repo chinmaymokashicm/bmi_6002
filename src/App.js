@@ -159,6 +159,8 @@ function App() {
 
   const [overlayData, setOverlayData] = useState([]);
 
+  const [currentTabValue, setCurrentTabValue] = useState(0);
+
   useEffect(() => {
     if (imageRef.current !== undefined) {
       console.log("Change in imageRef.current");
@@ -334,6 +336,8 @@ function App() {
         setImgDataArray={setImgDataArray}
         stackOverlayURLs={stackOverlayURLs}
         setStackOverlayURLs={setStackOverlayURLs}
+        currentTabValue={currentTabValue}
+        setCurrentTabValue={setCurrentTabValue}
       />
     </div>
   );

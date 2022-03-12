@@ -238,9 +238,9 @@ function KonvaStage({
             resizable={true}
             ref={innerCircleRef}
             onClick={onChange}
-            onDragStart={onChange}
+            // onDragStart={onChange}
             onDragEnd={onChange}
-            onDragMove={onChange}
+            // onDragMove={onChange}
             onTransformEnd={onChange}
           />
           <Arc

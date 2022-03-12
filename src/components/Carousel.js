@@ -32,6 +32,8 @@ const Carousel = ({
   setImgDataArray,
   stackOverlayURLs,
   setStackOverlayURLs,
+  currentTabValue,
+  setCurrentTabValue
 }) => {
   const clonedStackOverlayURLs = clone(stackOverlayURLs);
   const [overlayURLs, setOverlayURLs] = useState(
@@ -51,7 +53,7 @@ const Carousel = ({
   const [croppedImageObject, setCroppedImageObject] = useState(null);
   const [isCroppedSectionVisible, setIsCroppedSectionVisible] = useState(false);
   const [isOverlayVisible, setIsOverlayVisible] = useState(false);
-  const [currentTabValue, setCurrentTabValue] = useState(0);
+  
 
   let carouselStyle = {
     gridTemplateColumns: "[v1] 800px [v2] 1fr [v3]",
