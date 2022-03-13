@@ -312,7 +312,7 @@ function App() {
         }}
         disabled={!isRedoVisible}
       />
-      {`${stackCounter}/${Object.keys(stackImageURLs).length - 1}`}
+      {/* {`${stackCounter}/${Object.keys(stackImageURLs).length - 1}`} */}
     </div>
   );
   const componentSelect = <ImageBrowser onImageChange={onImageChange} />;
@@ -369,7 +369,14 @@ function App() {
 
   return (
     <div className="App">
-      <div className="component-temp">
+      <div className="undo-redo" style={{
+        position: "fixed",
+        top: "50px",
+        right: "50px"
+      }}>
+      {componentUndoRedo}
+      </div>
+      {/* <div className="component-temp">
         {componentUndoRedo}
         <Button
           text="stackData"
@@ -423,7 +430,7 @@ function App() {
         <Button text="overlayURLs" onClick={() => {
           console.log(overlayURLs)
         }} />
-      </div>
+      </div> */}
       <div className="component-select">
         <Section
           header="Select image(s)"
