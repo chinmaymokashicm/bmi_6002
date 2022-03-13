@@ -356,11 +356,11 @@ const Carousel = ({
                     gridTemplateRows: "1fr 1fr",
                   }}
                 >
-                  <Image src={overlayURLs[currentImageIndex].innerCircle} />
-                  <Image src={overlayURLs[currentImageIndex].IN} />
-                  <Image src={overlayURLs[currentImageIndex].II} />
-                  <Image src={overlayURLs[currentImageIndex].IT} />
-                  <Image src={overlayURLs[currentImageIndex].IS} />
+                  <Image src={overlayURLs[currentImageIndex].innerCircle} title="innerCircle"/>
+                  <Image src={overlayURLs[currentImageIndex].IN} title="IN"/>
+                  <Image src={overlayURLs[currentImageIndex].II} title="II"/>
+                  <Image src={overlayURLs[currentImageIndex].IT} title="IT"/>
+                  <Image src={overlayURLs[currentImageIndex].IS} title="IS"/>
                 </div>
               )}
               {overlayURLs[currentImageIndex].innerCircle === undefined && (
