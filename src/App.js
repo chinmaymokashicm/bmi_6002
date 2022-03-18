@@ -436,7 +436,11 @@ function App() {
   }, [previewSectionRef]);
 
   return (
-    <div className="App">
+    <div className="App" tabIndex="1" onKeyDown={(e) => {
+      if(e.key === "i"){
+        setIsHelpVisible(!isHelpVisible)
+      }
+    }}>
       {componentHelp}
       <div
         className="undo-redo"
