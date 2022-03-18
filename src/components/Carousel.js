@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import ReactCrop from "react-image-crop";
 import "react-image-crop/dist/ReactCrop.css";
 import clone from "just-clone";
+import Select from "react-select";
 
 import Image from "./Image";
 import Button from "./Button";
@@ -19,6 +20,7 @@ import ResetStackData from "../functions/ResetStackData";
 
 const Carousel = ({
   imageRef,
+  previewSectionRef,
   stackImageURLs,
   setStackImageURLs,
   stackCounter,
@@ -45,6 +47,7 @@ const Carousel = ({
     setOverlayURLs(stackOverlayURLs[stackCounter]);
   }, [stackOverlayURLs]);
 
+
   const [isCarouselVisible, setIsCarouselVisible] = useState(true);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [crop, setCrop] = useState();
@@ -54,6 +57,27 @@ const Carousel = ({
   const [croppedImageObject, setCroppedImageObject] = useState(null);
   const [isCroppedSectionVisible, setIsCroppedSectionVisible] = useState(false);
   const [isOverlayVisible, setIsOverlayVisible] = useState(false);
+
+  const labelsObj = [
+    {
+      label: "Left Superficial",
+      value: "LS",
+    },
+    {
+      label: "Left Deep",
+      value: "LD",
+    },
+    {
+      label: "Right Superficial",
+      value: "RS",
+    },
+    {
+      label: "Right Deep",
+      value: "RD",
+    },
+  ];
+  const [currentImageTypeLabel, setCurrentImageTypeLabel] = useState(null);
+  const [currentImageTypeValue, setCurrentImageTypeValue] = useState(null);
 
   let carouselStyle = {
     gridTemplateColumns: "[v1] 800px [v2] 1fr [v3]",
@@ -79,6 +103,7 @@ const Carousel = ({
     "Y",
     "Radius",
     "Regions of Interest",
+    "Label",
   ];
 
   const [imageInfoTableData, setImageInfoTableData] = useState([]);
@@ -134,7 +159,10 @@ const Carousel = ({
           overlayData[imageCounter].radius,
           overlayURLs[imageCounter].innerCircle !== undefined
             ? "\u{2705}"
-            : "Not selected",
+            : "❓",
+          stackImageURLs[stackCounter][imageCounter].imageLabel === undefined
+            ? "❓"
+            : stackImageURLs[stackCounter][imageCounter].imageLabel,
         ];
         rows.push(row);
       }
@@ -145,9 +173,10 @@ const Carousel = ({
   useEffect(() => {
     updateOverlayTable();
     // console.log(overlayURLs);
+    console.log(stackImageURLs[stackCounter]);
     if (overlayURLs.every((obj) => obj.innerCircle !== undefined)) {
     }
-  }, [overlayData]);
+  }, [overlayData, stackImageURLs[stackCounter]]);
 
   useEffect(() => {
     updateOverlayTable();
@@ -243,8 +272,39 @@ const Carousel = ({
     </AppBar>
   );
 
+  function navigateLeft() {
+    if (currentImageIndex !== 0) {
+      setCurrentImageIndex(currentImageIndex - 1);
+    } else {
+      setCurrentImageIndex(stackImageURLs[stackCounter].length - 1);
+    }
+  }
+  function navigateRight() {
+    if (currentImageIndex !== stackImageURLs[stackCounter].length - 1) {
+      setCurrentImageIndex(currentImageIndex + 1);
+    } else {
+      setCurrentImageIndex(0);
+    }
+  }
+
   return (
-    <div className="component-image-preview">
+    <div
+      className="component-image-preview"
+      tabIndex="1"
+      onKeyDown={(e) => {
+        console.log(e.key);
+        if (e.key === "Enter") {
+          setIsOverlayVisible(!isOverlayVisible);
+        }
+        if (e.key === "ArrowLeft") {
+          navigateLeft();
+        }
+        if (e.key === "ArrowRight") {
+          navigateRight();
+        }
+      }}
+      ref={previewSectionRef}
+    >
       {TabComponent}
       {stackImageURLs[stackCounter][0].objectURL !== undefined &&
         imageDimensions[currentImageIndex] !== undefined && (
@@ -258,8 +318,8 @@ const Carousel = ({
                 className="image-view"
                 style={{
                   borderColor: "azure",
-                  gridColumn: "v1 / v3",
-                  gridRow: "h1 / h2",
+                  // gridColumn: "v1 / v3",
+                  // gridRow: "h1 / h2",
                   backgroundColor: "blanchedalmond",
                   height: "100%",
                   overflow: "hidden",
@@ -343,14 +403,14 @@ const Carousel = ({
                     gridTemplateRows: "1fr 1fr",
                   }}
                 >
-                    <Image
-                      src={overlayURLs[currentImageIndex].innerCircle}
-                      title="innerCircle"
-                    />
-                    <Image src={overlayURLs[currentImageIndex].IN} title="IN" />
-                    <Image src={overlayURLs[currentImageIndex].II} title="II" />
-                    <Image src={overlayURLs[currentImageIndex].IT} title="IT" />
-                    <Image src={overlayURLs[currentImageIndex].IS} title="IS" />
+                  <Image
+                    src={overlayURLs[currentImageIndex].innerCircle}
+                    title="innerCircle"
+                  />
+                  <Image src={overlayURLs[currentImageIndex].IN} title="IN" />
+                  <Image src={overlayURLs[currentImageIndex].II} title="II" />
+                  <Image src={overlayURLs[currentImageIndex].IT} title="IT" />
+                  <Image src={overlayURLs[currentImageIndex].IS} title="IS" />
                 </div>
               )}
               {overlayURLs[currentImageIndex].innerCircle === undefined && (
@@ -363,7 +423,41 @@ const Carousel = ({
                 </div>
               )}
             </TabPanel>
-
+            <div
+              className="image-labels"
+              style={{
+                gridColumn: "v2 / v3",
+                gridRow: "h1 / h2",
+                display: currentTabValue === 0 ? "inline-block" : "none",
+              }}
+            >
+              Select image label
+              <div className="dropdown">
+                <Select
+                  onChange={(e) => {
+                    setCurrentImageTypeLabel(e.label);
+                    setCurrentImageTypeValue(e.value);
+                    //  Update the imageURLs objects
+                    var tempStackImageURLs = clone(stackImageURLs);
+                    var tempImageURLs = clone(tempStackImageURLs[stackCounter]);
+                    var tempImageURLObject = clone(
+                      tempImageURLs[currentImageIndex]
+                    );
+                    tempImageURLObject["imageLabel"] = e.value;
+                    tempImageURLs[currentImageIndex] = tempImageURLObject;
+                    tempStackImageURLs[stackCounter] = tempImageURLs;
+                    console.log("tempStackImageURLs", tempStackImageURLs);
+                    setStackImageURLs(tempStackImageURLs);
+                    navigateRight()
+                  }}
+                  options={labelsObj}
+                  label={
+                    stackImageURLs[stackCounter][currentImageIndex].imageLabel
+                  }
+                  placeholder="Select image label"
+                />
+              </div>
+            </div>
             <div
               className="image-information"
               style={{
@@ -387,26 +481,13 @@ const Carousel = ({
               <Button
                 text="<<"
                 onClick={() => {
-                  if (currentImageIndex !== 0) {
-                    setCurrentImageIndex(currentImageIndex - 1);
-                  } else {
-                    setCurrentImageIndex(
-                      stackImageURLs[stackCounter].length - 1
-                    );
-                  }
+                  navigateLeft();
                 }}
               />
               <Button
                 text=">>"
                 onClick={() => {
-                  if (
-                    currentImageIndex !==
-                    stackImageURLs[stackCounter].length - 1
-                  ) {
-                    setCurrentImageIndex(currentImageIndex + 1);
-                  } else {
-                    setCurrentImageIndex(0);
-                  }
+                  navigateRight();
                 }}
               />
               <div className="crop">

@@ -27,6 +27,7 @@ function App() {
       imageName: undefined,
       id: undefined,
       image: undefined,
+      imageLabel: undefined,
     },
   ];
   const [imageNames, setImageNames] = useState();
@@ -43,15 +44,16 @@ function App() {
     II: defaultImageURLarray.objectURL,
     IT: defaultImageURLarray.objectURL,
     IS: defaultImageURLarray.objectURL,
-  })
+  });
   const [stackOverlayURLs, setStackOverlayURLs] = useState({
     0: defaultOverlayURLarray,
   });
 
-  
   const [stackData, setStackData] = useState({ 0: [] });
   const [stackCounter, setStackCounter] = useState(0);
-  const [overlayURLs, setOverlayURLs] = useState(stackOverlayURLs[stackCounter])
+  const [overlayURLs, setOverlayURLs] = useState(
+    stackOverlayURLs[stackCounter]
+  );
 
   useEffect(() => {
     if (images.length < 1 || images.length > 4) {
@@ -66,6 +68,7 @@ function App() {
         imageName: imageNames[i],
         id: i,
         image: images[i],
+        imageLabel: undefined,
       });
       newOverlayURLs.push({
         innerCircle: undefined,
@@ -75,7 +78,7 @@ function App() {
         IS: undefined,
       });
     }
-    console.log(newOverlayURLs)
+    console.log(newOverlayURLs);
     setImageURLs(newImageURLs);
     setStackImageURLs({
       [stackCounter]: newImageURLs,
@@ -85,7 +88,7 @@ function App() {
     setStackOverlayURLs({
       [stackCounter]: newOverlayURLs,
       // [stackCounter + 1]: newOverlayURLs
-    })
+    });
     // Initialize overlay data
     setOverlayData(
       new Array(images.length).fill({
@@ -106,6 +109,9 @@ function App() {
     }
     setImageNames(newImageNames);
   }
+
+  // Keyboard functionality
+  const previewSectionRef = useRef();
 
   // Undo-redo
   useEffect(() => {
@@ -142,13 +148,17 @@ function App() {
       // updateOverlayDimensions();
     }
 
-    if(stackOverlayURLs[stackCounter] === undefined && !isCounterChangeOnButton){
+    if (
+      stackOverlayURLs[stackCounter] === undefined &&
+      !isCounterChangeOnButton
+    ) {
       //If there are no new overlays in this counter, just copy the previous one
-      var tempOverlayURLs = stackOverlayURLs
-      tempOverlayURLs[stackCounter] = tempOverlayURLs[Object.keys(stackOverlayURLs).length - 1]
-      setStackOverlayURLs(tempOverlayURLs)
+      var tempOverlayURLs = stackOverlayURLs;
+      tempOverlayURLs[stackCounter] =
+        tempOverlayURLs[Object.keys(stackOverlayURLs).length - 1];
+      setStackOverlayURLs(tempOverlayURLs);
     }
-    setOverlayURLs(stackOverlayURLs[stackCounter])
+    setOverlayURLs(stackOverlayURLs[stackCounter]);
 
     // console.log("stackCounter updated to ", stackCounter)
     setIsCounterChangeOnButton(false);
@@ -166,7 +176,6 @@ function App() {
 
   // Data display
   const [tableDataArray, setTableDataArray] = useState([]);
-
 
   useEffect(() => {
     if (imageRef.current !== undefined) {
@@ -238,6 +247,7 @@ function App() {
   function continueButtonSelect(e) {
     setExpandedPreview(true);
     setExpandedSelect(false);
+    previewSectionRef.current.focus();
   }
   const componentFooterSelect = (
     <Footer continueOnClick={continueButtonSelect} />
@@ -328,6 +338,7 @@ function App() {
     >
       <Carousel
         imageRef={imageRef}
+        previewSectionRef={previewSectionRef}
         stackImageURLs={stackImageURLs}
         setStackImageURLs={setStackImageURLs}
         stackCounter={stackCounter}
@@ -373,14 +384,24 @@ function App() {
   const componentML = <div>Machine Learning</div>;
   const componentResults = <div>Results</div>;
 
+
+  useEffect(() => {
+    if(previewSectionRef.current){
+      previewSectionRef.current.focus()
+    }
+  }, [previewSectionRef])
+
   return (
     <div className="App">
-      <div className="undo-redo" style={{
-        position: "fixed",
-        top: "50px",
-        right: "50px"
-      }}>
-      {componentUndoRedo}
+      <div
+        className="undo-redo"
+        style={{
+          position: "fixed",
+          top: "50px",
+          right: "50px",
+        }}
+      >
+        {componentUndoRedo}
       </div>
       {/* <div className="component-temp">
         {componentUndoRedo}
@@ -437,7 +458,17 @@ function App() {
           console.log(overlayURLs)
         }} />
       </div> */}
-      <div className="component-select">
+      <div
+        className="component-select"
+        tabIndex="1"
+        onKeyDown={(e) => {
+          if (e.key === "Enter") {
+            setExpandedPreview(true);
+            setExpandedSelect(false);
+            previewSectionRef.current.focus();
+          }
+        }}
+      >
         <Section
           header="Select image(s)"
           component={componentSelect}
