@@ -15,6 +15,7 @@ import SaveImageURLsToStack from "../functions/SaveImageURLsToStack";
 import MakeImageZero from "../functions/MakeImageZero";
 import GetPixels from "../functions/GetPixels";
 import GetImageDimensions from "../functions/GetImageDimensions";
+import ResetStackData from "../functions/ResetStackData";
 
 const Processing = ({
   imgDataArray,
@@ -30,7 +31,7 @@ const Processing = ({
   setOverlayURLs,
   stackOverlayURLs,
   setStackOverlayURLs,
-  setCurrentTabValue
+  setCurrentTabValue,
 }) => {
   // Setting up the appearance
   const animatedComponents = makeAnimated();
@@ -38,15 +39,17 @@ const Processing = ({
   const [isSubmitButtonDisabled, setIsSubmitButtonDisabled] = useState(true);
   useEffect(() => {
     if (imgDataArray.length === 0) {
-      console.log("imgDataArray is still empty?")
+      console.log("imgDataArray is still empty?");
       setIsSubmitButtonDisabled(true);
     } else {
-      console.log("imgDataArray is not empty!")
+      console.log("imgDataArray is not empty!");
       setIsSubmitButtonDisabled(false);
     }
   }, [imgDataArray]);
 
-  useEffect(() => {
+  useEffect(()=> {
+    console.log("Change in stackData!")
+    console.log("stackData", stackData)
     try {
       const lengthImageURLs = stackImageURLs[stackCounter].length;
       var objColumns = {
@@ -61,7 +64,13 @@ const Processing = ({
     } catch (e) {
       // console.log(e);
     }
-  }, [stackCounter]);
+  }, [stackData, stackCounter])
+
+  useEffect(()=> {
+    console.log("Change in overlayData!")
+    console.log(overlayData)
+    ResetStackData(setStackData, stackCounter)
+  }, [overlayData])
 
   var functionsList = [
     {
@@ -95,12 +104,34 @@ const Processing = ({
   const [columns, setColumns] = useState([]);
   const [tableDataArray, setTableDataArray] = useState([]);
 
+  const htmlProcessingDataArray = (
+    <table align="center" border="2">
+      <thead>
+        <tr>
+          {columns.map((columnName) => (
+            <th key={columnName}>{columnName} </th>
+          ))}
+        </tr>
+      </thead>
+      <tbody>
+        {tableDataArray.map((row, i) => (
+          <tr key={i}>
+            {row.map((cell, j) => (
+              <td key={j}>{String(cell)}</td>
+            ))}
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  );
+
   function generateTableData(objColumns) {
     var arrayColumns = Object.entries(objColumns)
       .sort(([, a], [, b]) => a - b)
       .map((arr) => arr[1]);
     setColumns(arrayColumns);
-    var objData = stackData[stackCounter];
+    var objData = clone(stackData[stackCounter]);
+    console.log("objData", objData)
     const rows = [];
     for (let rowIndex = 0; rowIndex < Object.keys(objData).length; rowIndex++) {
       var row = [];
@@ -135,8 +166,8 @@ const Processing = ({
         setImgDataArray,
         setOverlayURLs
       );
-      var greenTick = "\u{2705}"
-      var redCross = "\u{274C}"
+      var greenTick = "\u{2705}";
+      var redCross = "\u{274C}";
       for (var i = 0; i < stackOverlayURLs[stackCounter].length; i++) {
         objFunctionData[`Image ${i + 1}`] = functionOutput[i];
         if (functionOutput[i] === true) {
@@ -175,7 +206,8 @@ const Processing = ({
       // console.log("Saving data to stack");
       SaveDataToStack(objData, stackData, setStackData, stackCounter);
       setStackCounter(stackCounter + 1);
-      setCurrentTabValue(1)
+      setCurrentTabValue(1);
+      console.log("Running processing function!")
     } catch (e) {
       console.log(e);
     }
@@ -206,26 +238,7 @@ const Processing = ({
       {tableDataArray.length > 0 && (
         <div className="table">
           {/* ✅ ❌ */}
-          {columns.length > 1 && (
-            <table align="center" border="2">
-              <thead>
-                <tr>
-                  {columns.map((columnName) => (
-                    <th key={columnName}>{columnName} </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {tableDataArray.map((row, i) => (
-                  <tr key={i}>
-                    {row.map((cell, j) => (
-                      <td key={j}>{String(cell)}</td>
-                    ))}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          )}
+          {columns.length > 1 && htmlProcessingDataArray}
         </div>
       )}
     </div>

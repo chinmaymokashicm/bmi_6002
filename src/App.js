@@ -164,6 +164,10 @@ function App() {
 
   const [currentTabValue, setCurrentTabValue] = useState(0);
 
+  // Data display
+  const [tableDataArray, setTableDataArray] = useState([]);
+
+
   useEffect(() => {
     if (imageRef.current !== undefined) {
       console.log("Change in imageRef.current");
@@ -343,6 +347,8 @@ function App() {
         setStackOverlayURLs={setStackOverlayURLs}
         currentTabValue={currentTabValue}
         setCurrentTabValue={setCurrentTabValue}
+        stackData={stackData}
+        setStackData={setStackData}
       />
     </div>
   );

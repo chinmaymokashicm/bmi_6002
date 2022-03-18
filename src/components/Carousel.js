@@ -15,6 +15,7 @@ import KonvaStage from "../functions/KonvaStage";
 import { Tabs, Tab, AppBar } from "@material-ui/core";
 import TabPanel from "./TabPanel";
 import ErrorBoundary from "../functions/ErrorBoundary";
+import ResetStackData from "../functions/ResetStackData";
 
 const Carousel = ({
   imageRef,
@@ -37,14 +38,9 @@ const Carousel = ({
   setStackOverlayURLs,
   currentTabValue,
   setCurrentTabValue,
+  stackData,
+  setStackData,
 }) => {
-  // const clonedStackOverlayURLs = clone(stackOverlayURLs);
-  // const [overlayURLs, setOverlayURLs] = useState(
-  //   clonedStackOverlayURLs[stackCounter]
-  // );
-  // console.log(overlayURLs);
-  // console.log(stackImageURLs)
-
   useEffect(() => {
     setOverlayURLs(stackOverlayURLs[stackCounter]);
   }, [stackOverlayURLs]);
@@ -137,7 +133,7 @@ const Carousel = ({
           overlayData[imageCounter].y,
           overlayData[imageCounter].radius,
           overlayURLs[imageCounter].innerCircle !== undefined
-            ? "Selected"
+            ? "\u{2705}"
             : "Not selected",
         ];
         rows.push(row);
@@ -155,16 +151,13 @@ const Carousel = ({
 
   useEffect(() => {
     updateOverlayTable();
-    // console.log(overlayURLs);
+    console.log("New overlayURLs!", overlayURLs);
     if (overlayURLs.every((obj) => obj.innerCircle !== undefined)) {
-      // SaveOverlayURLsToStack(overlayURLs, stackOverlayURLs, setStackOverlayURLs, stackCounter)
-      // setStackCounter(stackCounter + 1)
       var tempStackOverlayURLs = clone(stackOverlayURLs);
       tempStackOverlayURLs[stackCounter] = overlayURLs;
       setStackOverlayURLs(tempStackOverlayURLs);
-
       console.log("Ready to grab pixel values!");
-      console.log(overlayURLs)
+      console.log(overlayURLs);
       GetPixels(clone(overlayURLs), setImgDataArray);
     }
   }, [overlayURLs]);
@@ -173,13 +166,7 @@ const Carousel = ({
     if (imageRef.current !== undefined) {
       updateOverlayDimensions();
     }
-  }, [currentImageIndex]);
-
-  useEffect(() => {
-    if (imageRef.current !== undefined) {
-      updateOverlayDimensions();
-    }
-  }, [imageRef.current]);
+  }, [currentImageIndex, imageRef.current]);
 
   function getCroppedImage() {
     const canvas = document.createElement("canvas");
@@ -356,11 +343,29 @@ const Carousel = ({
                     gridTemplateRows: "1fr 1fr",
                   }}
                 >
-                  <Image src={overlayURLs[currentImageIndex].innerCircle} title="innerCircle"/>
-                  <Image src={overlayURLs[currentImageIndex].IN} title="IN"/>
-                  <Image src={overlayURLs[currentImageIndex].II} title="II"/>
-                  <Image src={overlayURLs[currentImageIndex].IT} title="IT"/>
-                  <Image src={overlayURLs[currentImageIndex].IS} title="IS"/>
+                  <figure>
+                    <Image
+                      src={overlayURLs[currentImageIndex].innerCircle}
+                      title="innerCircle"
+                    />
+                    {/* <figcaption>Inner Circle</figcaption> */}
+                  </figure>
+                  <figure>
+                    <Image src={overlayURLs[currentImageIndex].IN} title="IN" />
+                    {/* <figcaption>IN</figcaption> */}
+                  </figure>
+                  <figure>
+                    <Image src={overlayURLs[currentImageIndex].II} title="II" />
+                    {/* <figcaption>II</figcaption> */}
+                  </figure>
+                  <figure>
+                    <Image src={overlayURLs[currentImageIndex].IT} title="IT" />
+                    {/* <figcaption>IT</figcaption> */}
+                  </figure>
+                  <figure>
+                    <Image src={overlayURLs[currentImageIndex].IS} title="IS" />
+                    {/* <figcaption>IS</figcaption> */}
+                  </figure>
                 </div>
               )}
               {overlayURLs[currentImageIndex].innerCircle === undefined && (
