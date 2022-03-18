@@ -343,29 +343,14 @@ const Carousel = ({
                     gridTemplateRows: "1fr 1fr",
                   }}
                 >
-                  <figure>
                     <Image
                       src={overlayURLs[currentImageIndex].innerCircle}
                       title="innerCircle"
                     />
-                    {/* <figcaption>Inner Circle</figcaption> */}
-                  </figure>
-                  <figure>
                     <Image src={overlayURLs[currentImageIndex].IN} title="IN" />
-                    {/* <figcaption>IN</figcaption> */}
-                  </figure>
-                  <figure>
                     <Image src={overlayURLs[currentImageIndex].II} title="II" />
-                    {/* <figcaption>II</figcaption> */}
-                  </figure>
-                  <figure>
                     <Image src={overlayURLs[currentImageIndex].IT} title="IT" />
-                    {/* <figcaption>IT</figcaption> */}
-                  </figure>
-                  <figure>
                     <Image src={overlayURLs[currentImageIndex].IS} title="IS" />
-                    {/* <figcaption>IS</figcaption> */}
-                  </figure>
                 </div>
               )}
               {overlayURLs[currentImageIndex].innerCircle === undefined && (
