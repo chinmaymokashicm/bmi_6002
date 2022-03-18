@@ -317,8 +317,8 @@ function App() {
         borderStyle: "solid",
         backgroundColor: "#f0d4ad",
         overflowY: "scroll",
-        opacity: "0.8"
-        // zIndex: "1"
+        opacity: "0.8",
+        zIndex: "10"
       }}
     >
       Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
