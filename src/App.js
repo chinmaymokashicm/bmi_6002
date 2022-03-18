@@ -10,6 +10,8 @@ import Processing from "./components/Processing";
 import Float from "./components/Float";
 import Button from "./components/Button";
 
+import { MdHelpCenter } from "react-icons/md";
+
 import clone from "just-clone";
 import GetImageDimensions from "./functions/GetImageDimensions";
 import UpdateImageDimensions from "./functions/UpdateImageDimensions";
@@ -300,6 +302,41 @@ function App() {
   const [isRedoVisible, setIsRedoVisible] = useState(false);
 
   const [isCounterChangeOnButton, setIsCounterChangeOnButton] = useState(false);
+
+  const [isHelpVisible, setIsHelpVisible] = useState(false);
+  const componentHelp = (
+    <div
+      style={{
+        position: "fixed",
+        display: isHelpVisible? "inline-block": "none",
+        top: "20%",
+        right: "30%",
+        height: "40%",
+        width: "40%",
+        borderColor: "red",
+        borderStyle: "solid",
+        backgroundColor: "#f0d4ad",
+        overflowY: "scroll",
+        opacity: "0.8"
+        // zIndex: "1"
+      }}
+    >
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+      tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
+      veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
+      commodo consequat. Duis aute irure dolor in reprehenderit in voluptate
+      velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat
+      cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id
+      est laborum.
+      <Button text="Close" onClick={() => {
+        setIsHelpVisible(false)
+      }} 
+      style={{
+        bottom: 0,
+        right: 0
+      }}/>
+    </div>
+  );
   const componentUndoRedo = (
     <div className="UndoRedo">
       <Button
@@ -325,6 +362,14 @@ function App() {
           }
         }}
         disabled={!isRedoVisible}
+      />
+      <Button
+        text={<MdHelpCenter />}
+        onClick={() => {
+          console.log("Help");
+          setIsHelpVisible(!isHelpVisible);
+          console.log(isHelpVisible)
+        }}
       />
       {/* {`${stackCounter}/${Object.keys(stackImageURLs).length - 1}`} */}
     </div>
@@ -384,15 +429,15 @@ function App() {
   const componentML = <div>Machine Learning</div>;
   const componentResults = <div>Results</div>;
 
-
   useEffect(() => {
-    if(previewSectionRef.current){
-      previewSectionRef.current.focus()
+    if (previewSectionRef.current) {
+      previewSectionRef.current.focus();
     }
-  }, [previewSectionRef])
+  }, [previewSectionRef]);
 
   return (
     <div className="App">
+      {componentHelp}
       <div
         className="undo-redo"
         style={{
