@@ -1,5 +1,4 @@
 import GetImageDimensions from "./GetImageDimensions";
-import GetPixels from "./GetPixels";
 import InitiateCanvas from "./InitiateCanvas";
 import SaveImageURLsToStack from "./SaveImageURLsToStack";
 

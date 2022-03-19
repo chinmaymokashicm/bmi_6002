@@ -7,76 +7,6 @@ import InitiateCanvas from "./InitiateCanvas";
 import SaveImageURLsToStack from "./SaveImageURLsToStack";
 import SaveOverlayURLsToStack from "./SaveOverlayURLsToStack";
 
-// function Greyscale(
-//   imgDataArray,
-//   stackImageURLs,
-//   setStackImageURLs,
-//   stackCounter,
-//   setImgDataArray
-// ) {
-//   var arrayReturn = [];
-//   try {
-//     var arrayNewObjectURLs = [];
-//     for (
-//       var currentImageIndex = 0;
-//       currentImageIndex < imgDataArray.length;
-//       currentImageIndex++
-//     ) {
-//       var imgData = imgDataArray[currentImageIndex];
-//       var pixelData = imgData.array.data;
-
-//       var [canvas, ctx, img] = InitiateCanvas(
-//         stackImageURLs[stackCounter][currentImageIndex].objectURL,
-//         imgData
-//       );
-
-//       // Weights
-//       // https://www.dynamsoft.com/blog/insights/image-processing/image-processing-101-color-space-conversion/#:~:text=the%20weighted%20method.%C2%A0-,The%20Weighted%20Method,-The%20weighted%20method
-//       var redWeight = 0.299;
-//       var greenWeight = 0.587;
-//       var blueWeight = 0.114;
-
-//       var lengthPixelData = Object.keys(pixelData).length; //To speed up the loop iteration
-//       for (let i = 0; i < lengthPixelData; i += 4) {
-//         var grayscale =
-//           redWeight * pixelData[i] +
-//           greenWeight * pixelData[i + 1] +
-//           blueWeight * pixelData[i + 2];
-//         pixelData[i] = grayscale;
-//         pixelData[i + 1] = grayscale;
-//         pixelData[i + 2] = grayscale;
-//       }
-//       var newImageData = ctx.createImageData(imgData.width, imgData.height);
-//       newImageData.data.set(pixelData);
-//       ctx.putImageData(newImageData, 0, 0);
-//       var base64Image = canvas.toDataURL("image/jpeg", 1);
-//       arrayNewObjectURLs.push(URL.createObjectURL(DataURLtoBlob(base64Image)));
-//       arrayReturn.push(true);
-//       // console.log("Finished image number: ", currentImageIndex);
-//     }
-//     arrayReturn.push(false); //Include value for "average" as well
-//     var tempImageURLs = clone(stackImageURLs[stackCounter]);
-//     for (let i = 0; i < tempImageURLs.length; i++) {
-//       tempImageURLs[i].objectURL = arrayNewObjectURLs[i];
-//     }
-
-//     SaveImageURLsToStack(
-//       tempImageURLs,
-//       stackImageURLs,
-//       setStackImageURLs,
-//       stackCounter,
-//       setImgDataArray
-//     );
-//     return arrayReturn;
-//   } catch (e) {
-//     console.log(e);
-//     for (let i = 0; i < imgDataArray.length + 1; i++) {
-//       //Include value for "average" as well
-//       arrayReturn.push(false);
-//     }
-//     return arrayReturn;
-//   }
-// }
 
 function Greyscale(
   imgDataArray,
@@ -84,7 +14,7 @@ function Greyscale(
   setStackOverlayURLs,
   stackCounter,
   setImgDataArray,
-  setOverlayURLs
+  setVesselDensityArray
 ) {
   function greyscale(
     counterImage,
@@ -111,8 +41,10 @@ function Greyscale(
         tempOverlayURLs,
         stackOverlayURLs,
         setStackOverlayURLs,
-        stackCounter
+        stackCounter,
+        setImgDataArray
       );
+      GetPixels(tempOverlayURLs, setImgDataArray)
       // setOverlayURLs(tempOverlayURLs)
       var returnArray = new Array(
         stackOverlayURLs[stackCounter].length + 1

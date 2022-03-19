@@ -4,7 +4,7 @@ function SaveOverlayURLsToStack(
   newOverlayURLs,
   stackOverlayURLs,
   setStackOverlayURLs,
-  stackCounter,
+  stackCounter
 ) {
   // Add here: code to remove all counters after {current counter+1} (necessary when undo and then generate new stack images/data)
 

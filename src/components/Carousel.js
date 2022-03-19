@@ -186,15 +186,12 @@ const Carousel = ({
       setStackOverlayURLs(tempStackOverlayURLs);
       console.log("Ready to grab pixel values!");
       console.log(overlayURLs);
-      GetPixels(clone(overlayURLs), setImgDataArray);
+      GetPixels(clone(overlayURLs), setImgDataArray, GetVesselDensity);
     }
   }, [overlayURLs]);
 
   useEffect(() => {
-    console.warn("HEEEELLLLPP")
-    console.log(imgDataArray)
     if (
-      imgDataArray.length > 0 &&
       imageLabelArray.every(
         (imageLabel) => imageLabel !== undefined
       )
@@ -204,22 +201,16 @@ const Carousel = ({
         imageLabels.push(imageLabelArray[i]);
       }
       var imageLabelSet = new Set(imageLabels);
-      console.log(
-        "imageLabels, imageLabelSet",
-        imageLabels,
-        imageLabelSet
-      );
+      // console.log(
+      //   "imageLabels, imageLabelSet",
+      //   imageLabels,
+      //   imageLabelSet
+      // );
       if (imageLabels.length !== imageLabelSet.size) {
         alert("Cannot assign one label to multiple images!");
-        setVesselDensityArray([])
-      } else {
-        GetVesselDensity(imgDataArray, setVesselDensityArray);
       }
     }
-  }, [imgDataArray, imageLabelArray]);
-
-
-
+  }, [imageLabelArray]);
 
   useEffect(() => {
     if (imageRef.current !== undefined) {

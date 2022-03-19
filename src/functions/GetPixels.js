@@ -2,9 +2,13 @@ import clone from "just-clone";
 import _ from "lodash";
 import { useState } from "react";
 import ArrayEquals from "./ArrayEquals";
+import GetVesselDensity from "./GetVesselDensity";
 import InitiateCanvas from "./InitiateCanvas";
 
-function GetPixels(currentOverlayURLs, setImgDataArray) {
+function GetPixels(
+  currentOverlayURLs,
+  setImgDataArray
+) {
   function getPixels(counterImage, counterOverlayName, tempPixelArray) {
     if (counterImage === numImages) {
       console.log("Reached the end!");
@@ -20,6 +24,9 @@ function GetPixels(currentOverlayURLs, setImgDataArray) {
       //   console.log(tempPixelArray[i].IN.data.filter((item) => item !== 0));
       // }
       setImgDataArray(tempPixelArray);
+      console.log(tempPixelArray)
+
+
       return;
     }
     if (counterOverlayName === overlayNamesArray.length) {
@@ -34,7 +41,8 @@ function GetPixels(currentOverlayURLs, setImgDataArray) {
     var canvas = document.createElement("canvas");
     var ctx = canvas.getContext("2d", { colorSpace: "display-p3" });
     var img = new Image();
-    img.src = currentOverlayURLs[counterImage][overlayNamesArray[counterOverlayName]]
+    img.src =
+      currentOverlayURLs[counterImage][overlayNamesArray[counterOverlayName]];
     // var [canvas, ctx, img] = InitiateCanvas(
     //   currentOverlayURLs[counterImage][overlayNamesArray[counterOverlayName]]
     // );

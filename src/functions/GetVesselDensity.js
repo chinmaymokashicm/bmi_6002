@@ -34,16 +34,16 @@ function GetVesselDensity(imgDataArray, setVesselDensityArray) {
       rgbSum += grayscale;
     }
     var averageRGB = rgbSum / (lengthPixelData / 4);
-    tempVesselDensityArray[counterImage][counterOverlayName] = averageRGB;
+    tempVesselDensityArray[counterImage][overlayNamesArray[counterOverlayName]] = averageRGB;
     // Get new ImageData object
     var newImageData = ctx.createImageData(
       imgDataCurrent.width,
       imgDataCurrent.height
     );
-    newImageData.data.set(pixelData);
-    ctx.putImageData(newImageData, 0, 0);
-    tempImgDataArray[counterImage][overlayNamesArray[counterOverlayName]] =
-      newImageData;
+    // newImageData.data.set(pixelData);
+    // ctx.putImageData(newImageData, 0, 0);
+    // tempImgDataArray[counterImage][overlayNamesArray[counterOverlayName]] =
+    //   newImageData;
     return calculate(counterImage, counterOverlayName + 1);
   }
   console.log("Getting vessel densities!");

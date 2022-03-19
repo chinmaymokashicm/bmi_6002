@@ -194,6 +194,7 @@ function App() {
     if(vesselDensityArray.length > 0){
       // alert("Vessel Density of the labeled regions have been calculated.")
       continueButtonPreview()
+      continueButtonProcessing()
     }
   }, [vesselDensityArray])
 
@@ -225,12 +226,12 @@ function App() {
     }
   }, [imageDimensions]);
 
-  useEffect(() => {
-    if (!isFirstLoad) {
-      console.log("Change in imgDataArray");
-    }
-    setIsFirstLoad(false);
-  }, [imgDataArray]);
+  // useEffect(() => {
+  //   if (!isFirstLoad) {
+  //     console.log("Change in imgDataArray");
+  //   }
+  //   setIsFirstLoad(false);
+  // }, [imgDataArray]);
 
   // Hooks for collapsible components
   const [isExpandedSelect, setExpandedSelect] = useState(true);
@@ -449,6 +450,8 @@ function App() {
       stackOverlayURLs={stackOverlayURLs}
       setStackOverlayURLs={setStackOverlayURLs}
       setCurrentTabValue={setCurrentTabValue}
+      vesselDensityArray={vesselDensityArray}
+      setVesselDensityArray={setVesselDensityArray}
     />
   );
   const componentML = <div>Machine Learning</div>;

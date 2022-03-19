@@ -16,6 +16,7 @@ import MakeImageZero from "../functions/MakeImageZero";
 import GetPixels from "../functions/GetPixels";
 import GetImageDimensions from "../functions/GetImageDimensions";
 import ResetStackData from "../functions/ResetStackData";
+import GetVesselDensity from "../functions/GetVesselDensity";
 
 const Processing = ({
   imgDataArray,
@@ -32,6 +33,8 @@ const Processing = ({
   stackOverlayURLs,
   setStackOverlayURLs,
   setCurrentTabValue,
+  vesselDensityArray,
+  setVesselDensityArray,
 }) => {
   // Setting up the appearance
   const animatedComponents = makeAnimated();
@@ -43,13 +46,19 @@ const Processing = ({
       setIsSubmitButtonDisabled(true);
     } else {
       console.log("imgDataArray is not empty!");
-      setIsSubmitButtonDisabled(false);
+      GetVesselDensity(imgDataArray, setVesselDensityArray)
     }
   }, [imgDataArray]);
-
+  
   useEffect(()=> {
-    console.log("Change in stackData!")
-    console.log("stackData", stackData)
+    if(vesselDensityArray.length > 0){
+      setIsSubmitButtonDisabled(false);
+    }
+  }, [vesselDensityArray])
+
+  useEffect(() => {
+    console.log("Change in stackData!");
+    console.log("stackData", stackData);
     try {
       const lengthImageURLs = stackImageURLs[stackCounter].length;
       var objColumns = {
@@ -64,13 +73,13 @@ const Processing = ({
     } catch (e) {
       // console.log(e);
     }
-  }, [stackData, stackCounter])
+  }, [stackData, stackCounter]);
 
-  useEffect(()=> {
-    console.log("Change in overlayData!")
-    console.log(overlayData)
-    ResetStackData(setStackData, stackCounter)
-  }, [overlayData])
+  useEffect(() => {
+    console.log("Change in overlayData!");
+    console.log(overlayData);
+    ResetStackData(setStackData, stackCounter);
+  }, [overlayData]);
 
   var functionsList = [
     {
@@ -80,9 +89,9 @@ const Processing = ({
       },
     },
     {
-      label: "Pixel Density",
+      label: "Vessel Density",
       value: function () {
-        return VesselDensityPixelCount;
+        return
       },
     },
     {
@@ -131,7 +140,7 @@ const Processing = ({
       .map((arr) => arr[1]);
     setColumns(arrayColumns);
     var objData = clone(stackData[stackCounter]);
-    console.log("objData", objData)
+    console.log("objData", objData);
     const rows = [];
     for (let rowIndex = 0; rowIndex < Object.keys(objData).length; rowIndex++) {
       var row = [];
@@ -164,7 +173,7 @@ const Processing = ({
         setStackOverlayURLs,
         stackCounter,
         setImgDataArray,
-        setOverlayURLs
+        setVesselDensityArray
       );
       var greenTick = "\u{2705}";
       var redCross = "\u{274C}";
@@ -207,7 +216,7 @@ const Processing = ({
       SaveDataToStack(objData, stackData, setStackData, stackCounter);
       setStackCounter(stackCounter + 1);
       setCurrentTabValue(1);
-      console.log("Running processing function!")
+      console.log("Running processing function!");
     } catch (e) {
       console.log(e);
     }

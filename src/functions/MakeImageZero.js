@@ -1,7 +1,6 @@
 import clone from "just-clone";
 import DataURLtoBlob from "./DataURLToBlob";
 import GetImageDimensions from "./GetImageDimensions";
-import GetPixels from "./GetPixels";
 import InitiateCanvas from "./InitiateCanvas";
 
 import SaveImageURLsToStack from "./SaveImageURLsToStack";
