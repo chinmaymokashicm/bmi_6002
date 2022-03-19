@@ -12,7 +12,7 @@ const Section = ({
   }
 
   return (
-    <div className="section-main">
+    <div className="section-main" tabIndex="1">
       <div
         className="section-header"
         {...getToggleProps({

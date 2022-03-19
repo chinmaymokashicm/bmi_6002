@@ -17,9 +17,12 @@ import { Tabs, Tab, AppBar } from "@material-ui/core";
 import TabPanel from "./TabPanel";
 import ErrorBoundary from "../functions/ErrorBoundary";
 import ResetStackData from "../functions/ResetStackData";
+import GetVesselDensity from "../functions/GetVesselDensity";
 
 const Carousel = ({
   imageRef,
+  imageLabelArray,
+  setImageLabelArray,
   previewSectionRef,
   stackImageURLs,
   setStackImageURLs,
@@ -33,7 +36,9 @@ const Carousel = ({
   updateOverlayDimensions,
   overlayData,
   setOverlayData,
+  imgDataArray,
   setImgDataArray,
+  setVesselDensityArray,
   overlayURLs,
   setOverlayURLs,
   stackOverlayURLs,
@@ -46,7 +51,6 @@ const Carousel = ({
   useEffect(() => {
     setOverlayURLs(stackOverlayURLs[stackCounter]);
   }, [stackOverlayURLs]);
-
 
   const [isCarouselVisible, setIsCarouselVisible] = useState(true);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -160,9 +164,9 @@ const Carousel = ({
           overlayURLs[imageCounter].innerCircle !== undefined
             ? "\u{2705}"
             : "❓",
-          stackImageURLs[stackCounter][imageCounter].imageLabel === undefined
+          imageLabelArray[imageCounter] === undefined
             ? "❓"
-            : stackImageURLs[stackCounter][imageCounter].imageLabel,
+            : imageLabelArray[imageCounter],
         ];
         rows.push(row);
       }
@@ -172,15 +176,10 @@ const Carousel = ({
 
   useEffect(() => {
     updateOverlayTable();
-    // console.log(overlayURLs);
-    console.log(stackImageURLs[stackCounter]);
-    if (overlayURLs.every((obj) => obj.innerCircle !== undefined)) {
-    }
-  }, [overlayData, stackImageURLs[stackCounter]]);
+  }, [overlayData, imageLabelArray]);
 
   useEffect(() => {
     updateOverlayTable();
-    console.log("New overlayURLs!", overlayURLs);
     if (overlayURLs.every((obj) => obj.innerCircle !== undefined)) {
       var tempStackOverlayURLs = clone(stackOverlayURLs);
       tempStackOverlayURLs[stackCounter] = overlayURLs;
@@ -190,6 +189,37 @@ const Carousel = ({
       GetPixels(clone(overlayURLs), setImgDataArray);
     }
   }, [overlayURLs]);
+
+  useEffect(() => {
+    console.warn("HEEEELLLLPP")
+    console.log(imgDataArray)
+    if (
+      imgDataArray.length > 0 &&
+      imageLabelArray.every(
+        (imageLabel) => imageLabel !== undefined
+      )
+    ) {
+      var imageLabels = [];
+      for (let i = 0; i < imageLabelArray.length; i++) {
+        imageLabels.push(imageLabelArray[i]);
+      }
+      var imageLabelSet = new Set(imageLabels);
+      console.log(
+        "imageLabels, imageLabelSet",
+        imageLabels,
+        imageLabelSet
+      );
+      if (imageLabels.length !== imageLabelSet.size) {
+        alert("Cannot assign one label to multiple images!");
+        setVesselDensityArray([])
+      } else {
+        GetVesselDensity(imgDataArray, setVesselDensityArray);
+      }
+    }
+  }, [imgDataArray, imageLabelArray]);
+
+
+
 
   useEffect(() => {
     if (imageRef.current !== undefined) {
@@ -290,20 +320,20 @@ const Carousel = ({
   return (
     <div
       className="component-image-preview"
-      tabIndex="1"
-      onKeyDown={(e) => {
-        console.log(e.key);
-        if (e.key === "Enter") {
-          setIsOverlayVisible(!isOverlayVisible);
-        }
-        if (e.key === "ArrowLeft") {
-          navigateLeft();
-        }
-        if (e.key === "ArrowRight") {
-          navigateRight();
-        }
-      }}
-      ref={previewSectionRef}
+      // tabIndex="1"
+      // onKeyDown={(e) => {
+      //   console.log(e.key);
+      //   if (e.key === "Enter") {
+      //     setIsOverlayVisible(!isOverlayVisible);
+      //   }
+      //   if (e.key === "ArrowLeft") {
+      //     navigateLeft();
+      //   }
+      //   if (e.key === "ArrowRight") {
+      //     navigateRight();
+      //   }
+      // }}
+      // ref={previewSectionRef}
     >
       {TabComponent}
       {stackImageURLs[stackCounter][0].objectURL !== undefined &&
@@ -312,6 +342,20 @@ const Carousel = ({
             id="image-carousel"
             className="image-carousel"
             style={carouselStyle}
+            tabIndex="1"
+            onKeyDown={(e) => {
+              console.log(e.key);
+              if (e.key === "Enter") {
+                setIsOverlayVisible(!isOverlayVisible);
+              }
+              if (e.key === "ArrowLeft") {
+                navigateLeft();
+              }
+              if (e.key === "ArrowRight") {
+                navigateRight();
+              }
+            }}
+            ref={previewSectionRef}
           >
             <TabPanel value={currentTabValue} index={0}>
               <div
@@ -437,18 +481,11 @@ const Carousel = ({
                   onChange={(e) => {
                     setCurrentImageTypeLabel(e.label);
                     setCurrentImageTypeValue(e.value);
-                    //  Update the imageURLs objects
-                    var tempStackImageURLs = clone(stackImageURLs);
-                    var tempImageURLs = clone(tempStackImageURLs[stackCounter]);
-                    var tempImageURLObject = clone(
-                      tempImageURLs[currentImageIndex]
-                    );
-                    tempImageURLObject["imageLabel"] = e.value;
-                    tempImageURLs[currentImageIndex] = tempImageURLObject;
-                    tempStackImageURLs[stackCounter] = tempImageURLs;
-                    console.log("tempStackImageURLs", tempStackImageURLs);
-                    setStackImageURLs(tempStackImageURLs);
-                    navigateRight()
+                    var tempImageLabelArray = clone(imageLabelArray)
+                    tempImageLabelArray[currentImageIndex] = e.value
+                    setImageLabelArray(tempImageLabelArray)
+                    // console.log(tempImageLabelArray)
+                    navigateRight();
                   }}
                   options={labelsObj}
                   label={

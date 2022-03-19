@@ -28,8 +28,7 @@ function App() {
       objectURL: undefined,
       imageName: undefined,
       id: undefined,
-      image: undefined,
-      imageLabel: undefined,
+      image: undefined
     },
   ];
   const [imageNames, setImageNames] = useState();
@@ -70,7 +69,6 @@ function App() {
         imageName: imageNames[i],
         id: i,
         image: images[i],
-        imageLabel: undefined,
       });
       newOverlayURLs.push({
         innerCircle: undefined,
@@ -80,7 +78,6 @@ function App() {
         IS: undefined,
       });
     }
-    console.log(newOverlayURLs);
     setImageURLs(newImageURLs);
     setStackImageURLs({
       [stackCounter]: newImageURLs,
@@ -101,7 +98,12 @@ function App() {
     );
     console.log("Setting image dimensions");
     UpdateImageDimensions(newImageURLs, setImageDimensions);
+
+    // Set imageLabels 
+    setImageLabelArray(new Array(images.length).fill(undefined))
   }, [images]);
+
+  const [imageLabelArray, setImageLabelArray] = useState([])
 
   function onImageChange(e) {
     setImages(e.target.files);
@@ -110,10 +112,18 @@ function App() {
       newImageNames.push(e.target.files[i].name);
     }
     setImageNames(newImageNames);
+    setExpandedPreview(true);
+    setExpandedSelect(false);
+    // previewSectionRef.focus();
   }
 
   // Keyboard functionality
+  const imageBrowserRef = useRef();
   const previewSectionRef = useRef();
+
+  useEffect(() => {
+    imageBrowserRef.current.focus()
+  }, [])
 
   // Undo-redo
   useEffect(() => {
@@ -168,6 +178,7 @@ function App() {
 
   // Image Processing
   const [imgDataArray, setImgDataArray] = useState([]);
+  const [vesselDensityArray, setVesselDensityArray] = useState([]);
   const imageRef = useRef();
   const [overlayWidth, setOverlayWidth] = useState(100);
   const [overlayHeight, setOverlayHeight] = useState(100);
@@ -178,6 +189,13 @@ function App() {
 
   // Data display
   const [tableDataArray, setTableDataArray] = useState([]);
+
+  useEffect(()=> {
+    if(vesselDensityArray.length > 0){
+      // alert("Vessel Density of the labeled regions have been calculated.")
+      continueButtonPreview()
+    }
+  }, [vesselDensityArray])
 
   useEffect(() => {
     if (imageRef.current !== undefined) {
@@ -308,7 +326,7 @@ function App() {
     <div
       style={{
         position: "fixed",
-        display: isHelpVisible? "inline-block": "none",
+        display: isHelpVisible ? "inline-block" : "none",
         top: "20%",
         right: "30%",
         height: "40%",
@@ -318,7 +336,7 @@ function App() {
         backgroundColor: "#f0d4ad",
         overflowY: "scroll",
         opacity: "0.8",
-        zIndex: "10"
+        zIndex: "10",
       }}
     >
       Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
@@ -328,13 +346,16 @@ function App() {
       velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat
       cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id
       est laborum.
-      <Button text="Close" onClick={() => {
-        setIsHelpVisible(false)
-      }} 
-      style={{
-        bottom: 0,
-        right: 0
-      }}/>
+      <Button
+        text="Close"
+        onClick={() => {
+          setIsHelpVisible(false);
+        }}
+        style={{
+          bottom: 0,
+          right: 0,
+        }}
+      />
     </div>
   );
   const componentUndoRedo = (
@@ -368,13 +389,13 @@ function App() {
         onClick={() => {
           console.log("Help");
           setIsHelpVisible(!isHelpVisible);
-          console.log(isHelpVisible)
+          console.log(isHelpVisible);
         }}
       />
       {/* {`${stackCounter}/${Object.keys(stackImageURLs).length - 1}`} */}
     </div>
   );
-  const componentSelect = <ImageBrowser onImageChange={onImageChange} />;
+  const componentSelect = <ImageBrowser onImageChange={onImageChange} imageBrowserRef={imageBrowserRef}/>;
   const componentImagePreview = (
     <div
       style={{
@@ -383,6 +404,8 @@ function App() {
     >
       <Carousel
         imageRef={imageRef}
+        imageLabelArray={imageLabelArray}
+        setImageLabelArray={setImageLabelArray}
         previewSectionRef={previewSectionRef}
         stackImageURLs={stackImageURLs}
         setStackImageURLs={setStackImageURLs}
@@ -396,7 +419,9 @@ function App() {
         updateOverlayDimensions={updateOverlayDimensions}
         overlayData={overlayData}
         setOverlayData={setOverlayData}
+        imgDataArray={imgDataArray}
         setImgDataArray={setImgDataArray}
+        setVesselDensityArray={setVesselDensityArray}
         overlayURLs={overlayURLs}
         setOverlayURLs={setOverlayURLs}
         stackOverlayURLs={stackOverlayURLs}
@@ -436,11 +461,19 @@ function App() {
   }, [previewSectionRef]);
 
   return (
-    <div className="App" tabIndex="1" onKeyDown={(e) => {
-      if(e.key === "i"){
-        setIsHelpVisible(!isHelpVisible)
-      }
-    }}>
+    <div
+      className="App"
+      tabIndex="0"
+      onKeyDown={(e) => {
+        if (e.key === "i") {
+          setIsHelpVisible(!isHelpVisible);
+        }
+        if(e.key === "o"){
+          imageBrowserRef.current.click()
+          // previewSectionRef.current.focus()
+        }
+      }}
+    >
       {componentHelp}
       <div
         className="undo-redo"

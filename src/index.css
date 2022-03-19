@@ -114,7 +114,6 @@ h1 {
   text-align: center;
 }
 
-
 /* Image carousel section */
 
 .image-carousel {
@@ -124,7 +123,7 @@ h1 {
 }
 /* ^^^Overwritten in Carousel.js */
 
-.image-view{
+.image-view {
   border-color: azure;
   grid-column: v1 / v3;
   grid-row: h1 / h2;
@@ -161,8 +160,6 @@ h1 {
 } */
 /* Overwritten in Carousel.js */
 
-
-
 img {
   width: 100%;
   /* margin-left: auto;
@@ -181,9 +178,8 @@ img {
   position: relative;
 }
 
-
 /* Table */
-.table{
+.table {
   /* overflow-x: scroll; */
   /* text-align: center; */
 }
@@ -194,14 +190,12 @@ table:hover tr:hover ~tr {
   background:none;
 } */
 
-td{
+td {
   text-align: center;
 }
 
-
 /* Section */
 .section-main {
-
   display: grid;
   /* grid-template-columns: ; */
   grid-template-rows: auto 1fr auto;
@@ -212,7 +206,14 @@ td{
   /* display: flex;
   flex-flow: column; */
   /* position: relative; */
+}
 
+.section-main:focus {
+  border-color: black !important;
+}
+
+.div:focus {
+  border-color: black !important;
 }
 
 .section-header {
@@ -235,13 +236,12 @@ td{
   /* position: relative; */
 }
 
-.Footer{
+.Footer {
   /* margin-left: auto; */
   float: right;
   /* position: absolute; */
   /* right: 0; */
 }
-
 
 /* 
 .button {
