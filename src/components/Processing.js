@@ -35,45 +35,21 @@ const Processing = ({
   setCurrentTabValue,
   vesselDensityArray,
   setVesselDensityArray,
+  isSubmitButtonDisabled,
+  setIsSubmitButtonDisabled,
+  labeledVesselDensityObj,
 }) => {
   // Setting up the appearance
   const animatedComponents = makeAnimated();
-
-  const [isSubmitButtonDisabled, setIsSubmitButtonDisabled] = useState(true);
   useEffect(() => {
     if (imgDataArray.length === 0) {
       console.log("imgDataArray is still empty?");
       setIsSubmitButtonDisabled(true);
     } else {
       console.log("imgDataArray is not empty!");
-      GetVesselDensity(imgDataArray, setVesselDensityArray)
+      GetVesselDensity(imgDataArray, setVesselDensityArray);
     }
   }, [imgDataArray]);
-  
-  useEffect(()=> {
-    if(vesselDensityArray.length > 0){
-      setIsSubmitButtonDisabled(false);
-    }
-  }, [vesselDensityArray])
-
-  useEffect(() => {
-    console.log("Change in stackData!");
-    console.log("stackData", stackData);
-    try {
-      const lengthImageURLs = stackImageURLs[stackCounter].length;
-      var objColumns = {
-        0: "id",
-        1: "Function",
-        [lengthImageURLs + 2]: "Average",
-      };
-      for (let i = 0; i < lengthImageURLs; i++) {
-        objColumns[i + 2] = `Image ${i + 1}`;
-      }
-      generateTableData(objColumns);
-    } catch (e) {
-      // console.log(e);
-    }
-  }, [stackData, stackCounter]);
 
   useEffect(() => {
     console.log("Change in overlayData!");
@@ -91,7 +67,7 @@ const Processing = ({
     {
       label: "Vessel Density",
       value: function () {
-        return
+        return;
       },
     },
     {
@@ -104,70 +80,80 @@ const Processing = ({
   const [currentFunctionName, setCurrentFunctionName] = useState(
     functionsList[0].label
   );
+  const [functionNamesArray, setFunctionNamesArray] = useState([]);
   const [currentFunction, setCurrentFunction] = useState(
     functionsList[0].value
   );
 
   //   -------------------------------------------------------------------------------
-
-  const [columns, setColumns] = useState([]);
-  const [tableDataArray, setTableDataArray] = useState([]);
-
-  const htmlProcessingDataArray = (
-    <table align="center" border="2">
-      <thead>
-        <tr>
-          {columns.map((columnName) => (
-            <th key={columnName}>{columnName} </th>
-          ))}
-        </tr>
-      </thead>
-      <tbody>
-        {tableDataArray.map((row, i) => (
-          <tr key={i}>
-            {row.map((cell, j) => (
-              <td key={j}>{String(cell)}</td>
-            ))}
-          </tr>
-        ))}
-      </tbody>
-    </table>
+  var htmlFunctionsArray = (
+    <ol>
+      {functionNamesArray.map((functionName, i) => (
+        <li key={i}>{functionName}</li>
+      ))}
+    </ol>
   );
 
-  function generateTableData(objColumns) {
-    var arrayColumns = Object.entries(objColumns)
-      .sort(([, a], [, b]) => a - b)
-      .map((arr) => arr[1]);
-    setColumns(arrayColumns);
-    var objData = clone(stackData[stackCounter]);
-    console.log("objData", objData);
-    const rows = [];
-    for (let rowIndex = 0; rowIndex < Object.keys(objData).length; rowIndex++) {
-      var row = [];
-      for (
-        let columnIndex = 0;
-        columnIndex < arrayColumns.length;
-        columnIndex++
-      ) {
-        var currentColumnName = arrayColumns[columnIndex];
-        var currentCell = objData[rowIndex]["function"][currentColumnName];
-        // console.log(currentColumnName, currentCell);
-        row.push(currentCell);
-      }
-      rows.push(row);
-    }
-    setTableDataArray(rows);
-  }
+  const [htmlProcessingDataTable, setHtmlProcessingDataTable] = useState(null);
 
+  function generateTable() {
+    var metricsArray = ["Vessel Density", "X"];
+    var dataArray = [labeledVesselDensityObj, "X"];
+    var columns = Object.keys(
+      labeledVesselDensityObj[Object.keys(labeledVesselDensityObj)[0]]
+    );
+    var imagesArray = Object.keys(labeledVesselDensityObj)
+    // columns.unshift("Image", "Metric");
+    var htmlTable = (
+      <table align="center" border="2">
+        <thead >
+          <th width="60" key="Image">Image</th>
+          <th width="60" key="Metric">Metric</th>
+          {columns.map((columnName) => (
+            <th width="60" key={columnName}>{columnName}</th>
+          ))}
+        </thead>
+        <tbody>
+          {imagesArray.map((imageName, imageCounter) => (
+            <tr>
+              <td key={imageName} rowSpan={1}>
+                {imageName}
+              </td>
+              <td key="Metric">
+                Vessel Density
+              </td>
+              {columns.map((columnName, columnCounter) => (
+                <td key={columnName}>
+                  {labeledVesselDensityObj[imageName][columnName].toFixed(2)}
+                </td>
+              ))}
+            </tr>
+          ))}
+
+          {/* <tr key="0">
+            <td key="Image" rowSpan="2">Image</td>
+            <td key="Metric">Vessel Density</td>
+          </tr>
+          <tr key="1">
+          <td key="Metric">Vessel Density</td>
+          </tr> */}
+        </tbody>
+      </table>
+    );
+    setHtmlProcessingDataTable(htmlTable);
+  }
+  useEffect(() => {
+    console.log(labeledVesselDensityObj)
+    if(Object.keys(labeledVesselDensityObj).length > 0){
+      generateTable();
+    }
+  }, [labeledVesselDensityObj]);
   //   -------------------------------------------------------------------------------
 
   function Submit() {
     try {
-      var objFunctionData = {
-        Function: currentFunctionName,
-      };
       var objOverlayData = {};
-      var functionOutput = currentFunction(
+      currentFunction(
         imgDataArray,
         stackOverlayURLs,
         setStackOverlayURLs,
@@ -175,35 +161,17 @@ const Processing = ({
         setImgDataArray,
         setVesselDensityArray
       );
-      var greenTick = "\u{2705}";
-      var redCross = "\u{274C}";
       for (var i = 0; i < stackOverlayURLs[stackCounter].length; i++) {
-        objFunctionData[`Image ${i + 1}`] = functionOutput[i];
-        if (functionOutput[i] === true) {
-          objFunctionData[`Image ${i + 1}`] = greenTick; //Green tick emoji
-        } else if (functionOutput[i] === false) {
-          objFunctionData[`Image ${i + 1}`] = redCross; //Red cross emoji
-        }
         objOverlayData[`Image ${i + 1}`] = overlayData[i];
       }
-      // console.log("Collected function return values");
-      var outputAverage = functionOutput[functionOutput.length - 1];
-      objFunctionData["Average"] =
-        typeof outputAverage === "boolean"
-          ? outputAverage === true
-            ? greenTick
-            : redCross
-          : outputAverage;
-      try {
-        objFunctionData["id"] = stackData[stackCounter].length + 1;
-      } catch (e) {
-        objFunctionData["id"] = 1;
-      }
-      // console.log("finished creating function data object");
+      var functionsArray = clone(functionNamesArray);
+      functionsArray.push(currentFunctionName);
       const objData = {
-        function: objFunctionData,
+        function: functionsArray,
         overlay: objOverlayData,
       };
+      setFunctionNamesArray(functionsArray);
+      console.log("functionsArray", functionsArray);
 
       SaveImageURLsToStack(
         stackImageURLs[stackCounter],
@@ -212,7 +180,6 @@ const Processing = ({
         stackCounter,
         setImgDataArray
       );
-      // console.log("Saving data to stack");
       SaveDataToStack(objData, stackData, setStackData, stackCounter);
       setStackCounter(stackCounter + 1);
       setCurrentTabValue(1);
@@ -243,13 +210,18 @@ const Processing = ({
           disabled={isSubmitButtonDisabled}
         />
       </div>
-
-      {tableDataArray.length > 0 && (
-        <div className="table">
-          {/* ✅ ❌ */}
-          {columns.length > 1 && htmlProcessingDataArray}
-        </div>
-      )}
+      <div className="text-functions-applied">
+        Functions applied:
+        {functionNamesArray.length === 0 && <p>None</p>}
+        {functionNamesArray.length > 0 && 
+        (
+          <p>{htmlFunctionsArray}</p>
+          )
+        }
+      </div>
+      <div className="table">
+        {htmlProcessingDataTable !== null && htmlProcessingDataTable}
+      </div>
     </div>
   );
 };

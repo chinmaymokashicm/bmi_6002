@@ -15,6 +15,7 @@ import { MdHelpCenter } from "react-icons/md";
 import clone from "just-clone";
 import GetImageDimensions from "./functions/GetImageDimensions";
 import UpdateImageDimensions from "./functions/UpdateImageDimensions";
+import CreateLabeledVesselDensityObj from "./functions/CreateLabeledVesselDensityObj";
 
 function App() {
   const [isFirstLoad, setIsFirstLoad] = useState(true);
@@ -28,7 +29,7 @@ function App() {
       objectURL: undefined,
       imageName: undefined,
       id: undefined,
-      image: undefined
+      image: undefined,
     },
   ];
   const [imageNames, setImageNames] = useState();
@@ -50,7 +51,12 @@ function App() {
     0: defaultOverlayURLarray,
   });
 
-  const [stackData, setStackData] = useState({ 0: [] });
+  const [stackData, setStackData] = useState({
+    0: {
+      function: [],
+      overlay: {},
+    },
+  });
   const [stackCounter, setStackCounter] = useState(0);
   const [overlayURLs, setOverlayURLs] = useState(
     stackOverlayURLs[stackCounter]
@@ -99,11 +105,12 @@ function App() {
     console.log("Setting image dimensions");
     UpdateImageDimensions(newImageURLs, setImageDimensions);
 
-    // Set imageLabels 
-    setImageLabelArray(new Array(images.length).fill(undefined))
+    // Set imageLabels
+    setImageLabelArray(new Array(images.length).fill(undefined));
   }, [images]);
 
-  const [imageLabelArray, setImageLabelArray] = useState([])
+  const [imageLabelArray, setImageLabelArray] = useState([]);
+  const [isSubmitButtonDisabled, setIsSubmitButtonDisabled] = useState(true);
 
   function onImageChange(e) {
     setImages(e.target.files);
@@ -122,8 +129,8 @@ function App() {
   const previewSectionRef = useRef();
 
   useEffect(() => {
-    imageBrowserRef.current.focus()
-  }, [])
+    imageBrowserRef.current.focus();
+  }, []);
 
   // Undo-redo
   useEffect(() => {
@@ -187,16 +194,33 @@ function App() {
 
   const [currentTabValue, setCurrentTabValue] = useState(0);
 
-  // Data display
-  const [tableDataArray, setTableDataArray] = useState([]);
+  const [labeledVesselDensityObj, setLabeledVesselDensityObj] = useState({});
 
-  useEffect(()=> {
-    if(vesselDensityArray.length > 0){
-      // alert("Vessel Density of the labeled regions have been calculated.")
-      continueButtonPreview()
-      continueButtonProcessing()
+  useEffect(() => {
+    if (imageLabelArray.every((imageLabel) => imageLabel !== undefined)) {
+      var imageLabels = [];
+      for (let i = 0; i < imageLabelArray.length; i++) {
+        imageLabels.push(imageLabelArray[i]);
+      }
+      var imageLabelSet = new Set(imageLabels);
+      if (imageLabels.length !== imageLabelSet.size) {
+        alert("Cannot assign one label to multiple images!");
+        setLabeledVesselDensityObj({})
+      } else {
+        if (vesselDensityArray.length > 0) {
+          setIsSubmitButtonDisabled(false);
+          continueButtonPreview();
+          continueButtonProcessing();
+          console.log(imageLabelArray, vesselDensityArray);
+          CreateLabeledVesselDensityObj(
+            imageLabelArray,
+            vesselDensityArray,
+            setLabeledVesselDensityObj
+          );
+        }
+      }
     }
-  }, [vesselDensityArray])
+  }, [vesselDensityArray, imageLabelArray]);
 
   useEffect(() => {
     if (imageRef.current !== undefined) {
@@ -396,7 +420,12 @@ function App() {
       {/* {`${stackCounter}/${Object.keys(stackImageURLs).length - 1}`} */}
     </div>
   );
-  const componentSelect = <ImageBrowser onImageChange={onImageChange} imageBrowserRef={imageBrowserRef}/>;
+  const componentSelect = (
+    <ImageBrowser
+      onImageChange={onImageChange}
+      imageBrowserRef={imageBrowserRef}
+    />
+  );
   const componentImagePreview = (
     <div
       style={{
@@ -422,6 +451,7 @@ function App() {
         setOverlayData={setOverlayData}
         imgDataArray={imgDataArray}
         setImgDataArray={setImgDataArray}
+        vesselDensityArray={vesselDensityArray}
         setVesselDensityArray={setVesselDensityArray}
         overlayURLs={overlayURLs}
         setOverlayURLs={setOverlayURLs}
@@ -431,28 +461,40 @@ function App() {
         setCurrentTabValue={setCurrentTabValue}
         stackData={stackData}
         setStackData={setStackData}
+        isSubmitButtonDisabled={isSubmitButtonDisabled}
+        setIsSubmitButtonDisabled={setIsSubmitButtonDisabled}
       />
     </div>
   );
   const componentProcessing = (
-    <Processing
-      imgDataArray={imgDataArray}
-      setImgDataArray={setImgDataArray}
-      stackImageURLs={stackImageURLs}
-      setStackImageURLs={setStackImageURLs}
-      stackCounter={stackCounter}
-      setStackCounter={setStackCounter}
-      stackData={stackData}
-      setStackData={setStackData}
-      overlayData={overlayData}
-      setOverlayData={setOverlayData}
-      setOverlayURLs={setOverlayURLs}
-      stackOverlayURLs={stackOverlayURLs}
-      setStackOverlayURLs={setStackOverlayURLs}
-      setCurrentTabValue={setCurrentTabValue}
-      vesselDensityArray={vesselDensityArray}
-      setVesselDensityArray={setVesselDensityArray}
-    />
+    <div style={{
+      height: "auto",
+      overflow: "hidden",
+      padding: "10px",
+      // marginTop: "10px"
+    }}>
+      <Processing
+        imgDataArray={imgDataArray}
+        setImgDataArray={setImgDataArray}
+        stackImageURLs={stackImageURLs}
+        setStackImageURLs={setStackImageURLs}
+        stackCounter={stackCounter}
+        setStackCounter={setStackCounter}
+        stackData={stackData}
+        setStackData={setStackData}
+        overlayData={overlayData}
+        setOverlayData={setOverlayData}
+        setOverlayURLs={setOverlayURLs}
+        stackOverlayURLs={stackOverlayURLs}
+        setStackOverlayURLs={setStackOverlayURLs}
+        setCurrentTabValue={setCurrentTabValue}
+        vesselDensityArray={vesselDensityArray}
+        setVesselDensityArray={setVesselDensityArray}
+        isSubmitButtonDisabled={isSubmitButtonDisabled}
+        setIsSubmitButtonDisabled={setIsSubmitButtonDisabled}
+        labeledVesselDensityObj={labeledVesselDensityObj}
+      />
+    </div>
   );
   const componentML = <div>Machine Learning</div>;
   const componentResults = <div>Results</div>;
@@ -471,8 +513,8 @@ function App() {
         if (e.key === "i") {
           setIsHelpVisible(!isHelpVisible);
         }
-        if(e.key === "o"){
-          imageBrowserRef.current.click()
+        if (e.key === "o") {
+          imageBrowserRef.current.click();
           // previewSectionRef.current.focus()
         }
       }}

@@ -38,6 +38,7 @@ const Carousel = ({
   setOverlayData,
   imgDataArray,
   setImgDataArray,
+  vesselDensityArray,
   setVesselDensityArray,
   overlayURLs,
   setOverlayURLs,
@@ -47,6 +48,8 @@ const Carousel = ({
   setCurrentTabValue,
   stackData,
   setStackData,
+  isSubmitButtonDisabled,
+  setIsSubmitButtonDisabled,
 }) => {
   useEffect(() => {
     setOverlayURLs(stackOverlayURLs[stackCounter]);
@@ -191,28 +194,6 @@ const Carousel = ({
   }, [overlayURLs]);
 
   useEffect(() => {
-    if (
-      imageLabelArray.every(
-        (imageLabel) => imageLabel !== undefined
-      )
-    ) {
-      var imageLabels = [];
-      for (let i = 0; i < imageLabelArray.length; i++) {
-        imageLabels.push(imageLabelArray[i]);
-      }
-      var imageLabelSet = new Set(imageLabels);
-      // console.log(
-      //   "imageLabels, imageLabelSet",
-      //   imageLabels,
-      //   imageLabelSet
-      // );
-      if (imageLabels.length !== imageLabelSet.size) {
-        alert("Cannot assign one label to multiple images!");
-      }
-    }
-  }, [imageLabelArray]);
-
-  useEffect(() => {
     if (imageRef.current !== undefined) {
       updateOverlayDimensions();
     }
@@ -309,23 +290,7 @@ const Carousel = ({
   }
 
   return (
-    <div
-      className="component-image-preview"
-      // tabIndex="1"
-      // onKeyDown={(e) => {
-      //   console.log(e.key);
-      //   if (e.key === "Enter") {
-      //     setIsOverlayVisible(!isOverlayVisible);
-      //   }
-      //   if (e.key === "ArrowLeft") {
-      //     navigateLeft();
-      //   }
-      //   if (e.key === "ArrowRight") {
-      //     navigateRight();
-      //   }
-      // }}
-      // ref={previewSectionRef}
-    >
+    <div className="component-image-preview">
       {TabComponent}
       {stackImageURLs[stackCounter][0].objectURL !== undefined &&
         imageDimensions[currentImageIndex] !== undefined && (
@@ -355,7 +320,9 @@ const Carousel = ({
                   borderColor: "azure",
                   // gridColumn: "v1 / v3",
                   // gridRow: "h1 / h2",
-                  backgroundColor: "blanchedalmond",
+                  // backgroundColor: "blanchedalmond",
+                  paddingTop: "50px",
+                    paddingLeft: "50px",
                   height: "100%",
                   overflow: "hidden",
                   display: "flex",
@@ -424,7 +391,7 @@ const Carousel = ({
                     borderColor: "azure",
                     gridColumn: "v1 / v3",
                     gridRow: "h1 / h2",
-                    backgroundColor: "blanchedalmond",
+                    // backgroundColor: "blanchedalmond",
                     height: "100%",
                     overflow: "hidden",
                     alignItems: "center",
@@ -472,9 +439,9 @@ const Carousel = ({
                   onChange={(e) => {
                     setCurrentImageTypeLabel(e.label);
                     setCurrentImageTypeValue(e.value);
-                    var tempImageLabelArray = clone(imageLabelArray)
-                    tempImageLabelArray[currentImageIndex] = e.value
-                    setImageLabelArray(tempImageLabelArray)
+                    var tempImageLabelArray = clone(imageLabelArray);
+                    tempImageLabelArray[currentImageIndex] = e.value;
+                    setImageLabelArray(tempImageLabelArray);
                     // console.log(tempImageLabelArray)
                     navigateRight();
                   }}
