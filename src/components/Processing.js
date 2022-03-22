@@ -1,20 +1,13 @@
-import React, { useState, useEffect, useMemo, useReducer } from "react";
+import React, { useState, useEffect } from "react";
 import Select from "react-select";
 import makeAnimated from "react-select/animated";
 import "react-dropdown/style.css";
 import Button from "./Button";
 import Greyscale from "../functions/Greyscale";
-import VesselDensityPixelCount from "../functions/VesselDensityPixelCount";
-import Table from "./Table";
-import MaterialTable from "material-table";
 import clone from "just-clone";
-import { Link } from "react-scroll";
-import styled from "styled-components";
 import SaveDataToStack from "../functions/SaveDataToStack";
 import SaveImageURLsToStack from "../functions/SaveImageURLsToStack";
 import MakeImageZero from "../functions/MakeImageZero";
-import GetPixels from "../functions/GetPixels";
-import GetImageDimensions from "../functions/GetImageDimensions";
 import ResetStackData from "../functions/ResetStackData";
 import GetVesselDensity from "../functions/GetVesselDensity";
 
@@ -49,13 +42,15 @@ const Processing = ({
       console.log("imgDataArray is not empty!");
       GetVesselDensity(imgDataArray, setVesselDensityArray);
     }
-  }, [imgDataArray]);
+  }, [imgDataArray, setIsSubmitButtonDisabled, setVesselDensityArray]);
+
+  
 
   useEffect(() => {
     console.log("Change in overlayData!");
     console.log(overlayData);
-    ResetStackData(setStackData, stackCounter);
-  }, [overlayData]);
+    // ResetStackData(setStackData, stackCounter);
+  }, [overlayData, setStackData, stackCounter]);
 
   var functionsList = [
     {
@@ -96,55 +91,53 @@ const Processing = ({
 
   const [htmlProcessingDataTable, setHtmlProcessingDataTable] = useState(null);
 
-  function generateTable() {
-    var metricsArray = ["Vessel Density", "X"];
-    var dataArray = [labeledVesselDensityObj, "X"];
-    var columns = Object.keys(
-      labeledVesselDensityObj[Object.keys(labeledVesselDensityObj)[0]]
-    );
-    var imagesArray = Object.keys(labeledVesselDensityObj)
-    // columns.unshift("Image", "Metric");
-    var htmlTable = (
-      <table align="center" border="2">
-        <thead >
-          <th width="60" key="Image">Image</th>
-          <th width="60" key="Metric">Metric</th>
-          {columns.map((columnName) => (
-            <th width="60" key={columnName}>{columnName}</th>
-          ))}
-        </thead>
-        <tbody>
-          {imagesArray.map((imageName, imageCounter) => (
+  useEffect(() => {
+    function generateTable() {
+      // var metricsArray = ["Vessel Density", "X"];
+      // var dataArray = [labeledVesselDensityObj, "X"];
+      var columns = Object.keys(
+        labeledVesselDensityObj[Object.keys(labeledVesselDensityObj)[0]]
+      );
+      var imagesArray = Object.keys(labeledVesselDensityObj);
+      // columns.unshift("Image", "Metric");
+      var htmlTable = (
+        <table align="center" border="2">
+          <thead>
             <tr>
-              <td key={imageName} rowSpan={1}>
-                {imageName}
-              </td>
-              <td key="Metric">
-                Vessel Density
-              </td>
-              {columns.map((columnName, columnCounter) => (
-                <td key={columnName}>
-                  {labeledVesselDensityObj[imageName][columnName].toFixed(2)}
-                </td>
+              <th width="60" key="Image">
+                Image
+              </th>
+              <th width="60" key="Metric">
+                Metric
+              </th>
+              {columns.map((columnName) => (
+                <th width="60" key={columnName}>
+                  {columnName}
+                </th>
               ))}
             </tr>
-          ))}
-
-          {/* <tr key="0">
-            <td key="Image" rowSpan="2">Image</td>
-            <td key="Metric">Vessel Density</td>
-          </tr>
-          <tr key="1">
-          <td key="Metric">Vessel Density</td>
-          </tr> */}
-        </tbody>
-      </table>
-    );
-    setHtmlProcessingDataTable(htmlTable);
-  }
-  useEffect(() => {
-    console.log(labeledVesselDensityObj)
-    if(Object.keys(labeledVesselDensityObj).length > 0){
+          </thead>
+          <tbody>
+            {imagesArray.map((imageName, imageCounter) => (
+              <tr key={imageName}>
+                <td key={imageName} rowSpan={1}>
+                  {imageName}
+                </td>
+                <td key="Metric">Vessel Density</td>
+                {columns.map((columnName, columnCounter) => (
+                  <td key={columnName}>
+                    {labeledVesselDensityObj[imageName][columnName].toFixed(2)}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      );
+      setHtmlProcessingDataTable(htmlTable);
+    }
+    // console.log(labeledVesselDensityObj);
+    if (Object.keys(labeledVesselDensityObj).length > 0) {
       generateTable();
     }
   }, [labeledVesselDensityObj]);
@@ -213,11 +206,7 @@ const Processing = ({
       <div className="text-functions-applied">
         Functions applied:
         {functionNamesArray.length === 0 && <p>None</p>}
-        {functionNamesArray.length > 0 && 
-        (
-          <p>{htmlFunctionsArray}</p>
-          )
-        }
+        {functionNamesArray.length > 0 && <p>{htmlFunctionsArray}</p>}
       </div>
       <div className="table">
         {htmlProcessingDataTable !== null && htmlProcessingDataTable}

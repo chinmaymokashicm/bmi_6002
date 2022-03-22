@@ -32,7 +32,7 @@ function KonvaStage({
   const arcII = useRef();
   const arcIT = useRef();
   const arcIS = useRef();
-  var percentInner = 0.4;
+  var percentInner = 0.5;
 
   var imageRefWidth = imageRef.current.width;
   var imageRefHeight = imageRef.current.height;
@@ -93,7 +93,7 @@ function KonvaStage({
         DataURLtoBlob(subRefArray[2].current.toDataURL())
       );
       mask.onload = function () {
-        if (subRefArray[1] == "II") {
+        if (subRefArray[1] === "II") {
           var offsetX = -mask.width / 2;
           var offsetY = 0;
         } else if (subRefArray[1] === "IN") {

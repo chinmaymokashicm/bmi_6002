@@ -4,17 +4,17 @@ function GetVesselDensity(imgDataArray, setVesselDensityArray) {
   function calculate(counterImage, counterOverlayName) {
     if (counterImage === numImages) {
       setVesselDensityArray(tempVesselDensityArray);
-      console.log(tempVesselDensityArray);
+      // console.log(tempVesselDensityArray);
       return;
     }
     if (counterOverlayName === overlayNamesArray.length) {
-      console.log("Moving to the next image!");
+      // console.log("Moving to the next image!");
       return calculate(counterImage + 1, 0);
     }
     var imgDataCurrent =
-      tempImgDataArray[counterImage][overlayNamesArray[counterOverlayName]];
-    var canvas = document.createElement("canvas");
-    var ctx = canvas.getContext("2d", { csolorSpace: "display-p3" });
+      clone(tempImgDataArray[counterImage][overlayNamesArray[counterOverlayName]]);
+    // var canvas = document.createElement("canvas");
+    // var ctx = canvas.getContext("2d", { csolorSpace: "display-p3" });
     var pixelData = imgDataCurrent.data;
     var lengthPixelData = Object.keys(pixelData).length; //To speed up the loop iteration
     // Weights
@@ -22,24 +22,29 @@ function GetVesselDensity(imgDataArray, setVesselDensityArray) {
     var redWeight = 0.299;
     var greenWeight = 0.587;
     var blueWeight = 0.114;
+    var binaryThreshold = 0;
     var rgbSum = 0;
     for (let i = 0; i < lengthPixelData; i += 4) {
       var grayscale =
         redWeight * pixelData[i] +
         greenWeight * pixelData[i + 1] +
         blueWeight * pixelData[i + 2];
+      var average = (pixelData[i] + pixelData[i+2] + pixelData[i+3])/3
       pixelData[i] = grayscale;
       pixelData[i + 1] = grayscale;
       pixelData[i + 2] = grayscale;
-      rgbSum += grayscale;
+      rgbSum += average > binaryThreshold ? 1 : 0;
     }
     var averageRGB = rgbSum / (lengthPixelData / 4);
-    tempVesselDensityArray[counterImage][overlayNamesArray[counterOverlayName]] = averageRGB;
+    var vesselDensity = averageRGB * 100;
+    tempVesselDensityArray[counterImage][
+      overlayNamesArray[counterOverlayName]
+    ] = vesselDensity;
     // Get new ImageData object
-    var newImageData = ctx.createImageData(
-      imgDataCurrent.width,
-      imgDataCurrent.height
-    );
+    // var newImageData = ctx.createImageData(
+    //   imgDataCurrent.width,
+    //   imgDataCurrent.height
+    // );
     // newImageData.data.set(pixelData);
     // ctx.putImageData(newImageData, 0, 0);
     // tempImgDataArray[counterImage][overlayNamesArray[counterOverlayName]] =

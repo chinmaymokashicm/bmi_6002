@@ -50,6 +50,7 @@ const Carousel = ({
   setStackData,
   isSubmitButtonDisabled,
   setIsSubmitButtonDisabled,
+  labeledVesselDensityObj,
 }) => {
   useEffect(() => {
     setOverlayURLs(stackOverlayURLs[stackCounter]);
@@ -182,6 +183,7 @@ const Carousel = ({
   }, [overlayData, imageLabelArray]);
 
   useEffect(() => {
+    console.log("Change in overlayURLs");
     updateOverlayTable();
     if (overlayURLs.every((obj) => obj.innerCircle !== undefined)) {
       var tempStackOverlayURLs = clone(stackOverlayURLs);
@@ -322,7 +324,7 @@ const Carousel = ({
                   // gridRow: "h1 / h2",
                   // backgroundColor: "blanchedalmond",
                   paddingTop: "50px",
-                    paddingLeft: "50px",
+                  paddingLeft: "50px",
                   height: "100%",
                   overflow: "hidden",
                   display: "flex",
@@ -333,7 +335,7 @@ const Carousel = ({
                 <div
                   id="image-display"
                   style={{
-                    backgroundColor: "black",
+                    // backgroundColor: "black",
                     width: "50%",
                     height: "70%",
                   }} // check index.css
@@ -451,6 +453,22 @@ const Carousel = ({
                   }
                   placeholder="Select image label"
                 />
+              </div>
+              <div className="status">
+                Status:
+                <br />
+                {/* "\u{2705}"
+            "❓" */}
+                Pixel Data:{" "}
+                {imgDataArray.length > 0 ? "\u{2705}" : "❓"}
+                <br />
+                Vessel Density:{" "}
+                {vesselDensityArray.length > 0 ? "\u{2705}" : "❓"}
+                <br />
+                Ready to process images:{" "}
+                {Object.keys(labeledVesselDensityObj).length > 0
+                  ? "\u{2705}"
+                  : "❓"}
               </div>
             </div>
             <div

@@ -163,10 +163,6 @@ function App() {
       // setIsCounterChangeOnButton(false);
     }
 
-    if (imageRef.current !== undefined) {
-      // updateOverlayDimensions();
-    }
-
     if (
       stackOverlayURLs[stackCounter] === undefined &&
       !isCounterChangeOnButton
@@ -197,6 +193,7 @@ function App() {
   const [labeledVesselDensityObj, setLabeledVesselDensityObj] = useState({});
 
   useEffect(() => {
+    console.log("Change in vesselDensityArray or imageLabelArray!");
     if (imageLabelArray.every((imageLabel) => imageLabel !== undefined)) {
       var imageLabels = [];
       for (let i = 0; i < imageLabelArray.length; i++) {
@@ -205,28 +202,25 @@ function App() {
       var imageLabelSet = new Set(imageLabels);
       if (imageLabels.length !== imageLabelSet.size) {
         alert("Cannot assign one label to multiple images!");
-        setLabeledVesselDensityObj({})
-      } else {
-        if (vesselDensityArray.length > 0) {
-          setIsSubmitButtonDisabled(false);
-          continueButtonPreview();
-          continueButtonProcessing();
-          console.log(imageLabelArray, vesselDensityArray);
-          CreateLabeledVesselDensityObj(
-            imageLabelArray,
-            vesselDensityArray,
-            setLabeledVesselDensityObj
-          );
-        }
+        setLabeledVesselDensityObj({});
+      }
+      if (
+        imageLabels.length === imageLabelSet.size &&
+        vesselDensityArray.length > 0
+      ) {
+        console.log("Ready to generate vesseldensity object!")
+        setIsSubmitButtonDisabled(false);
+        continueButtonPreview();
+        continueButtonProcessing();
+        console.log(imageLabelArray, vesselDensityArray);
+        CreateLabeledVesselDensityObj(
+          imageLabelArray,
+          vesselDensityArray,
+          setLabeledVesselDensityObj
+        );
       }
     }
   }, [vesselDensityArray, imageLabelArray]);
-
-  useEffect(() => {
-    if (imageRef.current !== undefined) {
-      console.log("Change in imageRef.current");
-    }
-  }, [imageRef.current]);
 
   function updateOverlayDimensions() {
     var currentDimensions = imageDimensions;
@@ -385,7 +379,7 @@ function App() {
   );
   const componentUndoRedo = (
     <div className="UndoRedo">
-      <Button
+      {/* <Button
         text="Undo"
         onClick={() => {
           if (stackCounter > 0) {
@@ -408,7 +402,7 @@ function App() {
           }
         }}
         disabled={!isRedoVisible}
-      />
+      /> */}
       <Button
         text={<MdHelpCenter />}
         onClick={() => {
@@ -463,16 +457,19 @@ function App() {
         setStackData={setStackData}
         isSubmitButtonDisabled={isSubmitButtonDisabled}
         setIsSubmitButtonDisabled={setIsSubmitButtonDisabled}
+        labeledVesselDensityObj={labeledVesselDensityObj}
       />
     </div>
   );
   const componentProcessing = (
-    <div style={{
-      height: "auto",
-      overflow: "hidden",
-      padding: "10px",
-      // marginTop: "10px"
-    }}>
+    <div
+      style={{
+        height: "auto",
+        overflow: "hidden",
+        padding: "10px",
+        // marginTop: "10px"
+      }}
+    >
       <Processing
         imgDataArray={imgDataArray}
         setImgDataArray={setImgDataArray}

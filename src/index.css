@@ -148,7 +148,7 @@ h1 {
 }
 /* ^^^Overwritten in Carousel.js */
 .image-display {
-  background-color: "black";
+  /* background-color: "black"; */
   width: "50%";
   height: "70%";
 }
