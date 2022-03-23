@@ -16,6 +16,7 @@ import clone from "just-clone";
 import GetImageDimensions from "./functions/GetImageDimensions";
 import UpdateImageDimensions from "./functions/UpdateImageDimensions";
 import CreateLabeledVesselDensityObj from "./functions/CreateLabeledVesselDensityObj";
+import HelpSection from "./components/HelpSection";
 
 function App() {
   const [isFirstLoad, setIsFirstLoad] = useState(true);
@@ -209,7 +210,7 @@ function App() {
         imageLabels.length === imageLabelSet.size &&
         vesselDensityArray.length > 0
       ) {
-        console.log("Ready to generate vesseldensity object!")
+        console.log("Ready to generate vesseldensity object!");
         setIsSubmitButtonDisabled(false);
         continueButtonPreview();
         continueButtonProcessing();
@@ -343,40 +344,10 @@ function App() {
 
   const [isHelpVisible, setIsHelpVisible] = useState(false);
   const componentHelp = (
-    <div
-      style={{
-        position: "fixed",
-        display: isHelpVisible ? "inline-block" : "none",
-        top: "20%",
-        right: "30%",
-        height: "40%",
-        width: "40%",
-        borderColor: "red",
-        borderStyle: "solid",
-        backgroundColor: "#f0d4ad",
-        overflowY: "scroll",
-        opacity: "0.8",
-        zIndex: "10",
-      }}
-    >
-      Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-      tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
-      veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
-      commodo consequat. Duis aute irure dolor in reprehenderit in voluptate
-      velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat
-      cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id
-      est laborum.
-      <Button
-        text="Close"
-        onClick={() => {
-          setIsHelpVisible(false);
-        }}
-        style={{
-          bottom: 0,
-          right: 0,
-        }}
-      />
-    </div>
+    <HelpSection
+      isHelpVisible={isHelpVisible}
+      setIsHelpVisible={setIsHelpVisible}
+    />
   );
   const componentUndoRedo = (
     <div className="UndoRedo">
@@ -518,6 +489,9 @@ function App() {
         if (e.key === "o") {
           imageBrowserRef.current.click();
           // previewSectionRef.current.focus()
+        }
+        if(e.key === "Escape"){
+          setIsHelpVisible(false)
         }
       }}
     >
