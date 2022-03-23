@@ -342,7 +342,7 @@ function App() {
 
   const [isCounterChangeOnButton, setIsCounterChangeOnButton] = useState(false);
 
-  const [isHelpVisible, setIsHelpVisible] = useState(false);
+  const [isHelpVisible, setIsHelpVisible] = useState(true);
   const componentHelp = (
     <HelpSection
       isHelpVisible={isHelpVisible}
