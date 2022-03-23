@@ -11,9 +11,11 @@ import MakeImageZero from "../functions/MakeImageZero";
 import ResetStackData from "../functions/ResetStackData";
 import GetVesselDensity from "../functions/GetVesselDensity";
 
+import { CSVLink, CSVDownload } from "react-csv";
+
 const Processing = ({
-  imgDataArray,
-  setImgDataArray,
+  overlayPixelsArray,
+  setOverlayPixelsArray,
   stackImageURLs,
   setStackImageURLs,
   stackCounter,
@@ -31,25 +33,25 @@ const Processing = ({
   isSubmitButtonDisabled,
   setIsSubmitButtonDisabled,
   labeledVesselDensityObj,
+  imagePixelsArray,
+  setImagePixelsArray,
 }) => {
   // Setting up the appearance
   const animatedComponents = makeAnimated();
   useEffect(() => {
-    if (imgDataArray.length === 0) {
-      console.log("imgDataArray is still empty?");
+    if (overlayPixelsArray.length === 0) {
+      console.log("overlayPixelsArray is still empty?");
       setIsSubmitButtonDisabled(true);
     } else {
-      console.log("imgDataArray is not empty!");
-      GetVesselDensity(imgDataArray, setVesselDensityArray);
+      console.log("overlayPixelsArray is not empty!");
+      GetVesselDensity(overlayPixelsArray, setVesselDensityArray);
     }
-  }, [imgDataArray, setIsSubmitButtonDisabled, setVesselDensityArray]);
-
-  
+  }, [overlayPixelsArray, setIsSubmitButtonDisabled, setVesselDensityArray]);
 
   useEffect(() => {
     console.log("Change in overlayData!");
     console.log(overlayData);
-    // ResetStackData(setStackData, stackCounter);
+    ResetStackData(setStackData, stackCounter);
   }, [overlayData, setStackData, stackCounter]);
 
   var functionsList = [
@@ -59,18 +61,18 @@ const Processing = ({
         return Greyscale;
       },
     },
-    {
-      label: "Vessel Density",
-      value: function () {
-        return;
-      },
-    },
-    {
-      label: "Make everything 0",
-      value: function () {
-        return MakeImageZero;
-      },
-    },
+    // {
+    //   label: "Vessel Density",
+    //   value: function () {
+    //     return;
+    //   },
+    // },
+    // {
+    //   label: "Make everything 0",
+    //   value: function () {
+    //     return MakeImageZero;
+    //   },
+    // },
   ];
   const [currentFunctionName, setCurrentFunctionName] = useState(
     functionsList[0].label
@@ -143,16 +145,24 @@ const Processing = ({
   }, [labeledVesselDensityObj]);
   //   -------------------------------------------------------------------------------
 
+useEffect(()=> {
+  console.log("imagePixelsArray", imagePixelsArray)
+}, [imagePixelsArray])
+
+
   function Submit() {
     try {
       var objOverlayData = {};
       currentFunction(
-        imgDataArray,
+        overlayPixelsArray,
         stackOverlayURLs,
         setStackOverlayURLs,
         stackCounter,
-        setImgDataArray,
-        setVesselDensityArray
+        setOverlayPixelsArray,
+        imagePixelsArray,
+        setImagePixelsArray,
+        stackImageURLs,
+        setStackImageURLs
       );
       for (var i = 0; i < stackOverlayURLs[stackCounter].length; i++) {
         objOverlayData[`Image ${i + 1}`] = overlayData[i];
@@ -166,13 +176,12 @@ const Processing = ({
       setFunctionNamesArray(functionsArray);
       console.log("functionsArray", functionsArray);
 
-      SaveImageURLsToStack(
-        stackImageURLs[stackCounter],
-        stackImageURLs,
-        setStackImageURLs,
-        stackCounter,
-        setImgDataArray
-      );
+      // SaveImageURLsToStack(
+      //   stackImageURLs[stackCounter],
+      //   stackImageURLs,
+      //   setStackImageURLs,
+      //   stackCounter
+      // );
       SaveDataToStack(objData, stackData, setStackData, stackCounter);
       setStackCounter(stackCounter + 1);
       setCurrentTabValue(1);
@@ -202,6 +211,16 @@ const Processing = ({
           onClick={Submit}
           disabled={isSubmitButtonDisabled}
         />
+        {/* <CSVLink data={vesselDensityArray} filename="test.csv">Download</CSVLink> */}
+        {/* <Button text="Download" onClick={()=> {
+          try{
+            console.log("Hello");
+            <CSVDownload data={vesselDensityArray} filename="test.csv" target="_blank" />
+          }
+          catch(e){
+            console.log(e)
+          }
+        }} /> */}
       </div>
       <div className="text-functions-applied">
         Functions applied:

@@ -7,19 +7,21 @@ import InitiateCanvas from "./InitiateCanvas";
 import SaveImageURLsToStack from "./SaveImageURLsToStack";
 import SaveOverlayURLsToStack from "./SaveOverlayURLsToStack";
 
-
 function Greyscale(
-  imgDataArray,
+  overlayPixelsArray,
   stackOverlayURLs,
   setStackOverlayURLs,
   stackCounter,
-  setImgDataArray,
-  setVesselDensityArray
+  setOverlayPixelsArray,
+  imagePixelsArray,
+  setImagePixelsArray,
+  stackImageURLs,
+  setStackImageURLs
 ) {
-  function greyscale(
+  function updateOverlayURLs(
     counterImage,
     counterOverlayName,
-    tempImgDataArray,
+    tempOverlayPixelsArray,
     tempOverlayURLs
   ) {
     console.log(
@@ -29,38 +31,39 @@ function Greyscale(
       overlayNamesArray[counterOverlayName]
     );
     if (counterImage === numImages) {
-      console.log("Here");
-      console.log(tempImgDataArray);
-      console.log("tempOverlayURLs", tempOverlayURLs);
-      setImgDataArray(tempImgDataArray);
-      // var tempStackOverlayURLs = clone(stackOverlayURLs);
-      // tempStackOverlayURLs[stackCounter + 1] = tempOverlayURLs;
-      // console.log(tempStackOverlayURLs);
-      // setStackOverlayURLs(tempStackOverlayURLs);
+      // console.log("Here");
+      // console.log(tempOverlayPixelsArray);
+      // console.log("tempOverlayURLs", tempOverlayURLs);
+      setOverlayPixelsArray(tempOverlayPixelsArray);
       SaveOverlayURLsToStack(
         tempOverlayURLs,
         stackOverlayURLs,
         setStackOverlayURLs,
         stackCounter,
-        setImgDataArray
+        setOverlayPixelsArray
       );
-      GetPixels(tempOverlayURLs, setImgDataArray)
-      // setOverlayURLs(tempOverlayURLs)
-      var returnArray = new Array(
-        stackOverlayURLs[stackCounter].length + 1
-      ).fill(true);
-      return returnArray;
+      return
+      // GetPixels(tempOverlayURLs, setOverlayPixelsArray)
     }
     if (counterOverlayName === overlayNamesArray.length) {
-      return greyscale(counterImage + 1, 0, tempImgDataArray, tempOverlayURLs);
+      updateOverlayURLs(
+        counterImage + 1,
+        0,
+        tempOverlayPixelsArray,
+        tempOverlayURLs
+      );
+      return
     }
-    var imgDataCurrent =
-      tempImgDataArray[counterImage][overlayNamesArray[counterOverlayName]];
+    // console.log(tempOverlayPixelsArray, counterImage)
+    var overlayPixelDataCurrent =
+      tempOverlayPixelsArray[counterImage][
+        overlayNamesArray[counterOverlayName]
+      ];
     var [canvas, ctx, img] = InitiateCanvas(
       tempOverlayURLs[counterImage][overlayNamesArray[counterOverlayName]],
-      imgDataCurrent
+      overlayPixelDataCurrent
     );
-    var pixelData = imgDataCurrent.data;
+    var pixelData = overlayPixelDataCurrent.data;
     var lengthPixelData = Object.keys(pixelData).length; //To speed up the loop iteration
 
     // Weights
@@ -82,8 +85,8 @@ function Greyscale(
 
     // Get new ImageData object
     var newImageData = ctx.createImageData(
-      imgDataCurrent.width,
-      imgDataCurrent.height
+      overlayPixelDataCurrent.width,
+      overlayPixelDataCurrent.height
     );
     newImageData.data.set(pixelData);
     console.log(newImageData);
@@ -92,28 +95,96 @@ function Greyscale(
     var base64Image = canvas.toDataURL();
     var objectURL = URL.createObjectURL(DataURLtoBlob(base64Image));
 
-    // Set the values in imgDataArray and overlayURLs
-    tempImgDataArray[counterImage][overlayNamesArray[counterOverlayName]] =
-      newImageData;
+    // Set the values in overlayPixelsArray and overlayURLs
+    tempOverlayPixelsArray[counterImage][
+      overlayNamesArray[counterOverlayName]
+    ] = newImageData;
     tempOverlayURLs[counterImage][overlayNamesArray[counterOverlayName]] =
       objectURL;
-    return greyscale(
+    return updateOverlayURLs(
       counterImage,
       counterOverlayName + 1,
-      tempImgDataArray,
+      tempOverlayPixelsArray,
       tempOverlayURLs
     );
   }
 
+  function updateImageURLs(counterImage, tempImagePixelsArray, tempImageURLs) {
+    if (counterImage === numImages) {
+      setImagePixelsArray(tempImagePixelsArray);
+      SaveImageURLsToStack(
+        stackImageURLs[stackCounter],
+        stackImageURLs,
+        setStackImageURLs,
+        stackCounter
+      );
+      GetPixels(tempOverlayURLs, setOverlayPixelsArray, tempImageURLs, setImagePixelsArray)
+      return;
+    }
+    var imagePixelDataCurrent = tempImagePixelsArray[counterImage];
+    console.log(tempImagePixelsArray[counterImage], counterImage)
+    var [canvas, ctx, img] = InitiateCanvas(
+      stackImageURLs[stackCounter][counterImage].objectURL,
+      imagePixelDataCurrent
+    );
+    var pixelData = imagePixelDataCurrent.data;
+    var lengthPixelData = Object.keys(pixelData).length; //To speed up the loop iteration
+    var redWeight = 0.299;
+    var greenWeight = 0.587;
+    var blueWeight = 0.114;
+    for (let i = 0; i < lengthPixelData; i += 4) {
+      var grayscale =
+        redWeight * pixelData[i] +
+        greenWeight * pixelData[i + 1] +
+        blueWeight * pixelData[i + 2];
+      pixelData[i] = grayscale;
+      pixelData[i + 1] = grayscale;
+      pixelData[i + 2] = grayscale;
+    }
+    // Get new ImageData object
+    var newImageData = ctx.createImageData(
+      imagePixelDataCurrent.width,
+      imagePixelDataCurrent.height
+    );
+    newImageData.data.set(pixelData);
+    console.log(newImageData);
+    ctx.putImageData(newImageData, 0, 0);
+    // Get new imageURL
+    var base64Image = canvas.toDataURL();
+    var objectURL = URL.createObjectURL(DataURLtoBlob(base64Image));
+
+    tempImagePixelsArray[counterImage] = newImageData;
+    tempImageURLs[counterImage].objectURL = objectURL;
+    updateImageURLs(
+      counterImage + 1,
+      tempImagePixelsArray,
+      tempImageURLs
+    );
+    return
+  }
+
   try {
-    var tempImgDataArray = clone(imgDataArray);
+    console.log(imagePixelsArray)
+    var tempOverlayPixelsArray = clone(overlayPixelsArray);
+    var tempImagePixelsArray = clone(imagePixelsArray);
+    console.log(tempImagePixelsArray)
     var tempOverlayURLs = clone(stackOverlayURLs[stackCounter]);
+    var tempImageURLs = clone(stackImageURLs[stackCounter]);
     var numImages = stackOverlayURLs[stackCounter].length;
     var overlayNamesArray = Object.keys(stackOverlayURLs[stackCounter][0]);
-    return greyscale(0, 0, tempImgDataArray, tempOverlayURLs);
+    updateOverlayURLs(
+      0,
+      0,
+      tempOverlayPixelsArray,
+      tempOverlayURLs
+    );
+    updateImageURLs(0, tempImagePixelsArray, tempImageURLs)
+    // var
+    // GetPixels
+    return ;
   } catch (e) {
-    console.log(e);
-    return new Array(stackOverlayURLs[stackCounter].length + 1).fill(false);
+    console.error(e);
+    return
   }
 }
 

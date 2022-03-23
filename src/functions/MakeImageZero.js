@@ -6,11 +6,11 @@ import InitiateCanvas from "./InitiateCanvas";
 import SaveImageURLsToStack from "./SaveImageURLsToStack";
 
 function MakeImageZero(
-  imgDataArray,
+  overlayPixelsArray,
   stackOverlayURLs,
   setStackOverlayURLs,
   stackCounter,
-  setImgDataArray,
+  setOverlayPixelsArray,
   setOverlayURLs
 ) {
   function makeZero(
@@ -29,7 +29,7 @@ function MakeImageZero(
       console.log("Here");
       console.log(tempImgDataArray);
       console.log(tempOverlayURLs);
-      setImgDataArray(tempImgDataArray);
+      setOverlayPixelsArray(tempImgDataArray);
       var tempStackOverlayURLs = clone(stackOverlayURLs);
       tempStackOverlayURLs[stackCounter + 1] = tempOverlayURLs;
       console.log(tempStackOverlayURLs);
@@ -79,7 +79,7 @@ function MakeImageZero(
     var base64Image = canvas.toDataURL("image/jpeg", 1);
     var objectURL = URL.createObjectURL(DataURLtoBlob(canvas.toDataURL()));
 
-    // Set the values in imgDataArray and overlayURLs
+    // Set the values in overlayPixelsArray and overlayURLs
     tempImgDataArray[counterImage][overlayNamesArray[counterOverlayName]] =
       newImageData;
     tempOverlayURLs[counterImage][overlayNamesArray[counterOverlayName]] =
@@ -93,7 +93,7 @@ function MakeImageZero(
   }
 
   try {
-    var tempImgDataArray = clone(imgDataArray);
+    var tempImgDataArray = clone(overlayPixelsArray);
     var tempOverlayURLs = clone(stackOverlayURLs[stackCounter]);
     var numImages = stackOverlayURLs[stackCounter].length;
     var overlayNamesArray = Object.keys(stackOverlayURLs[stackCounter][0]);

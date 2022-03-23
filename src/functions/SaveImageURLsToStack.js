@@ -4,8 +4,7 @@ function SaveImageURLsToStack(
   newImageURLs,
   stackImageURLs,
   setStackImageURLs,
-  stackCounter,
-  setImgDataArray,
+  stackCounter
 ) {
   // Add here: code to remove all counters after {current counter+1} (necessary when undo and then generate new stack images/data)
 
@@ -14,7 +13,7 @@ function SaveImageURLsToStack(
   // console.log("tempStackImageURLs", tempStackImageURLs)
   setStackImageURLs(tempStackImageURLs);
 
-  // GetPixels(newImageURLs, setImgDataArray, GetImageDimensions(newImageURLs));
+  // GetPixels(newImageURLs, setOverlayPixelsArray, GetImageDimensions(newImageURLs));
 }
 
 export default SaveImageURLsToStack;

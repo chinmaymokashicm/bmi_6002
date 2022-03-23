@@ -3,21 +3,21 @@ import InitiateCanvas from "./InitiateCanvas";
 import SaveImageURLsToStack from "./SaveImageURLsToStack";
 
 function VesselDensityPixelCount(
-  imgDataArray,
+  overlayPixelsArray,
   stackImageURLs,
   setStackImageURLs,
   stackCounter,
-  setImgDataArray
+  setOverlayPixelsArray
 ) {
   try {
     var arrayPixelDensity = [];
     var pixelDensityTotal = 0;
     for (
       var currentImageIndex = 0;
-      currentImageIndex < imgDataArray.length;
+      currentImageIndex < overlayPixelsArray.length;
       currentImageIndex++
     ) {
-      var imgData = imgDataArray[currentImageIndex];
+      var imgData = overlayPixelsArray[currentImageIndex];
       var pixelData = imgData.array.data;
       var [canvas, ctx, img] = InitiateCanvas(
         stackImageURLs[stackCounter][currentImageIndex].objectURL,
@@ -36,7 +36,7 @@ function VesselDensityPixelCount(
       arrayPixelDensity.push(Math.round(pixelDensity));
       pixelDensityTotal += pixelDensity;
     }
-    var pixelDensityAverage = pixelDensityTotal / imgDataArray.length;
+    var pixelDensityAverage = pixelDensityTotal / overlayPixelsArray.length;
     arrayPixelDensity.push(Math.round(pixelDensityAverage));
     // console.log(arrayPixelDensity)
 
@@ -45,13 +45,13 @@ function VesselDensityPixelCount(
       stackImageURLs,
       setStackImageURLs,
       stackCounter,
-      setImgDataArray
+      setOverlayPixelsArray
     );
     return arrayPixelDensity;
   } catch (e) {
     console.log(e);
     var arrayError = [];
-    for (let i = 0; i < imgDataArray.length + 1; i++) {
+    for (let i = 0; i < overlayPixelsArray.length + 1; i++) {
       arrayError.push(false);
     }
     return arrayError;

@@ -5,9 +5,9 @@ import clone from "just-clone";
 // import GetVesselDensity from "./GetVesselDensity";
 // import InitiateCanvas from "./InitiateCanvas";
 
-function GetPixels(currentOverlayURLs, setImgDataArray) {
+function GetPixels(currentOverlayURLs, setOverlayPixelsArray, imageURLs, setImagePixelsArray) {
   try {
-    function getPixels(counterImage, counterOverlayName, tempPixelArray) {
+    function getOverlayPixels(counterImage, counterOverlayName, tempPixelArray) {
       if (counterImage === numImages) {
         // console.log("Reached the end!");
         // for (let i = 0; i < tempPixelArray.length; i++) {
@@ -21,19 +21,19 @@ function GetPixels(currentOverlayURLs, setImgDataArray) {
         //   // console.log(tempPixelArray[0].IN.data.filter((item) => item !== 0));
         //   console.log(tempPixelArray[i].IN.data.filter((item) => item !== 0));
         // }
-        setImgDataArray(tempPixelArray);
-        console.log("imgDataArray", tempPixelArray);
+        setOverlayPixelsArray(tempPixelArray);
+        console.log("overlayPixelsArray", tempPixelArray);
         return;
       }
       if (counterOverlayName === overlayNamesArray.length) {
-        console.log("Moving to the next image!");
-        getPixels(counterImage + 1, 0, clone(tempPixelArray));
+        // console.log("Moving to the next image!");
+        getOverlayPixels(counterImage + 1, 0, clone(tempPixelArray));
         return;
       }
-      console.log(counterImage, overlayNamesArray[counterOverlayName]);
-      console.log(
-        currentOverlayURLs[counterImage][overlayNamesArray[counterOverlayName]]
-      );
+      // console.log(counterImage, overlayNamesArray[counterOverlayName]);
+      // console.log(
+      //   currentOverlayURLs[counterImage][overlayNamesArray[counterOverlayName]]
+      // );
       var canvas = document.createElement("canvas");
       var ctx = canvas.getContext("2d", { colorSpace: "display-p3" });
       var img = new Image();
@@ -57,12 +57,35 @@ function GetPixels(currentOverlayURLs, setImgDataArray) {
         var imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
         tempPixelArray[counterImage][overlayNamesArray[counterOverlayName]] =
           imgData;
-        console.log("Moving to next overlayURL!");
+        // console.log("Moving to next overlayURL!");
         ctx.restore();
         // console.log(overlayNamesArray[counterOverlayName], imgData.data.filter((element) => element !== 0).length);
-        getPixels(counterImage, counterOverlayName + 1, clone(tempPixelArray));
+        getOverlayPixels(counterImage, counterOverlayName + 1, clone(tempPixelArray));
         return;
       };
+    }
+
+    function getImagePixels(counterImage, tempPixelArray){
+      if(counterImage === numImages){
+        console.log("imagePixelsArray", tempPixelArray)
+        setImagePixelsArray(tempPixelArray)
+        return;
+      }
+      var canvas = document.createElement("canvas");
+      var ctx = canvas.getContext("2d", { colorSpace: "display-p3" });
+      var img = new Image();
+      img.src = imageURLs[counterImage].objectURL
+      img.onload = function(){
+        console.log("You there?")
+        canvas.width = img.width
+        canvas.height = img.height
+        ctx.drawImage(img, 0, 0)
+        var imgData = ctx.getImageData(0, 0, canvas.width, canvas.height)
+        tempPixelArray[counterImage] = imgData
+        ctx.restore()
+        getImagePixels(counterImage + 1, clone(tempPixelArray))
+        return
+      }
     }
 
     console.log("Getting pixels!");
@@ -73,11 +96,12 @@ function GetPixels(currentOverlayURLs, setImgDataArray) {
     var overlayNamesArray = Object.keys(currentOverlayURLs[0]);
     // console.log(numImages, "tempPixelArray", tempPixelArray, overlayNamesArray);
     // console.log(currentOverlayURLs);
-    getPixels(0, 0, clone(tempPixelArray));
+    getOverlayPixels(0, 0, clone(tempPixelArray));
+    getImagePixels(0, clone(tempPixelArray))
     console.log("Hello");
     return;
   } catch (e) {
-    console.log(e);
+    console.error(e);
   }
 }
 

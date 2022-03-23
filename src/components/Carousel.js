@@ -18,6 +18,11 @@ import TabPanel from "./TabPanel";
 import ErrorBoundary from "../functions/ErrorBoundary";
 import ResetStackData from "../functions/ResetStackData";
 import GetVesselDensity from "../functions/GetVesselDensity";
+import { CSVLink } from "react-csv";
+import { saveAs } from "file-saver";
+
+import CreateRGBArray from "../functions/CreateRGBArray";
+import CreateCSVURI from "../functions/CreateCSVURI";
 
 const Carousel = ({
   imageRef,
@@ -36,8 +41,8 @@ const Carousel = ({
   updateOverlayDimensions,
   overlayData,
   setOverlayData,
-  imgDataArray,
-  setImgDataArray,
+  overlayPixelsArray,
+  setOverlayPixelsArray,
   vesselDensityArray,
   setVesselDensityArray,
   overlayURLs,
@@ -51,6 +56,8 @@ const Carousel = ({
   isSubmitButtonDisabled,
   setIsSubmitButtonDisabled,
   labeledVesselDensityObj,
+  imagePixelsArray,
+  setImagePixelsArray,
 }) => {
   useEffect(() => {
     setOverlayURLs(stackOverlayURLs[stackCounter]);
@@ -117,9 +124,9 @@ const Carousel = ({
   const [imageInfoTableData, setImageInfoTableData] = useState([]);
 
   const htmlImageDataTable = (
-    <table align="center" border="2">
+    <table align="center" border="2" overflow-x="auto">
       <thead>
-        <tr>
+        <tr width="auto">
           {columns.map((columnName) => (
             <th key={columnName}>{columnName} </th>
           ))}
@@ -179,6 +186,11 @@ const Carousel = ({
   }
 
   useEffect(() => {
+    if (overlayPixelsArray[0] !== undefined) {
+    }
+  }, [overlayPixelsArray]);
+
+  useEffect(() => {
     updateOverlayTable();
   }, [overlayData, imageLabelArray]);
 
@@ -191,7 +203,12 @@ const Carousel = ({
       setStackOverlayURLs(tempStackOverlayURLs);
       console.log("Ready to grab pixel values!");
       console.log(overlayURLs);
-      GetPixels(clone(overlayURLs), setImgDataArray, GetVesselDensity);
+      GetPixels(
+        clone(overlayURLs),
+        setOverlayPixelsArray,
+        stackImageURLs[stackCounter],
+        setImagePixelsArray
+      );
     }
   }, [overlayURLs]);
 
@@ -243,7 +260,7 @@ const Carousel = ({
         stackImageURLs,
         setStackImageURLs,
         stackCounter,
-        setImgDataArray
+        setOverlayPixelsArray
       );
       setStackCounter(stackCounter + 1);
     } catch (e) {
@@ -457,10 +474,11 @@ const Carousel = ({
               <div className="status">
                 Status:
                 <br />
-                {/* "\u{2705}"
-            "❓" */}
-                Pixel Data:{" "}
-                {imgDataArray.length > 0 ? "\u{2705}" : "❓"}
+                Overlay Pixel Data:{" "}
+                {overlayPixelsArray.length > 0 ? "\u{2705}" : "❓"}
+                <br />
+                Image Pixel Data:{" "}
+                {imagePixelsArray.length > 0 ? "\u{2705}" : "❓"}
                 <br />
                 Vessel Density:{" "}
                 {vesselDensityArray.length > 0 ? "\u{2705}" : "❓"}
@@ -469,6 +487,58 @@ const Carousel = ({
                 {Object.keys(labeledVesselDensityObj).length > 0
                   ? "\u{2705}"
                   : "❓"}
+                <br />
+                <Button
+                  text="Pixel Data"
+                  onClick={() => {
+                    const JSZip = require("jszip");
+                    const zip = new JSZip()
+                    const folder = zip.folder("pixels");
+                    for (
+                      let imageCounter = 0;
+                      imageCounter < overlayPixelsArray.length;
+                      imageCounter++
+                    ) {
+                      for (
+                        let overlayCounter = 0;
+                        overlayCounter < Object.keys(overlayPixelsArray[imageCounter]).length;
+                        overlayCounter++
+                      ) {
+                        var overlayNamesArray = Object.keys(
+                          overlayPixelsArray[imageCounter]
+                        );
+                        var href = CreateCSVURI(
+                          CreateRGBArray(
+                            overlayPixelsArray[imageCounter][
+                              overlayNamesArray[overlayCounter]
+                            ]
+                          )
+                        );
+                        folder.file(
+                          stackImageURLs[stackCounter][imageCounter].imageName +
+                            "_" +
+                            overlayNamesArray[overlayCounter],
+                          href
+                        );
+                      }
+                    }
+                    zip
+                      .generateAsync({ type: "blob" })
+                      .then(function (content) {
+                        saveAs(content, "pixels.zip");
+                      });
+                    // var href = CreateCSVURI(
+                    //   CreateRGBArray(overlayPixelsArray[0].innerCircle)
+                    // );
+                    // var download = "test.csv";
+                    // var link = document.createElement("a");
+                    // link.setAttribute("href", href);
+                    // link.setAttribute("download", download);
+                    // document.body.appendChild(link);
+                    // link.click();
+                  }}
+                  disabled={overlayPixelsArray[0] !== undefined ? false : true}
+                />
               </div>
             </div>
             <div

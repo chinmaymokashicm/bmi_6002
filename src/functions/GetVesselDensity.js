@@ -1,6 +1,6 @@
 import clone from "just-clone";
 
-function GetVesselDensity(imgDataArray, setVesselDensityArray) {
+function GetVesselDensity(overlayPixelsArray, setVesselDensityArray) {
   function calculate(counterImage, counterOverlayName) {
     if (counterImage === numImages) {
       setVesselDensityArray(tempVesselDensityArray);
@@ -12,7 +12,7 @@ function GetVesselDensity(imgDataArray, setVesselDensityArray) {
       return calculate(counterImage + 1, 0);
     }
     var imgDataCurrent =
-      clone(tempImgDataArray[counterImage][overlayNamesArray[counterOverlayName]]);
+      clone(tempOverlayPixels[counterImage][overlayNamesArray[counterOverlayName]]);
     // var canvas = document.createElement("canvas");
     // var ctx = canvas.getContext("2d", { csolorSpace: "display-p3" });
     var pixelData = imgDataCurrent.data;
@@ -47,14 +47,14 @@ function GetVesselDensity(imgDataArray, setVesselDensityArray) {
     // );
     // newImageData.data.set(pixelData);
     // ctx.putImageData(newImageData, 0, 0);
-    // tempImgDataArray[counterImage][overlayNamesArray[counterOverlayName]] =
+    // tempOverlayPixels[counterImage][overlayNamesArray[counterOverlayName]] =
     //   newImageData;
     return calculate(counterImage, counterOverlayName + 1);
   }
   console.log("Getting vessel densities!");
-  var tempImgDataArray = clone(imgDataArray);
-  var tempImgData = tempImgDataArray[0];
-  var numImages = tempImgDataArray.length;
+  var tempOverlayPixels = clone(overlayPixelsArray);
+  var tempImgData = tempOverlayPixels[0];
+  var numImages = tempOverlayPixels.length;
   var tempVesselDensityArray = [];
   for (let i = 0; i < numImages; i++) {
     let obj = {};
@@ -63,7 +63,7 @@ function GetVesselDensity(imgDataArray, setVesselDensityArray) {
     }
     tempVesselDensityArray.push(obj);
   }
-  var overlayNamesArray = Object.keys(tempImgDataArray[0]);
+  var overlayNamesArray = Object.keys(tempOverlayPixels[0]);
   return calculate(0, 0);
 }
 

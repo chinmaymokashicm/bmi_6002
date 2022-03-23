@@ -180,7 +180,8 @@ function App() {
   }, [stackCounter]);
 
   // Image Processing
-  const [imgDataArray, setImgDataArray] = useState([]);
+  const [overlayPixelsArray, setOverlayPixelsArray] = useState([]);
+  const [imagePixelsArray, setImagePixelsArray] = useState([]);
   const [vesselDensityArray, setVesselDensityArray] = useState([]);
   const imageRef = useRef();
   const [overlayWidth, setOverlayWidth] = useState(100);
@@ -246,10 +247,10 @@ function App() {
 
   // useEffect(() => {
   //   if (!isFirstLoad) {
-  //     console.log("Change in imgDataArray");
+  //     console.log("Change in overlayPixelsArray");
   //   }
   //   setIsFirstLoad(false);
-  // }, [imgDataArray]);
+  // }, [overlayPixelsArray]);
 
   // Hooks for collapsible components
   const [isExpandedSelect, setExpandedSelect] = useState(true);
@@ -443,8 +444,8 @@ function App() {
         updateOverlayDimensions={updateOverlayDimensions}
         overlayData={overlayData}
         setOverlayData={setOverlayData}
-        imgDataArray={imgDataArray}
-        setImgDataArray={setImgDataArray}
+        overlayPixelsArray={overlayPixelsArray}
+        setOverlayPixelsArray={setOverlayPixelsArray}
         vesselDensityArray={vesselDensityArray}
         setVesselDensityArray={setVesselDensityArray}
         overlayURLs={overlayURLs}
@@ -458,6 +459,8 @@ function App() {
         isSubmitButtonDisabled={isSubmitButtonDisabled}
         setIsSubmitButtonDisabled={setIsSubmitButtonDisabled}
         labeledVesselDensityObj={labeledVesselDensityObj}
+        imagePixelsArray={imagePixelsArray}
+        setImagePixelsArray={setImagePixelsArray}
       />
     </div>
   );
@@ -471,8 +474,8 @@ function App() {
       }}
     >
       <Processing
-        imgDataArray={imgDataArray}
-        setImgDataArray={setImgDataArray}
+        overlayPixelsArray={overlayPixelsArray}
+        setOverlayPixelsArray={setOverlayPixelsArray}
         stackImageURLs={stackImageURLs}
         setStackImageURLs={setStackImageURLs}
         stackCounter={stackCounter}
@@ -490,6 +493,8 @@ function App() {
         isSubmitButtonDisabled={isSubmitButtonDisabled}
         setIsSubmitButtonDisabled={setIsSubmitButtonDisabled}
         labeledVesselDensityObj={labeledVesselDensityObj}
+        imagePixelsArray={imagePixelsArray}
+        setImagePixelsArray={setImagePixelsArray}
       />
     </div>
   );
@@ -559,7 +564,7 @@ function App() {
             console.log(overlayData);
           }}
         />
-        <Button text="imgDataArray" onClick={() => console.log(imgDataArray)} />
+        <Button text="overlayPixelsArray" onClick={() => console.log(overlayPixelsArray)} />
         <Button
           text="Image dimensions"
           onClick={() => {
