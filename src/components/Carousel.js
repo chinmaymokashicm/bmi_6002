@@ -517,7 +517,7 @@ const Carousel = ({
                         folder.file(
                           stackImageURLs[stackCounter][imageCounter].imageName +
                             "_" +
-                            overlayNamesArray[overlayCounter],
+                            overlayNamesArray[overlayCounter] +".csv",
                           href
                         );
                       }
