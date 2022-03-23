@@ -6,6 +6,7 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   height: 100%;
+  background-color: #e6dce0;
 }
 
 code {
@@ -31,8 +32,8 @@ code {
   grid-template-columns: 0.4fr 0.6fr;
   grid-template-rows: auto;
   grid-gap: 20px;
-  border-style: solid;
-  border-color: brown;
+  /* border-style: solid; */
+  border-color: none;
 }
 
 .component-temp {
@@ -44,7 +45,7 @@ code {
 }
 
 .component-temp {
-  border-style: dotted;
+  /* border-style: dotted; */
 }
 
 .component-select {
@@ -56,7 +57,7 @@ code {
 }
 
 .component-select {
-  border-style: groove;
+  /* border-style: groove; */
 }
 
 .component-preview {
@@ -68,7 +69,7 @@ code {
 }
 
 .component-preview {
-  border-style: double;
+  /* border-style: double; */
 }
 
 .component-processing {
@@ -81,7 +82,7 @@ code {
 }
 
 .component-processing {
-  border-style: dotted;
+  /* border-style: dotted; */
 }
 
 .component-ml {
@@ -94,7 +95,7 @@ code {
 }
 
 .component-ml {
-  border-style: solid;
+  /* border-style: solid; */
 }
 
 .component-results {
@@ -106,7 +107,7 @@ code {
 }
 
 .component-results {
-  border-style: ridge;
+  /* border-style: ridge; */
 }
 
 /* Headers */
@@ -124,7 +125,7 @@ h1 {
 /* ^^^Overwritten in Carousel.js */
 
 .image-view {
-  border-color: azure;
+  /* border-color: azure; */
   grid-column: v1 / v3;
   grid-row: h1 / h2;
   /* background-color: blanchedalmond; */
@@ -200,37 +201,37 @@ td {
   /* grid-template-columns: ; */
   grid-template-rows: auto 1fr auto;
   grid-gap: 20px;
-  border-style: solid;
-  border-color: brown;
+  /* border-style: solid; */
+  border-color: none;
   /* overflow: scroll; */
   /* display: flex;
   flex-flow: column; */
   /* position: relative; */
 }
 
-.section-main:focus {
+/* .section-main:focus {
   border-color: black !important;
 }
 
 .div:focus {
   border-color: black !important;
-}
+} */
 
 .section-header {
-  background-color: aqua;
+  background-color: #4fadc2;
   cursor: pointer;
 }
 
 .section-component {
-  background-color: burlywood;
+  background-color: #c2dbbf;
   /* flex: 1; */
   height: auto;
 }
 
 .section-footer {
-  background-color: rgb(28, 89, 94);
+  background-color: #1c595e;
   border-style: double;
-  border-color: black;
+  /* border-color: black; */
   bottom: 0;
   min-height: 20px;
   /* position: relative; */

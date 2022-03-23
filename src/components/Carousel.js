@@ -285,7 +285,9 @@ const Carousel = ({
   }
 
   const TabComponent = (
-    <AppBar position="static">
+    <AppBar position="static" style={{
+      backgroundColor: "#84ad94"
+    }}>
       <Tabs value={currentTabValue} onChange={handleTabs}>
         <Tab label="Images" />
         <Tab label="Regions" />
