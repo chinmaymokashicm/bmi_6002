@@ -285,9 +285,12 @@ const Carousel = ({
   }
 
   const TabComponent = (
-    <AppBar position="static" style={{
-      backgroundColor: "#84ad94"
-    }}>
+    <AppBar
+      position="static"
+      style={{
+        backgroundColor: "#84ad94",
+      }}
+    >
       <Tabs value={currentTabValue} onChange={handleTabs}>
         <Tab label="Images" />
         <Tab label="Regions" />
@@ -452,6 +455,7 @@ const Carousel = ({
                 gridColumn: "v2 / v3",
                 gridRow: "h1 / h2",
                 display: currentTabValue === 0 ? "inline-block" : "none",
+                padding: "10px",
               }}
             >
               Select image label
@@ -494,7 +498,7 @@ const Carousel = ({
                   text="Pixel Data"
                   onClick={() => {
                     const JSZip = require("jszip");
-                    const zip = new JSZip()
+                    const zip = new JSZip();
                     const folder = zip.folder("pixels");
                     for (
                       let imageCounter = 0;
@@ -503,7 +507,8 @@ const Carousel = ({
                     ) {
                       for (
                         let overlayCounter = 0;
-                        overlayCounter < Object.keys(overlayPixelsArray[imageCounter]).length;
+                        overlayCounter <
+                        Object.keys(overlayPixelsArray[imageCounter]).length;
                         overlayCounter++
                       ) {
                         var overlayNamesArray = Object.keys(
@@ -516,12 +521,12 @@ const Carousel = ({
                             ]
                           )
                         );
-                        folder.file(
+                        var filename =
                           stackImageURLs[stackCounter][imageCounter].imageName +
-                            "_" +
-                            overlayNamesArray[overlayCounter] +".csv",
-                          href
-                        );
+                          "_" +
+                          overlayNamesArray[overlayCounter] +
+                          ".csv";
+                        folder.file(filename, href);
                       }
                     }
                     zip
