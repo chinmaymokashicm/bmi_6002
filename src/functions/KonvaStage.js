@@ -32,7 +32,7 @@ function KonvaStage({
   const arcII = useRef();
   const arcIT = useRef();
   const arcIS = useRef();
-  var percentInner = 0.5;
+  var percentInner = 0.33;
 
   var imageRefWidth = imageRef.current.width;
   var imageRefHeight = imageRef.current.height;
