@@ -32,7 +32,7 @@ function KonvaStage({
   const arcII = useRef();
   const arcIT = useRef();
   const arcIS = useRef();
-  var percentInner = 0.33;
+  var percentInner = 0.34;
 
   var imageRefWidth = imageRef.current.width;
   var imageRefHeight = imageRef.current.height;
@@ -227,6 +227,7 @@ function KonvaStage({
             ]}
             resizeEnabled={true}
             rotateEnabled={false}
+            padding={-50}
           />
           <Circle
             x={x}

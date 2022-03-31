@@ -239,7 +239,7 @@ function App() {
         x: Math.round(imageDimensions[i].width / 2),
         y: Math.round(imageDimensions[i].height / 2),
         radius: Math.round(
-          Math.min(imageDimensions[i].width / 4, imageDimensions[i].height / 4)
+          Math.min(imageDimensions[i].width / 3, imageDimensions[i].height / 3)
         ),
       });
       setOverlayData(tempOverlayData);
