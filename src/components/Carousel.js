@@ -22,7 +22,7 @@ import { CSVLink } from "react-csv";
 import { saveAs } from "file-saver";
 
 import CreateRGBArray from "../functions/CreateRGBArray";
-import CreateCSVURI from "../functions/CreateCSVURI";
+import CreateCSV from "../functions/CreateCSV";
 
 const Carousel = ({
   imageRef,
@@ -514,7 +514,7 @@ const Carousel = ({
                         var overlayNamesArray = Object.keys(
                           overlayPixelsArray[imageCounter]
                         );
-                        var href = CreateCSVURI(
+                        var href = CreateCSV(
                           CreateRGBArray(
                             overlayPixelsArray[imageCounter][
                               overlayNamesArray[overlayCounter]
