@@ -14,7 +14,7 @@ function CreateCSV(rgbArray) {
   }).join("\n")
 
   // return URL.createObjectURL(new Blob(rgbArray, {type: "text/csv"}));
-  console.log("Created CSV data", csv)
+  // console.log("Created CSV data", csv)
   return(csv)
 }
 
