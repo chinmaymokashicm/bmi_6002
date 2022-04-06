@@ -115,6 +115,9 @@ function KonvaStage({
           // console.log(counter, subRefArray[1], mask.width, mask.height);
           var canvas = document.createElement("canvas");
           var ctx = canvas.getContext("2d", { csolorSpace: "display-p3" });
+          canvas.width = img.width
+          canvas.height = img.height
+          // console.log("canvas.width, canvas.height", canvas.width, canvas.height)
           ctx.drawImage(
             mask,
             0,
@@ -139,13 +142,6 @@ function KonvaStage({
             mask.width,
             mask.height
           );
-          // console.log(
-          //   counter,
-          //   mask.width,
-          //   mask.height,
-          //   subRefArray[2].current.attrs,
-          //   attributes
-          // );
           ctx.restore();
           overlayURLsCurrentIndex[subRefArray[1]] = URL.createObjectURL(DataURLtoBlob(canvas.toDataURL()));
           extractPixels(
