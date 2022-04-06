@@ -534,15 +534,6 @@ const Carousel = ({
                       .then(function (content) {
                         saveAs(content, "pixels.zip");
                       });
-                    // var href = CreateCSVURI(
-                    //   CreateRGBArray(overlayPixelsArray[0].innerCircle)
-                    // );
-                    // var download = "test.csv";
-                    // var link = document.createElement("a");
-                    // link.setAttribute("href", href);
-                    // link.setAttribute("download", download);
-                    // document.body.appendChild(link);
-                    // link.click();
                   }}
                   disabled={overlayPixelsArray[0] !== undefined ? false : true}
                 />
