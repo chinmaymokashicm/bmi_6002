@@ -24,6 +24,7 @@ import { saveAs } from "file-saver";
 import CreateRGBArray from "../functions/CreateRGBArray";
 import CreateCSV from "../functions/CreateCSV";
 import CreatePixelZip from "../functions/CreatePixelZip";
+import ZippingStatusBar from "../functions/ZippingStatusBar";
 
 const Carousel = ({
   imageRef,
@@ -73,6 +74,9 @@ const Carousel = ({
   const [croppedImageObject, setCroppedImageObject] = useState(null);
   const [isCroppedSectionVisible, setIsCroppedSectionVisible] = useState(false);
   const [isOverlayVisible, setIsOverlayVisible] = useState(false);
+  const [isZippingStatusBarVisible, setIsZippingStatusBarVisible] =
+    useState(false);
+
 
   const labelsObj = [
     {
@@ -316,6 +320,27 @@ const Carousel = ({
 
   return (
     <div className="component-image-preview">
+      <div
+        style={{
+          position: "fixed",
+          display: isZippingStatusBarVisible ? "inline-block" : "none",
+          top: "20%",
+          right: "30%",
+          height: "40%",
+          width: "40%",
+          borderColor: "red",
+          borderStyle: "solid",
+          backgroundColor: "#f0d4ad",
+          overflowY: "scroll",
+          opacity: "0.8",
+          zIndex: "10",
+          padding: "10px",
+        }}
+      >
+        <ZippingStatusBar
+          isZippingStatusBarVisible={isZippingStatusBarVisible}
+        />
+      </div>
       {TabComponent}
       {stackImageURLs[stackCounter][0].objectURL !== undefined &&
         imageDimensions[currentImageIndex] !== undefined && (
@@ -501,6 +526,7 @@ const Carousel = ({
                     const JSZip = require("jszip");
                     const zip = new JSZip();
                     const folder = zip.folder("pixels");
+                    setIsZippingStatusBarVisible(true)
                     for (
                       let imageCounter = 0;
                       imageCounter < overlayPixelsArray.length;
@@ -512,6 +538,11 @@ const Carousel = ({
                         Object.keys(overlayPixelsArray[imageCounter]).length;
                         overlayCounter++
                       ) {
+                        console.log(
+                          "imageCounter, overlayCounter",
+                          imageCounter,
+                          overlayCounter
+                        );
                         var overlayNamesArray = Object.keys(
                           overlayPixelsArray[imageCounter]
                         );
@@ -530,6 +561,7 @@ const Carousel = ({
                         folder.file(filename, href);
                       }
                     }
+                    setIsZippingStatusBarVisible(false)
                     zip
                       .generateAsync({ type: "blob" })
                       .then(function (content) {
