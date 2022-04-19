@@ -19,24 +19,30 @@ function GetVesselDensity(overlayPixelsArray, setVesselDensityArray) {
     var lengthPixelData = Object.keys(pixelData).length; //To speed up the loop iteration
     // Weights
     // https://www.dynamsoft.com/blog/insights/image-processing/image-processing-101-color-space-conversion/#:~:text=the%20weighted%20method.%C2%A0-,The%20Weighted%20Method,-The%20weighted%20method
-    var redWeight = 0.299;
-    var greenWeight = 0.587;
-    var blueWeight = 0.114;
-    var binaryThreshold = 0;
-    var rgbSum = 0;
+    // var redWeight = 0.299;
+    // var greenWeight = 0.587;
+    // var blueWeight = 0.114;
+    var sumPixels = 0
+    var numValidPixels = 0
     for (let i = 0; i < lengthPixelData; i += 4) {
-      var grayscale =
-        redWeight * pixelData[i] +
-        greenWeight * pixelData[i + 1] +
-        blueWeight * pixelData[i + 2];
-      var average = (pixelData[i] + pixelData[i+2] + pixelData[i+3])/3
-      pixelData[i] = grayscale;
-      pixelData[i + 1] = grayscale;
-      pixelData[i + 2] = grayscale;
-      rgbSum += average > binaryThreshold ? 1 : 0;
+      if(pixelData[i+3] > 0){
+        // var grayscale =
+        //   redWeight * pixelData[i] +
+        //   greenWeight * pixelData[i + 1] +
+        //   blueWeight * pixelData[i + 2];
+        // var average = (pixelData[i] + pixelData[i+2] + pixelData[i+3])/3
+        var red = pixelData[i]
+        // pixelData[i] = average;
+        // pixelData[i + 1] = average;
+        // pixelData[i + 2] = average;
+        sumPixels += red
+        numValidPixels += 1
+      }
     }
-    var averageRGB = rgbSum / (lengthPixelData / 4);
-    var vesselDensity = averageRGB * 100;
+
+    // var averageRGB = rgbSum / (lengthPixelData / 4);
+    // var vesselDensity = averageRGB * 100;
+    var vesselDensity = sumPixels / numValidPixels
     tempVesselDensityArray[counterImage][
       overlayNamesArray[counterOverlayName]
     ] = vesselDensity;
