@@ -65,12 +65,13 @@ code {
   grid-column-end: 2;
   grid-row-start: 2;
   grid-row-end: 6;
+  height: 100%;
   /* grid-auto-rows: minmax(min-content, max-content); */
 }
 
-.component-preview {
-  /* border-style: double; */
-}
+/* .component-preview {
+  border-style: double;
+} */
 
 .component-processing {
   grid-column-start: 1;
@@ -78,6 +79,7 @@ code {
   grid-row-start: 3;
   grid-row-end: 4;
   overflow: scroll;
+  height: auto;
   /* grid-auto-rows: minmax(min-content, max-content); */
 }
 
@@ -89,8 +91,9 @@ code {
   grid-column-start: 1;
   grid-column-end: 1;
   grid-row-start: 4;
-  grid-row-end: 5;
+  grid-row-end: 6;
   overflow: scroll;
+  height: auto;
   /* grid-auto-rows: minmax(min-content, max-content); */
 }
 

@@ -17,6 +17,7 @@ import GetImageDimensions from "./functions/GetImageDimensions";
 import UpdateImageDimensions from "./functions/UpdateImageDimensions";
 import CreateLabeledVesselDensityObj from "./functions/CreateLabeledVesselDensityObj";
 import HelpSection from "./components/HelpSection";
+import MachineLearning from "./components/MachineLearning";
 
 function App() {
   const [isFirstLoad, setIsFirstLoad] = useState(true);
@@ -469,7 +470,18 @@ function App() {
       />
     </div>
   );
-  const componentML = <div>Machine Learning</div>;
+  const componentML = (
+    <div
+      style={{
+        height: "auto",
+        overflow: "hidden",
+        padding: "10px",
+        // marginTop: "10px"
+      }}
+    >
+      <MachineLearning labeledVesselDensityObj={labeledVesselDensityObj}/>
+    </div>
+  );
   const componentResults = <div>Results</div>;
 
   useEffect(() => {
@@ -490,8 +502,8 @@ function App() {
           imageBrowserRef.current.click();
           // previewSectionRef.current.focus()
         }
-        if(e.key === "Escape"){
-          setIsHelpVisible(false)
+        if (e.key === "Escape") {
+          setIsHelpVisible(false);
         }
       }}
     >
@@ -615,7 +627,7 @@ function App() {
           getToggleProps={getTogglePropsML}
         />
       </div>
-      <div className="component-results">
+      {/* <div className="component-results">
         <Section
           header="Results"
           component={componentResults}
@@ -625,7 +637,7 @@ function App() {
           getCollapseProps={getCollapsePropsResults}
           getToggleProps={getTogglePropsResults}
         />
-      </div>
+      </div> */}
     </div>
   );
 }
