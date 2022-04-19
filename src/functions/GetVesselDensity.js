@@ -11,8 +11,9 @@ function GetVesselDensity(overlayPixelsArray, setVesselDensityArray) {
       // console.log("Moving to the next image!");
       return calculate(counterImage + 1, 0);
     }
-    var imgDataCurrent =
-      clone(tempOverlayPixels[counterImage][overlayNamesArray[counterOverlayName]]);
+    var imgDataCurrent = clone(
+      tempOverlayPixels[counterImage][overlayNamesArray[counterOverlayName]]
+    );
     // var canvas = document.createElement("canvas");
     // var ctx = canvas.getContext("2d", { csolorSpace: "display-p3" });
     var pixelData = imgDataCurrent.data;
@@ -22,27 +23,27 @@ function GetVesselDensity(overlayPixelsArray, setVesselDensityArray) {
     // var redWeight = 0.299;
     // var greenWeight = 0.587;
     // var blueWeight = 0.114;
-    var sumPixels = 0
-    var numValidPixels = 0
+    var sumPixels = 0;
+    var numValidPixels = 0;
     for (let i = 0; i < lengthPixelData; i += 4) {
-      if(pixelData[i+3] > 0){
+      if (pixelData[i + 3] > 0) {
         // var grayscale =
         //   redWeight * pixelData[i] +
         //   greenWeight * pixelData[i + 1] +
         //   blueWeight * pixelData[i + 2];
         // var average = (pixelData[i] + pixelData[i+2] + pixelData[i+3])/3
-        var red = pixelData[i]
+        var red = pixelData[i];
         // pixelData[i] = average;
         // pixelData[i + 1] = average;
         // pixelData[i + 2] = average;
-        sumPixels += red
-        numValidPixels += 1
+        sumPixels += red;
+        numValidPixels += 1;
       }
     }
 
     // var averageRGB = rgbSum / (lengthPixelData / 4);
     // var vesselDensity = averageRGB * 100;
-    var vesselDensity = sumPixels / numValidPixels
+    var vesselDensity = sumPixels / numValidPixels;
     tempVesselDensityArray[counterImage][
       overlayNamesArray[counterOverlayName]
     ] = vesselDensity;
