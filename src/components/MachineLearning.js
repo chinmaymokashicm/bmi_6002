@@ -56,7 +56,7 @@ const MachineLearning = ({ labeledVesselDensityObj }) => {
   return <div>
     {prediction !== null && (
       <span>
-        Probability of acute stroke: {Math.round(prediction * 100)}%
+        Probability of acute stroke: <h1>{Math.round(prediction * 100)}%</h1>
       </span>
     )}
     </div>
