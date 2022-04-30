@@ -36,6 +36,8 @@ const Processing = ({
   imagePixelsArray,
   setImagePixelsArray,
 }) => {
+  const [isFunctionBlockVisible, setIsFunctionBlockVisible] = useState(false);
+
   // Setting up the appearance
   const animatedComponents = makeAnimated();
   useEffect(() => {
@@ -145,10 +147,9 @@ const Processing = ({
   }, [labeledVesselDensityObj]);
   //   -------------------------------------------------------------------------------
 
-useEffect(()=> {
-  console.log("imagePixelsArray", imagePixelsArray)
-}, [imagePixelsArray])
-
+  useEffect(() => {
+    console.log("imagePixelsArray", imagePixelsArray);
+  }, [imagePixelsArray]);
 
   function Submit() {
     try {
@@ -193,7 +194,12 @@ useEffect(()=> {
 
   return (
     <div className="main">
-      <div className="dropdown">
+      <div
+        className="dropdown"
+        style={{
+          display: isFunctionBlockVisible ? "inline-block" : "none",
+        }}
+      >
         <Select
           onChange={(e) => {
             setCurrentFunctionName(e.label);
@@ -205,7 +211,12 @@ useEffect(()=> {
           placeholder={currentFunctionName}
         />
       </div>
-      <div className="submit">
+      <div
+        className="submit"
+        style={{
+          display: isFunctionBlockVisible ? "inline-block" : "none",
+        }}
+      >
         <Button
           text="Submit"
           onClick={Submit}
@@ -222,12 +233,18 @@ useEffect(()=> {
           }
         }} /> */}
       </div>
-      <div className="text-functions-applied">
+      <div
+        className="text-functions-applied"
+        style={{
+          display: isFunctionBlockVisible ? "inline-block" : "none",
+        }}
+      >
         Functions applied:
         {functionNamesArray.length === 0 && <p>None</p>}
         {functionNamesArray.length > 0 && <p>{htmlFunctionsArray}</p>}
       </div>
       <div className="table">
+        <h2 style={{ alignItems: "center", justifyContent: "center", display: "flex"}}>Vessel Density</h2>
         {htmlProcessingDataTable !== null && htmlProcessingDataTable}
       </div>
     </div>
