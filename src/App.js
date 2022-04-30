@@ -396,7 +396,7 @@ function App() {
   const componentImagePreview = (
     <div
       style={{
-        overflow: "scroll",
+        overflow: "auto",
       }}
     >
       <Carousel

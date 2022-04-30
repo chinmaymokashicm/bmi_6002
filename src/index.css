@@ -78,7 +78,7 @@ code {
   grid-column-end: 1;
   grid-row-start: 3;
   grid-row-end: 4;
-  overflow: scroll;
+  overflow: auto;
   height: auto;
   /* grid-auto-rows: minmax(min-content, max-content); */
 }
@@ -92,7 +92,7 @@ code {
   grid-column-end: 1;
   grid-row-start: 4;
   grid-row-end: 6;
-  overflow: scroll;
+  overflow: auto;
   height: auto;
   /* grid-auto-rows: minmax(min-content, max-content); */
 }
@@ -223,12 +223,14 @@ td {
 .section-header {
   background-color: #4fadc2;
   cursor: pointer;
+  border-radius: 15px 15px;
 }
 
 .section-component {
   background-color: #c2dbbf;
   /* flex: 1; */
   height: auto;
+  border-radius: 25px 15px;
 }
 
 .section-footer {
