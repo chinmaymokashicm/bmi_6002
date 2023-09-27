@@ -19,7 +19,7 @@
     "fs": "^0.0.1-security",
     "get-pixels": "^3.3.3",
     "jpeg-js": "^0.4.3",
-    "jszip": "^3.7.1",
+    "jszip": "^3.8.0",
     "just-clone": "^5.0.1",
     "konva": "^8.3.2",
     "lodash": "^4.17.21",
